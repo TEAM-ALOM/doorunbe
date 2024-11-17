@@ -29,6 +29,7 @@ public class ItemService {
 
         return itemList.stream()
                 .map(item -> ItemResponseDto.of(
+                        item.getId(),
                         item.getName(),
                         item.getCost(),
                         userItemRepository.findByUserAndItem(user, item)
