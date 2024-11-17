@@ -21,4 +21,11 @@ public class ItemController {
                                                                    @RequestParam("userId") Long userId) {
         return ResponseEntity.ok(itemService.getItemByCategory(itemCategory, userId));
     }
+
+    @PostMapping("/{itemId}")
+    public ResponseEntity<Void> purchaseItem(@PathVariable("itemId") Long itemId,
+                                             @RequestParam("userId") Long userId) {
+        itemService.purchaseItem(itemId, userId);
+        return ResponseEntity.ok().build();
+    }
 }

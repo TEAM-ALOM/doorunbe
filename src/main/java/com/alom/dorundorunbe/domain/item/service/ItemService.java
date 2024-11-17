@@ -2,6 +2,7 @@ package com.alom.dorundorunbe.domain.item.service;
 
 import com.alom.dorundorunbe.domain.item.domain.Item;
 import com.alom.dorundorunbe.domain.item.domain.ItemCategory;
+import com.alom.dorundorunbe.domain.item.domain.UserItem;
 import com.alom.dorundorunbe.domain.item.dto.ItemResponseDto;
 import com.alom.dorundorunbe.domain.item.repository.ItemRepository;
 import com.alom.dorundorunbe.domain.item.repository.UserItemRepository;
@@ -34,5 +35,24 @@ public class ItemService {
                 ))
                 .sorted(Comparator.comparing(ItemResponseDto::owned).reversed())
                 .toList();
+    }
+
+    public void purchaseItem(Long itemId, Long userId) {
+        User user = userService.findById(userId);
+        Item item = itemRepository.findById(itemId).orElseThrow();
+
+        if (userItemRepository.findByUserAndItem(user, item)) {
+            throw new IllegalArgumentException("이미 소유한 아이템입니다");
+        }
+        if (user.getCash()<item.getCost()) {
+            throw new IllegalArgumentException("잔액이 부족합니다");
+        }
+
+        user.updateCash(user.getCash()-item.getCost());
+        UserItem userItem = UserItem.builder()
+                .user(user)
+                .item(item)
+                .build();
+        userItemRepository.save(userItem);
     }
 }
