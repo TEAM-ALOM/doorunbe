@@ -29,9 +29,15 @@ public class RunningRecord extends BaseEntity {
 
     private LocalDateTime date;
 
-    private long distance;
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
+
+    private double distance;
 
     private int cadence;
 
-    private long time;
+    private long elapsedTime;
+
+    private double speed;
 }
