@@ -1,7 +1,16 @@
-package com.alom.dorundorunbe.domain.RunningRecord.domain;
+package com.alom.dorundorunbe.domain.RunningRecord.dto;
+
+import jakarta.persistence.Entity;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RunningRecordEndRequestDto {
     private Long id;
 

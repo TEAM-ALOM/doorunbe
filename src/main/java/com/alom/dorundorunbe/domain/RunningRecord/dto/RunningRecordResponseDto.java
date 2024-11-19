@@ -1,7 +1,14 @@
-package com.alom.dorundorunbe.domain.RunningRecord.domain;
+package com.alom.dorundorunbe.domain.RunningRecord.dto;
+
+import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class RunningRecordResponseDto {
     private Long id;
 
@@ -18,4 +25,6 @@ public class RunningRecordResponseDto {
     private long elapsedTime;
 
     private double speed;
+
+    private boolean isFinished;
 }

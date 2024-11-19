@@ -3,16 +3,15 @@ package com.alom.dorundorunbe.domain.RunningRecord.domain;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 import static jakarta.persistence.FetchType.LAZY;
 
-@Entity @Getter
+@Entity
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -40,4 +39,6 @@ public class RunningRecord extends BaseEntity {
     private long elapsedTime;
 
     private double speed;
+
+    private boolean isFinished = false;
 }
