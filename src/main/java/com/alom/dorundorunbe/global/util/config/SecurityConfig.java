@@ -1,5 +1,7 @@
 package com.alom.dorundorunbe.global.util.config;
 
+import com.alom.dorundorunbe.domain.auth.handler.OAuthFailureHandler;
+import com.alom.dorundorunbe.domain.auth.handler.OAuthSuccessHandler;
 import com.alom.dorundorunbe.domain.auth.service.PrincipalUserDetailsService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +15,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
   private final PrincipalUserDetailsService principalUserDetailsService;
+  private final OAuthSuccessHandler oAuthSuccessHandler;
+  private final OAuthFailureHandler oAuthFailureHandler;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -30,7 +34,9 @@ public class SecurityConfig {
             .anyRequest().authenticated()) // 나머지 요청은 인증 필요
         .oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
-                        .userService(principalUserDetailsService))); // oauth2
+                        .userService(principalUserDetailsService))
+                .successHandler(oAuthSuccessHandler)
+                .failureHandler(oAuthFailureHandler)); // oauth2
 
     return http.build();
   }
