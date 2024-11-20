@@ -19,8 +19,8 @@ public class User extends BaseEntity {
     private Long id;
 
     // 임의로 추가한 필드 -> kakao 로그인 구현 시 수정
-    @Column(name = "kakao_id", nullable = false, unique = true)
-    private String kakaoId;
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(nullable = false, unique = true, length = 32)
     private String nickname;
