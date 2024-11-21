@@ -1,4 +1,4 @@
-package com.alom.dorundorunbe.domain.achievement.domain;
+package com.alom.dorundorunbe.domain.Achievement.domain;
 
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
