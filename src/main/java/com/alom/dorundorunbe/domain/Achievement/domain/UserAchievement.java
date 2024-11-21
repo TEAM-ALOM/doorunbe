@@ -28,4 +28,10 @@ public class UserAchievement extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "achievement_id", nullable = false)
     private Achievement achievement;
+
+    private boolean rewardClaimed;//보상 지급여부
+
+    public void markRewardAsClaimed() {
+        this.rewardClaimed = true;
+    }//보상 지급되었을 때 또 보상이 지급되는 것 방지
 }
