@@ -72,4 +72,6 @@ public class MyPageController {
             return myPageService.deleteUser(userDeleteDTO, username);
         else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
+
+    
 }

@@ -1,6 +1,5 @@
 package com.alom.dorundorunbe.mypage.service;
 
-
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.achievement.AchievementRepository;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -37,14 +35,14 @@ public class MyPageService {
         Optional<User> userOpt = userRepository.findByUserName(username);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
-            List<RunningRecord> runningRecords = runningRecordRepository.findByUser(user);
+            List<RunningRecord> runningRecords = runningRecordRepository.findAllByUser(user);
             Collections.sort(runningRecords, Comparator.comparing(RunningRecord::getDate).reversed());
             return runningRecords;
         }
         else return null;
     }
     public List<AchievementResponse> getAchievements(String username) {
-        List<UserAchievement> userAchievements = achievementRepository.findByUserName(username);
+        List<UserAchievement> userAchievements = achievementRepository.findAllByUserName(username);
         List<AchievementResponse> achievementResponses = userAchievements.stream()
                 .map(ua->new AchievementResponse(
                         ua.getAchievement().getId(),
@@ -55,7 +53,7 @@ public class MyPageService {
         return achievementResponses;
     }
     public boolean checkNameDuplicate(String username) {return userRepository.existsByName(username);}
-    public boolean checkNickNameDuplicate(String username, String nickName) {return userRepository.existsByNickName(username);}
+    public boolean checkNickNameDuplicate(String nickName) {return userRepository.existsByNickName(nickName);}
     public boolean checkPasswordDuplicate(String password){return userRepository.existsByPassword(password);}
     public ResponseEntity<String> updateByName(UserUpdateDTO userDTO, String username) {
         User existingUser = userRepository.findByUserName(username).get();
@@ -69,7 +67,7 @@ public class MyPageService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Age must be greater than zero");
         if(userDTO.getNickname() == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nickname is required");
-        if(checkNickNameDuplicate(userDTO.getName(), userDTO.getNickname()))
+        if(checkNickNameDuplicate(userDTO.getNickname()))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nickname already exists");
         existingUser.setNickname(userDTO.getNickname());
         existingUser.setAge(userDTO.getAge());
