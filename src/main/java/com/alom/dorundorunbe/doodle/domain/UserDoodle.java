@@ -16,7 +16,6 @@ import static jakarta.persistence.FetchType.LAZY;
 @NoArgsConstructor
 @Table(name = "user_doodle")
 public class UserDoodle extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
