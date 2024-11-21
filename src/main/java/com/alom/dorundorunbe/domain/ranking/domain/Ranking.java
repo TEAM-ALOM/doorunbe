@@ -1,6 +1,6 @@
 package com.alom.dorundorunbe.domain.ranking.domain;
 
-import com.alom.dorundorunbe.domain.user.domain.User;
+import com.alom.dorundorunbe.domain.user.User;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ public class Ranking extends BaseEntity {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false) // user_id를 기반으로 연결
     private User user;
 
     @Column(nullable = false)
