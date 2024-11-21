@@ -1,4 +1,4 @@
-package com.alom.dorundorunbe.domain.user;
+package com.alom.dorundorunbe.domain.user.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

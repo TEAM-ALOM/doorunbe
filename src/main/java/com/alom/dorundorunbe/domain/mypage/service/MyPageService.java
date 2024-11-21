@@ -1,15 +1,15 @@
-package com.alom.dorundorunbe.mypage.service;
+package com.alom.dorundorunbe.domain.mypage.service;
 
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecordRepository;
-import com.alom.dorundorunbe.domain.achievement.AchievementRepository;
-import com.alom.dorundorunbe.domain.achievement.UserAchievement;
-import com.alom.dorundorunbe.domain.user.User;
-import com.alom.dorundorunbe.domain.user.UserRepository;
-import com.alom.dorundorunbe.mypage.dto.AchievementResponse;
-import com.alom.dorundorunbe.mypage.dto.UserDeleteDTO;
-import com.alom.dorundorunbe.mypage.dto.UserPasswordChangeDTO;
-import com.alom.dorundorunbe.mypage.dto.UserUpdateDTO;
+import com.alom.dorundorunbe.domain.achievement.domain.AchievementRepository;
+import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
+import com.alom.dorundorunbe.domain.user.domain.User;
+import com.alom.dorundorunbe.domain.user.domain.UserRepository;
+import com.alom.dorundorunbe.domain.mypage.dto.AchievementResponse;
+import com.alom.dorundorunbe.domain.mypage.dto.UserDeleteDTO;
+import com.alom.dorundorunbe.domain.mypage.dto.UserPasswordChangeDTO;
+import com.alom.dorundorunbe.domain.mypage.dto.UserUpdateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

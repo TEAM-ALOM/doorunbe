@@ -1,7 +1,7 @@
-package com.alom.dorundorunbe.domain.achievement;
+package com.alom.dorundorunbe.domain.achievement.domain;
 
 import com.alom.dorundorunbe.global.util.BaseEntity;
-import com.alom.dorundorunbe.domain.user.User;
+import com.alom.dorundorunbe.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

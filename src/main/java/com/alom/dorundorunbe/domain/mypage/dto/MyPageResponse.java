@@ -1,4 +1,4 @@
-package com.alom.dorundorunbe.mypage.dto;
+package com.alom.dorundorunbe.domain.mypage.dto;
 
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.alom.dorundorunbe.domain.user;
+package com.alom.dorundorunbe.domain.user.domain;
 
 import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.global.util.BaseEntity;

@@ -1,11 +1,12 @@
-package com.alom.dorundorunbe.mypage.controller;
+package com.alom.dorundorunbe.domain.mypage.controller;
 
 
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
-import com.alom.dorundorunbe.domain.user.User;
-import com.alom.dorundorunbe.domain.user.UserRepository;
+import com.alom.dorundorunbe.domain.mypage.dto.*;
+import com.alom.dorundorunbe.domain.user.domain.User;
+import com.alom.dorundorunbe.domain.user.domain.UserRepository;
 import com.alom.dorundorunbe.mypage.dto.*;
-import com.alom.dorundorunbe.mypage.service.MyPageService;
+import com.alom.dorundorunbe.domain.mypage.service.MyPageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

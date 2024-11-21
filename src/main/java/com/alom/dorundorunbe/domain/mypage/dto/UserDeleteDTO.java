@@ -1,4 +1,4 @@
-package com.alom.dorundorunbe.mypage.dto;
+package com.alom.dorundorunbe.domain.mypage.dto;
 
 import lombok.Getter;
 

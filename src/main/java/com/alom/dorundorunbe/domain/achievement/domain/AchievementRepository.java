@@ -1,4 +1,4 @@
-package com.alom.dorundorunbe.domain.achievement;
+package com.alom.dorundorunbe.domain.achievement.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
