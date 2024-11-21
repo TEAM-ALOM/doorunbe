@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface UserDoodleRepository extends JpaRepository<UserDoodle, Long> {
     Optional<UserDoodle> findByDoodleAndUser(Long doodleId, Long userId);
+
 }

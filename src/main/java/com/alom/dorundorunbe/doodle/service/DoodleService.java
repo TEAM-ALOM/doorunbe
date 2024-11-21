@@ -99,6 +99,4 @@ public class DoodleService {
    }
 
    //참가자 doodle 완료 상태 업데이트 로직 구현(완료 기준..?? 모호)
-
-
 }

@@ -32,4 +32,5 @@ public class UserDoodle extends BaseEntity {
     private UserDoodleStatus status; //참가 상태
 
     private LocalDate joinDate; //참가날짜
+
 }

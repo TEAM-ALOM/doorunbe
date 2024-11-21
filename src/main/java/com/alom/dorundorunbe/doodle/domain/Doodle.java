@@ -41,5 +41,4 @@ public class Doodle extends BaseEntity {
 
     @OneToMany(mappedBy = "doodle")
     private List<UserDoodle> participants;
-
 }

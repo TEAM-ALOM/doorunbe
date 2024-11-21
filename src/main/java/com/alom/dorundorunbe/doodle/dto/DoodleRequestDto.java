@@ -13,4 +13,5 @@ public class DoodleRequestDto {
     private int goalParticipationCount;
     private String password;
     private int maxParticipant;
+
 }

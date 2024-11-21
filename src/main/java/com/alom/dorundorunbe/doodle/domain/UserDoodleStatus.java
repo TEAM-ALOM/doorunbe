@@ -4,4 +4,5 @@ public enum UserDoodleStatus {
     PARTICIPATING,
     WITHDRAWN,
     COMPLETED
+
 }
