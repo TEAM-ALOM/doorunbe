@@ -5,7 +5,7 @@ import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.mypage.dto.*;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.domain.UserRepository;
-import com.alom.dorundorunbe.mypage.dto.*;
+import com.alom.dorundorunbe.domain.mypage.*;
 import com.alom.dorundorunbe.domain.mypage.service.MyPageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
