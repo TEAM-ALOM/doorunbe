@@ -19,7 +19,7 @@ public class Ranking extends BaseEntity {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false) // user_id를 기반으로 연결
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(nullable = false)

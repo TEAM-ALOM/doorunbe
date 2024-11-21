@@ -3,7 +3,11 @@ package com.alom.dorundorunbe.domain.user.domain;
 import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.Getter;
+import lombok.Builder;
 
 @Entity @Getter
 @Setter
