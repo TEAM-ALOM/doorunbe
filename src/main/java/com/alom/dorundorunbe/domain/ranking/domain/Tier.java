@@ -1,6 +1,6 @@
 package com.alom.dorundorunbe.domain.ranking.domain;
 
-public enum Rank {
+public enum Tier {
     STARTER("스타터"),
     BEGINNER("비기너"),
     AMATEUR("아마추어"),
@@ -8,7 +8,7 @@ public enum Rank {
 
     private final String rank;
 
-    Rank(String rank) {
+    Tier(String rank) {
         this.rank = rank;
     }
 }
