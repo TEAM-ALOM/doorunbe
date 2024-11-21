@@ -1,8 +1,8 @@
 package com.alom.dorundorunbe.doodle.service;
 
+import com.alom.dorundorunbe.UserRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.doodle.domain.UserDoodle;
-import com.alom.dorundorunbe.User.Repository.UserRepository;
 import com.alom.dorundorunbe.doodle.domain.Doodle;
 import com.alom.dorundorunbe.doodle.domain.UserDoodleStatus;
 import com.alom.dorundorunbe.doodle.dto.DoodleRequestDto;
@@ -36,7 +36,7 @@ public class DoodleService {
                 .password(doodleRequestDto.getPassword())
                 .maxParticipant(doodleRequestDto.getMaxParticipant())
                 .build();
-        return doodleRepository.save(doodle); //수정사항 dto로 변환해서 넘길것.., 이름 바꾸기
+        return doodleRepository.save(doodle); //수정사항 dto로 변환해서 넘길것..
     }
 
     public List<Doodle> getAllDoodles(){ //doodle 전체 조회
@@ -98,7 +98,7 @@ public class DoodleService {
         doodleRepository.save(doodle);
    }
 
-   //참가자 doodle 완료 상태 업데이트 로직 구현(완료 기준..??)
+   //참가자 doodle 완료 상태 업데이트 로직 구현(완료 기준..?? 모호)
 
 
 }
