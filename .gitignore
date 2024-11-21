@@ -38,4 +38,4 @@ out/
 .vscode/
 
 ### Application.yml ###
-/src/main/resources/*
+/src/main/resources/application-dev.yml
