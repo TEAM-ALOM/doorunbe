@@ -20,9 +20,9 @@ public class ItemController {
 
     @GetMapping("/{itemCategory}")
     @Operation(summary = "아이템 목록 조회", description = "카테고리별로 아이템 목록을 반환합니다(소유한 아이템 우선 정렬)")
-    public ResponseEntity<List<ItemResponseDto>> getItemByCategory(@PathVariable("itemCategory") ItemCategory itemCategory,
+    public ResponseEntity<List<ItemResponseDto>> fetchItemByCategory(@PathVariable("itemCategory") ItemCategory itemCategory,
                                                                    @RequestParam("userId") Long userId) {
-        return ResponseEntity.ok(itemService.getItemByCategory(itemCategory, userId));
+        return ResponseEntity.ok(itemService.findItemByCategory(itemCategory, userId));
     }
 
     @PostMapping("/{itemId}")
@@ -49,7 +49,7 @@ public class ItemController {
 
     @GetMapping("/equipped")
     @Operation(summary = "착용한 아이템 목록 조회", description = "착용한 아이템 목록을 반환합니다")
-    public ResponseEntity<List<EquippedItemResponseDto>> getEquippedItem(@RequestParam("userId") Long userId) {
-        return ResponseEntity.ok(itemService.getEquippedItem(userId));
+    public ResponseEntity<List<EquippedItemResponseDto>> fetchEquippedItem(@RequestParam("userId") Long userId) {
+        return ResponseEntity.ok(itemService.findEquippedItem(userId));
     }
 }

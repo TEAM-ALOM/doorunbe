@@ -23,7 +23,7 @@ public class ItemService {
     private final UserItemRepository userItemRepository;
     private final UserService userService;
 
-    public List<ItemResponseDto> getItemByCategory(ItemCategory itemCategory, Long userId) {
+    public List<ItemResponseDto> findItemByCategory(ItemCategory itemCategory, Long userId) {
 
         User user = userService.findById(userId);
         List<Item> itemList = itemRepository.findAllByItemCategory(itemCategory);
@@ -104,7 +104,7 @@ public class ItemService {
                 .toList();
     }
 
-    public List<EquippedItemResponseDto> getEquippedItem(Long userId) {
+    public List<EquippedItemResponseDto> findEquippedItem(Long userId) {
         User user = userService.findById(userId);
 
         return userItemRepository.findAllByUserAndEquipped(user, true).stream()
