@@ -1,12 +1,11 @@
-package com.alom.dorundorunbe.domain.doodle.domain;
+package com.alom.dorundorunbe.doodle.domain;
 
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.time.LocalDate;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -14,6 +13,7 @@ import static jakarta.persistence.FetchType.LAZY;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 @Table(name = "user_doodle")
 public class UserDoodle extends BaseEntity {
     @Id
@@ -27,4 +27,9 @@ public class UserDoodle extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "doodle_id", nullable = false)
     private Doodle doodle;
+
+    @Enumerated(EnumType.STRING)
+    private UserDoodleStatus status; //참가 상태
+
+    private LocalDate joinDate; //참가날짜
 }

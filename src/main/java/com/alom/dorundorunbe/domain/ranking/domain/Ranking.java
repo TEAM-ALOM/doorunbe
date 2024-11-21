@@ -23,7 +23,7 @@ public class Ranking extends BaseEntity {
     private User user;
 
     @Column(nullable = false)
-    private Rank rank;
+    private UserRank userRank;
 
     private long time;
 
