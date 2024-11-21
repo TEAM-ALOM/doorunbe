@@ -1,4 +1,4 @@
-package com.alom.dorundorunbe.global.util.config;
+package com.alom.dorundorunbe.global.config;
 
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.Components;

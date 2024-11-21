@@ -42,7 +42,10 @@ public class PrincipalUserDetailsService extends DefaultOAuth2UserService implem
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        User user = userService.findByEmail(username)
+                .orElseThrow();
+
+        return new PrincipalUserDetails(user);
     }
 
     private User registerUser(AuthUserDto authUserDto) {

@@ -1,6 +1,7 @@
 package com.alom.dorundorunbe.domain.auth.provider;
 
 import com.alom.dorundorunbe.domain.auth.token.AccessToken;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -20,7 +21,7 @@ public class JwtTokenProvider {
     private final SecretKey secretKey;
 
     @Autowired
-    public JwtTokenProvider(@Value("{jwt.secret}") String secret) {
+    public JwtTokenProvider(@Value("${jwt.secret}") String secret) {
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
@@ -34,5 +35,30 @@ public class JwtTokenProvider {
                 .compact();
 
         return AccessToken.of(token);
+    }
+
+    public Boolean validateToken(String token) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getExpiration()
+                    .after(new Date());
+        } catch (ExpiredJwtException e) {
+            throw new RuntimeException("만료된 토큰입니다.");
+        } catch (Exception e) {
+            throw new RuntimeException("올바르지 않은 토큰입니다.");
+        }
+    }
+
+    public String getSubject(String token) {
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
 }

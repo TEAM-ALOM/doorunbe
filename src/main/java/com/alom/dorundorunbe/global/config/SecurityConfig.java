@@ -1,19 +1,24 @@
-package com.alom.dorundorunbe.global.util.config;
+package com.alom.dorundorunbe.global.config;
 
 import com.alom.dorundorunbe.domain.auth.handler.OAuthFailureHandler;
 import com.alom.dorundorunbe.domain.auth.handler.OAuthSuccessHandler;
+import com.alom.dorundorunbe.domain.auth.provider.JwtTokenProvider;
 import com.alom.dorundorunbe.domain.auth.service.PrincipalUserDetailsService;
+import com.alom.dorundorunbe.global.filter.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @AllArgsConstructor
 public class SecurityConfig {
 
+  private final JwtTokenProvider jwtTokenProvider;
   private final PrincipalUserDetailsService principalUserDetailsService;
   private final OAuthSuccessHandler oAuthSuccessHandler;
   private final OAuthFailureHandler oAuthFailureHandler;
@@ -32,11 +37,14 @@ public class SecurityConfig {
                 "/actuator/**"
             ).permitAll() // Swagger 및 관련 리소스 허용
             .anyRequest().authenticated()) // 나머지 요청은 인증 필요
+        .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                         .userService(principalUserDetailsService))
                 .successHandler(oAuthSuccessHandler)
-                .failureHandler(oAuthFailureHandler)); // oauth2
+                .failureHandler(oAuthFailureHandler)) // oauth2
+        .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, principalUserDetailsService), UsernamePasswordAuthenticationFilter.class);
 
     return http.build();
   }
