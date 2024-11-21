@@ -31,5 +31,9 @@ public class User extends BaseEntity {
     private Gender gender;
 
     @Column(nullable = false)
-    private int cash;
+    private Long cash;
+
+    public void updateCash(Long cash) {
+        this.cash = cash;
+    }
 }

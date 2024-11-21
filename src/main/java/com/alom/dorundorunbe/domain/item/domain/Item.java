@@ -20,8 +20,11 @@ public class Item extends BaseEntity {
     @Column(nullable = false, length = 32)
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    private ItemCategory itemCategory;
+
     // 어떤 형태로 저장할지 추후 추가
 
     @Column(nullable = false)
-    private int cost;
+    private Long cost;
 }
