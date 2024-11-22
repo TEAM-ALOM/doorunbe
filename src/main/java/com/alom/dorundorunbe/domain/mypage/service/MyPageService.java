@@ -1,15 +1,15 @@
 package com.alom.dorundorunbe.domain.mypage.service;
 
+import com.alom.dorundorunbe.domain.Achievement.domain.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
-import com.alom.dorundorunbe.domain.Achievement.domain.AchievementRepository;
-import com.alom.dorundorunbe.domain.Achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
+import com.alom.dorundorunbe.domain.Achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.user.domain.User;
+import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.domain.mypage.dto.AchievementResponse;
 import com.alom.dorundorunbe.domain.mypage.dto.UserDeleteDTO;
 import com.alom.dorundorunbe.domain.mypage.dto.UserPasswordChangeDTO;
 import com.alom.dorundorunbe.domain.mypage.dto.UserUpdateDTO;
-import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ public class MyPageService {
     private RunningRecordRepository runningRecordRepository;
 
     @Autowired
-    private AchievementRepository achievementRepository;
+    private UserAchievementRepository userAchievementRepository;
 
     public List<RunningRecord> getRunningRecords(String username) {
         Optional<User> userOpt = userRepository.findByName(username);
@@ -42,7 +42,7 @@ public class MyPageService {
         else return null;
     }
     public List<AchievementResponse> getAchievements(String username) {
-        List<UserAchievement> userAchievements = achievementRepository.findAllByName(username);
+        List<UserAchievement> userAchievements = userAchievementRepository.findAllByUserName(username);
         List<AchievementResponse> achievementResponses = userAchievements.stream()
                 .map(ua->new AchievementResponse(
                         ua.getAchievement().getId(),
