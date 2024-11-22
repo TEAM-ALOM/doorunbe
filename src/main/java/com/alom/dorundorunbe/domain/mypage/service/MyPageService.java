@@ -2,7 +2,7 @@ package com.alom.dorundorunbe.domain.mypage.service;
 
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecordRepository;
-import com.alom.dorundorunbe.domain.Achievement.domain.AchievementRepository;
+import com.alom.dorundorunbe.domain.Achievement.domain.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.Achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.domain.UserRepository;
@@ -29,7 +29,7 @@ public class MyPageService {
     private RunningRecordRepository runningRecordRepository;
 
     @Autowired
-    private AchievementRepository achievementRepository;
+    private UserAchievementRepository userAchievementRepository;
 
     public List<RunningRecord> getRunningRecords(String username) {
         Optional<User> userOpt = userRepository.findByUserName(username);
@@ -42,15 +42,20 @@ public class MyPageService {
         else return null;
     }
     public List<AchievementResponse> getAchievements(String username) {
-        List<UserAchievement> userAchievements = achievementRepository.findAllByUserName(username);
-        List<AchievementResponse> achievementResponses = userAchievements.stream()
-                .map(ua->new AchievementResponse(
-                        ua.getAchievement().getId(),
-                        ua.getAchievement().getName(),
-                        ua.getAchievement().getDescription()
-                ))
-                .collect(Collectors.toList());
-        return achievementResponses;
+        Optional<User> userOpt = userRepository.findByUserName(username);
+        if(userOpt.isPresent()) {
+            Long userId = userOpt.get().getId();
+            List<UserAchievement> userAchievements = userAchievementRepository.findAllByUserId(userId);
+            List<AchievementResponse> achievementResponses = userAchievements.stream()
+                    .map(ua->new AchievementResponse(
+                            ua.getAchievement().getId(),
+                            ua.getAchievement().getName(),
+                            ua.getAchievement().getDescription()
+                    ))
+                    .collect(Collectors.toList());
+            return achievementResponses;
+        }
+        else return null;
     }
     public boolean checkNameDuplicate(String username) {return userRepository.existsByName(username);}
     public boolean checkNickNameDuplicate(String nickName) {return userRepository.existsByNickName(nickName);}
