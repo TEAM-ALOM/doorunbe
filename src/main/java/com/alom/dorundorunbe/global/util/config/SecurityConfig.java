@@ -20,7 +20,8 @@ public class SecurityConfig {
                 "/swagger-ui.html",
                 "/swagger-resources/**",
                 "/webjars/**",
-                "/actuator/**"
+                "/actuator/**",
+                    "/doodle/**"
             ).permitAll() // Swagger 및 관련 리소스 허용
             .anyRequest().authenticated() // 나머지 요청은 인증 필요
         );
