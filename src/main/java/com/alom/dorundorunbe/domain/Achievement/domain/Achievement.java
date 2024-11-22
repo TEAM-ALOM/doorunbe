@@ -20,6 +20,8 @@ public class Achievement extends BaseEntity {
     @Column(nullable = false, length = 32)
     private String name;
 
+    private String description;
+
     private RewardType rewardType;
     private int rewardValue;
 }

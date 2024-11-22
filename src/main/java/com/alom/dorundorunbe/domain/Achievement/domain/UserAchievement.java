@@ -2,6 +2,7 @@ package com.alom.dorundorunbe.domain.Achievement.domain;
 
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.util.BaseEntity;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,4 +29,5 @@ public class UserAchievement extends BaseEntity {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "achievement_id", nullable = false)
     private Achievement achievement;
+
 }
