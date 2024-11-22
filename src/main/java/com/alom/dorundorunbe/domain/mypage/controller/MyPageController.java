@@ -4,9 +4,8 @@ package com.alom.dorundorunbe.domain.mypage.controller;
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.mypage.dto.*;
 import com.alom.dorundorunbe.domain.user.domain.User;
-import com.alom.dorundorunbe.domain.user.domain.UserRepository;
-import com.alom.dorundorunbe.domain.mypage.*;
 import com.alom.dorundorunbe.domain.mypage.service.MyPageService;
+import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,11 +30,11 @@ public class MyPageController {
     @GetMapping("/myPage")
     public ResponseEntity<?> myPage(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> optionalUser = userRepository.findByUserName(username);
+        Optional<User> optionalUser = userRepository.findByName(username);
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
             List<AchievementResponse> achievementResponses = myPageService.getAchievements(username);
-            String rank = user.getRanking().getRank().toString();
+            String rank = user.getRanking().toString();
             List<RunningRecord> runningRecords = myPageService.getRunningRecords(username);
 
             MyPageResponse myPageResponse = new MyPageResponse(user.getName(), user.getEmail(), achievementResponses, rank, runningRecords);
@@ -50,7 +49,7 @@ public class MyPageController {
     @PutMapping("/myPage/updateUser")
     public ResponseEntity<String> updateUser(@RequestBody UserUpdateDTO userDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> optionalUser = userRepository.findByUserName(username);
+        Optional<User> optionalUser = userRepository.findByName(username);
         if(optionalUser.isPresent())
             return myPageService.updateByName(userDTO, username);
         else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -59,7 +58,7 @@ public class MyPageController {
     @PutMapping("/myPage/changePassword")
     public ResponseEntity<String> changePassword(@RequestBody UserPasswordChangeDTO userPasswordChangeDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> optionalUser = userRepository.findByUserName(username);
+        Optional<User> optionalUser = userRepository.findByName(username);
         if(optionalUser.isPresent())
             return myPageService.updatePassword(userPasswordChangeDTO, username);
         else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
@@ -68,7 +67,7 @@ public class MyPageController {
     @DeleteMapping("/myPage/deleteUser")
     public ResponseEntity<String> deleteUser(@RequestBody UserDeleteDTO userDeleteDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Optional<User> optionalUser = userRepository.findByUserName(username);
+        Optional<User> optionalUser = userRepository.findByName(username);
         if(optionalUser.isPresent())
             return myPageService.deleteUser(userDeleteDTO, username);
         else return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
