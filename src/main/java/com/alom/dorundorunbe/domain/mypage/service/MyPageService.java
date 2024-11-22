@@ -1,15 +1,15 @@
 package com.alom.dorundorunbe.domain.mypage.service;
 
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
-import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.Achievement.domain.AchievementRepository;
 import com.alom.dorundorunbe.domain.Achievement.domain.UserAchievement;
+import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
-import com.alom.dorundorunbe.domain.user.domain.UserRepository;
 import com.alom.dorundorunbe.domain.mypage.dto.AchievementResponse;
 import com.alom.dorundorunbe.domain.mypage.dto.UserDeleteDTO;
 import com.alom.dorundorunbe.domain.mypage.dto.UserPasswordChangeDTO;
 import com.alom.dorundorunbe.domain.mypage.dto.UserUpdateDTO;
+import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class MyPageService {
     private AchievementRepository achievementRepository;
 
     public List<RunningRecord> getRunningRecords(String username) {
-        Optional<User> userOpt = userRepository.findByUserName(username);
+        Optional<User> userOpt = userRepository.findByName(username);
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             List<RunningRecord> runningRecords = runningRecordRepository.findAllByUser(user);
@@ -42,7 +42,7 @@ public class MyPageService {
         else return null;
     }
     public List<AchievementResponse> getAchievements(String username) {
-        List<UserAchievement> userAchievements = achievementRepository.findAllByUserName(username);
+        List<UserAchievement> userAchievements = achievementRepository.findAllByName(username);
         List<AchievementResponse> achievementResponses = userAchievements.stream()
                 .map(ua->new AchievementResponse(
                         ua.getAchievement().getId(),
@@ -53,10 +53,10 @@ public class MyPageService {
         return achievementResponses;
     }
     public boolean checkNameDuplicate(String username) {return userRepository.existsByName(username);}
-    public boolean checkNickNameDuplicate(String nickName) {return userRepository.existsByNickName(nickName);}
+    public boolean checkNickNameDuplicate(String nickName) {return userRepository.existsByNickname(nickName);}
     public boolean checkPasswordDuplicate(String password){return userRepository.existsByPassword(password);}
     public ResponseEntity<String> updateByName(UserUpdateDTO userDTO, String username) {
-        User existingUser = userRepository.findByUserName(username).get();
+        User existingUser = userRepository.findByName(username).get();
         if(userDTO.getName() == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name is required");
         if(checkNameDuplicate(userDTO.getName()))
@@ -76,7 +76,7 @@ public class MyPageService {
         return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
     }
     public ResponseEntity<String> updatePassword(UserPasswordChangeDTO userPasswordChangeDTO, String username){
-        User existingUser = userRepository.findByUserName(username).get();
+        User existingUser = userRepository.findByName(username).get();
         if(userPasswordChangeDTO.getOldPassword() == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Old password is required");
         if(userPasswordChangeDTO.getNewPassword() == null)
@@ -97,7 +97,7 @@ public class MyPageService {
     }
 
     public ResponseEntity<String> deleteUser(UserDeleteDTO userDeleteDTO, String username) {
-        User existingUser = userRepository.findByUserName(username).get();
+        User existingUser = userRepository.findByName(username).get();
         if(!userDeleteDTO.getPassword().equals(existingUser.getPassword()))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password does not match");
         userRepository.delete(existingUser);
