@@ -1,7 +1,7 @@
 package com.alom.dorundorunbe.doodle.service;
 
-import com.alom.dorundorunbe.UserRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
+import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.doodle.domain.UserDoodle;
 import com.alom.dorundorunbe.doodle.domain.Doodle;
 import com.alom.dorundorunbe.doodle.domain.UserDoodleStatus;
