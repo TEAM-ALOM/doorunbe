@@ -55,20 +55,20 @@ public class RunningRecordController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @GetMapping("/{userId}")
-//    public ResponseEntity<ResponseDto<RunningRecordResponseDto>> fetchRunningRecords(@PathVariable Long userId,
-//                                                                                     @RequestParam(defaultValue = "0") int page,
-//                                                                                     @RequestParam(defaultValue = "5") int size){
-//        Pageable pageable = PageRequest.of(page, size);
-//        Page<RunningRecordResponseDto> result = runningRecordService.findRunningRecords(userId, pageable);
-//        ResponseDto<RunningRecordResponseDto> response = new ResponseDto<>();
-//        response.setSuccess(true);
-//        response.setCode(HttpStatus.OK.value());
-//        response.setMessage("요청에 성공하였습니다.");
-//        response.setResult(result);
-//
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+    @GetMapping("/{userId}")
+    public ResponseEntity<ResponseDto<Page<RunningRecordResponseDto>>> fetchRunningRecords(@PathVariable Long userId,
+                                                                                     @RequestParam(defaultValue = "0") int page,
+                                                                                     @RequestParam(defaultValue = "5") int size){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RunningRecordResponseDto> result = runningRecordService.findRunningRecords(userId, pageable);
+        ResponseDto<Page<RunningRecordResponseDto>> response = new ResponseDto<>();
+        response.setSuccess(true);
+        response.setCode(HttpStatus.OK.value());
+        response.setMessage("요청에 성공하였습니다.");
+        response.setResult(result);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 
 }
