@@ -1,6 +1,6 @@
-package com.alom.dorundorunbe.doodle.repository;
+package com.alom.dorundorunbe.domain.doodle.repository;
 
-import com.alom.dorundorunbe.doodle.domain.UserDoodle;
+import com.alom.dorundorunbe.domain.doodle.domain.UserDoodle;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

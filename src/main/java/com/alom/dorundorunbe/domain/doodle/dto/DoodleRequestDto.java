@@ -1,4 +1,4 @@
-package com.alom.dorundorunbe.doodle.dto;
+package com.alom.dorundorunbe.domain.doodle.dto;
 
 import lombok.Getter;
 import lombok.Setter;

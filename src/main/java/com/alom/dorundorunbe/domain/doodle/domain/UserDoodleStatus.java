@@ -1,4 +1,4 @@
-package com.alom.dorundorunbe.doodle.domain;
+package com.alom.dorundorunbe.domain.doodle.domain;
 
 public enum UserDoodleStatus {
     PARTICIPATING,

@@ -1,10 +1,9 @@
-package com.alom.dorundorunbe.doodle.domain;
+package com.alom.dorundorunbe.domain.doodle.domain;
 
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Getter

@@ -1,8 +1,8 @@
-package com.alom.dorundorunbe.doodle.controller;
+package com.alom.dorundorunbe.domain.doodle.controller;
 
-import com.alom.dorundorunbe.doodle.domain.Doodle;
-import com.alom.dorundorunbe.doodle.dto.DoodleRequestDto;
-import com.alom.dorundorunbe.doodle.service.DoodleService;
+import com.alom.dorundorunbe.domain.doodle.dto.DoodleRequestDto;
+import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
+import com.alom.dorundorunbe.domain.doodle.domain.Doodle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

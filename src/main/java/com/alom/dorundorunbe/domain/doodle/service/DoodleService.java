@@ -1,13 +1,13 @@
-package com.alom.dorundorunbe.doodle.service;
+package com.alom.dorundorunbe.domain.doodle.service;
 
+import com.alom.dorundorunbe.domain.doodle.domain.UserDoodleStatus;
+import com.alom.dorundorunbe.domain.doodle.dto.DoodleRequestDto;
+import com.alom.dorundorunbe.domain.doodle.repository.UserDoodleRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
-import com.alom.dorundorunbe.doodle.domain.UserDoodle;
-import com.alom.dorundorunbe.doodle.domain.Doodle;
-import com.alom.dorundorunbe.doodle.domain.UserDoodleStatus;
-import com.alom.dorundorunbe.doodle.dto.DoodleRequestDto;
-import com.alom.dorundorunbe.doodle.repository.DoodleRepository;
-import com.alom.dorundorunbe.doodle.repository.UserDoodleRepository;
+import com.alom.dorundorunbe.domain.doodle.domain.UserDoodle;
+import com.alom.dorundorunbe.domain.doodle.domain.Doodle;
+import com.alom.dorundorunbe.domain.doodle.repository.DoodleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
