@@ -1,6 +1,9 @@
 package com.alom.dorundorunbe.domain.achievement.controller;
 
 import com.alom.dorundorunbe.domain.achievement.domain.Achievement;
+import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
+import com.alom.dorundorunbe.domain.achievement.dto.assign.AssignAchievementRequestDto;
+import com.alom.dorundorunbe.domain.achievement.dto.assign.AssignAchievementResponseDto;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementResponseDto;
 import com.alom.dorundorunbe.domain.achievement.dto.query.AchievementDto;
@@ -49,4 +52,15 @@ public class AchievementController {
         Slice<AchievementDto> achievementDtosSlice = achievementService.findUserAchievement(userId, pageable);
         return ResponseEntity.ok(achievementDtosSlice);
     }
+
+    /**
+     * 업적 할당
+     */
+    @PostMapping("/assign")
+    public ResponseEntity<AssignAchievementResponseDto> assignAchievement(@RequestBody AssignAchievementRequestDto requestDto) {
+        Long id = achievementService.checkAndAssignAchievement(requestDto);
+        UserAchievement userAchievement = achievementService.findOneUserAchievement(id);
+        return ResponseEntity.ok(AssignAchievementResponseDto.of(userAchievement));
+    }
+
 }
