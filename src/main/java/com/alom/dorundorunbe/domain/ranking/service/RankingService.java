@@ -1,6 +1,6 @@
 package com.alom.dorundorunbe.domain.ranking.service;
 
-import com.alom.dorundorunbe.domain.ranking.domain.Tier;
+import com.alom.dorundorunbe.global.enums.Tier;
 import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.exception.RankingNotFoundException;
 import com.alom.dorundorunbe.domain.ranking.exception.UserAlreadyJoinedRankingException;
