@@ -30,7 +30,7 @@ public class Achievement extends BaseEntity {
     private Integer distance; // DISTANCE 업적일 때 사용
 
     @Column(nullable = true)
-    private Double cadence; // CADENCE 업적일 때 사용
+    private Integer cadence; // CADENCE 업적일 때 사용
 
     @Column(nullable = true)
     private Integer week; // WEEK 업적일 때 사용
@@ -53,7 +53,7 @@ public class Achievement extends BaseEntity {
         this.distance = distance;
     }
 
-    public void updateCadence(Double cadence) {
+    public void updateCadence(Integer cadence) {
         this.cadence = cadence;
     }
 
