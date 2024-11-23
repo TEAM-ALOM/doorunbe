@@ -132,6 +132,18 @@ public class AchievementService {
         return userAchievement.getId();
     }
 
+    public Achievement findOneAchievement(Long achievementId){
+        return achievementRepository.findById(achievementId).orElseThrow(
+                ()->new AchievementNotFoundException(String.format(ErrorMessages.ACHIEVEMENT_NOT_FOUND, achievementId))
+        );
+    }
+    //단순 조회용
+    public UserAchievement findOneUserAchievement(Long userAchievementId){
+        return userAchievementRepository.findById(userAchievementId).orElseThrow(
+                ()->new UserAchievementNotFoundException(String.format(ErrorMessages.USER_ACHIEVEMENT_NOT_FOUND, userAchievementId))//문제
+        );
+    }
+
 
     /**
      * 업적 조건 평가
@@ -187,6 +199,8 @@ public class AchievementService {
 
         return userAchievementRepository.save(userAchievement);
     }
+
+
 
 
 
