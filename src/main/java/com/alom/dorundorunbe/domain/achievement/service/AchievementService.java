@@ -3,7 +3,9 @@ package com.alom.dorundorunbe.domain.achievement.service;
 import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.achievement.domain.Achievement;
 import com.alom.dorundorunbe.domain.achievement.domain.RewardType;
+import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
+import com.alom.dorundorunbe.domain.achievement.dto.query.AchievementDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.exception.AchievementAlreadyExistsException;
 import com.alom.dorundorunbe.domain.achievement.exception.AchievementNotFoundException;
@@ -12,6 +14,8 @@ import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,6 +77,11 @@ public class AchievementService {
                 throw new IllegalArgumentException("Invalid RewardType");
             }
         }
+    }
+    public Slice<AchievementDto> findUserAchievement(Long userId, Pageable pageable) {
+        Slice<UserAchievement> userAchievementsSlice = userAchievementRepository.findAllSliceByUserId(userId, pageable);
+        return userAchievementsSlice.map(userAchievement ->
+                AchievementDto.of(userAchievement.getAchievement()));
     }
 
 
