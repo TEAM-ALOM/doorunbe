@@ -1,6 +1,7 @@
 package com.alom.dorundorunbe.domain.user.domain;
 
 import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
+import com.alom.dorundorunbe.global.enums.Tier;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -46,6 +47,13 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private Long cash;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private Tier tier; // BACKGROUND 업적일 때 사용 (유저의 티어와 매칭)
+
+    @Column(nullable = true, length = 64)
+    private String background; // BACKGROUND 업적일 때 보상 배경
 
     public void updateCash(Long cash) {
         this.cash = cash;
