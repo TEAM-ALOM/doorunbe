@@ -7,6 +7,8 @@ import com.alom.dorundorunbe.domain.achievement.dto.assign.AssignAchievementResp
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementResponseDto;
 import com.alom.dorundorunbe.domain.achievement.dto.query.AchievementDto;
+import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementRequestDto;
+import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementResponseDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementResponseDto;
 import com.alom.dorundorunbe.domain.achievement.service.AchievementService;
@@ -61,6 +63,16 @@ public class AchievementController {
         Long id = achievementService.checkAndAssignAchievement(requestDto);
         UserAchievement userAchievement = achievementService.findOneUserAchievement(id);
         return ResponseEntity.ok(AssignAchievementResponseDto.of(userAchievement));
+    }
+
+    /**
+     * 보상 수령
+     */
+    @PostMapping("/reward")
+    public ResponseEntity<RewardAchievementResponseDto> claimReward(@RequestBody RewardAchievementRequestDto requestDto) {
+        Long id = achievementService.claimReward(requestDto);
+        UserAchievement userAchievement = achievementService.findOneUserAchievement(id);
+        return ResponseEntity.ok(RewardAchievementResponseDto.of(userAchievement));
     }
 
 }
