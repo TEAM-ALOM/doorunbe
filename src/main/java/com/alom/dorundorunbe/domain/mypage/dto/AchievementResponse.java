@@ -10,5 +10,5 @@ import lombok.Setter;
 public class AchievementResponse {
     private Long achievementId;
     private String achievementName;
-    private String achievementDescription;
+    //private String achievementDescription;
 }

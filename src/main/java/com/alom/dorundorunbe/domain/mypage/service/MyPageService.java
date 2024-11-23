@@ -1,9 +1,9 @@
 package com.alom.dorundorunbe.domain.mypage.service;
 
-import com.alom.dorundorunbe.domain.Achievement.domain.UserAchievementRepository;
+import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
-import com.alom.dorundorunbe.domain.Achievement.domain.UserAchievement;
+import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.domain.mypage.dto.AchievementResponse;
@@ -46,8 +46,8 @@ public class MyPageService {
         List<AchievementResponse> achievementResponses = userAchievements.stream()
                 .map(ua->new AchievementResponse(
                         ua.getAchievement().getId(),
-                        ua.getAchievement().getName(),
-                        ua.getAchievement().getDescription()
+                        ua.getAchievement().getName()
+
                 ))
                 .collect(Collectors.toList());
         return achievementResponses;

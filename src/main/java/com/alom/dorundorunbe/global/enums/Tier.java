@@ -1,4 +1,4 @@
-package com.alom.dorundorunbe.domain.ranking.domain;
+package com.alom.dorundorunbe.global.enums;
 
 public enum Tier {
     STARTER("스타터"),

@@ -1,6 +1,6 @@
 package com.alom.dorundorunbe.domain.ranking.dto;
 
-import com.alom.dorundorunbe.domain.ranking.domain.Tier;
+import com.alom.dorundorunbe.global.enums.Tier;
 
 public record UpdateRankingRequestDto(
         Long userId,
