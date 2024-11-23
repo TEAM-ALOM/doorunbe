@@ -7,6 +7,7 @@ import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.achievement.dto.assign.AssignAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.query.AchievementDto;
+import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.exception.*;
 import com.alom.dorundorunbe.domain.achievement.exception.common.ErrorMessages;
@@ -110,6 +111,28 @@ public class AchievementService {
         return userAchievement.getId();
     }
 
+    @Transactional
+    public Long claimReward(RewardAchievementRequestDto requestDto) {
+        UserAchievement userAchievement = userAchievementRepository.findByUserIdAndAchievementId(
+                        requestDto.userId(), requestDto.achievementId())
+                .orElseThrow(() -> new UserAchievementNotFoundException(
+                        "해당 사용자 업적을 찾을 수 없습니다"));
+
+        if (userAchievement.isRewardClaimed()) {
+            throw new RewardAlreadyClaimedException(ErrorMessages.REWARD_ALREADY_CLAIMED);
+        }
+
+        Achievement achievement = userAchievement.getAchievement();
+        User user = userAchievement.getUser();
+
+        // 보상 지급
+        giveRewardToUser(achievement, user);
+
+        userAchievement.markRewardAsClaimed(); // 보상을 수령했음을 표시
+        return userAchievement.getId();
+    }
+
+
     /**
      * 업적 조건 평가
      */
@@ -139,6 +162,20 @@ public class AchievementService {
     private long getWeeklyRuns(Long userId) {
         LocalDateTime startOfWeek = LocalDateTime.now().minusDays(7);
         return runningRecordRepository.countRecordsByUserIdAndDateRange(userId, startOfWeek, LocalDateTime.now());
+    }
+
+    private void giveRewardToUser(Achievement achievement, User user) {
+        if(achievement.getRewardType() == RewardType.DISTANCE ||
+                achievement.getRewardType() == RewardType.CADENCE ||
+                achievement.getRewardType() == RewardType.WEEK) {
+            user.addCash(achievement.getCash());
+        }
+        else if(achievement.getRewardType() == RewardType.TIER) {
+            user.updateBackground(achievement.getBackground());
+        }
+        else{
+            throw new IllegalArgumentException("Invalid RewardType");
+        }
     }
 
     private UserAchievement assignAchievementToUser(User user, Achievement achievement) {

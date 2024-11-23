@@ -58,4 +58,12 @@ public class User extends BaseEntity {
     public void updateCash(Long cash) {
         this.cash = cash;
     }
+
+    public void updateBackground(String newBackground) {
+        this.background = newBackground;
+    }
+
+    public void addCash(Long rewardValue){
+        cash += rewardValue;
+    }
 }
