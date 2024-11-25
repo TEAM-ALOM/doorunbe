@@ -1,11 +1,11 @@
-package com.alom.dorundorunbe.domain.RunningRecord.service;
+package com.alom.dorundorunbe.domain.runningrecord.service;
 
-import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
-import com.alom.dorundorunbe.domain.RunningRecord.dto.RunningRecordEndRequestDto;
-import com.alom.dorundorunbe.domain.RunningRecord.dto.RunningRecordResponseDto;
-import com.alom.dorundorunbe.domain.RunningRecord.dto.RunningRecordStartRequestDto;
-import com.alom.dorundorunbe.domain.RunningRecord.mapper.RunningRecordMapper;
-import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
+import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordEndRequestDto;
+import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
+import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordStartRequestDto;
+import com.alom.dorundorunbe.domain.runningrecord.mapper.RunningRecordMapper;
+import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.service.UserService;
 import lombok.AllArgsConstructor;
@@ -27,9 +27,10 @@ public class RunningRecordService {
         return runningRecordMapper.toResponseDto(runningRecordRepository.save(runningRecord));
     }
 
-    public RunningRecordResponseDto saveEndRecord(RunningRecordEndRequestDto endRequestDto){
-        RunningRecord runningRecord = runningRecordMapper.toEntityFromEndRequestDto(endRequestDto);
-        runningRecord.setFinished(true);
+    public RunningRecordResponseDto saveEndRecord(Long id, RunningRecordEndRequestDto endRequestDto){
+        RunningRecord runningRecord = runningRecordRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Running record with id "+id+" does not exist"));
+        runningRecordMapper.updateEntityFromEndRequestDto(runningRecord, endRequestDto);
         return runningRecordMapper.toResponseDto(runningRecord);
     }
 

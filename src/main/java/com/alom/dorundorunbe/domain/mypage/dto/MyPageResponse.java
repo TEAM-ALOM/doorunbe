@@ -1,6 +1,6 @@
 package com.alom.dorundorunbe.domain.mypage.dto;
 
-import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import lombok.Getter;
 import lombok.Setter;
 

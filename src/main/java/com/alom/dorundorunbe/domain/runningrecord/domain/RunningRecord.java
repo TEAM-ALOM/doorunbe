@@ -1,10 +1,11 @@
-package com.alom.dorundorunbe.domain.RunningRecord.domain;
+package com.alom.dorundorunbe.domain.runningrecord.domain;
 
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static jakarta.persistence.FetchType.LAZY;
@@ -26,19 +27,19 @@ public class RunningRecord extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private LocalDateTime date;
+    private LocalDate date;
 
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
 
-    private double distance;
+    private Double distance;
 
-    private int cadence;
+    private Integer cadence;
 
-    private long elapsedTime;
+    private Integer elapsedTime;
 
-    private double speed;
+    private Double speed;
 
-    private boolean isFinished;
+    private Boolean isFinished = false;
 }
