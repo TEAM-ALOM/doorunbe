@@ -35,8 +35,8 @@ public class RunningRecordController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<Page<RunningRecordResponseDto>> fetchRunningRecords(@PathVariable(name = "userId") Long userId,
-                                                                                     @RequestParam(defaultValue = "0") Integer page,
-                                                                                     @RequestParam(defaultValue = "5") Integer size){
+                                                                                     @RequestParam(defaultValue = "0", value = "page") int page,
+                                                                                     @RequestParam(defaultValue = "5", value = "size") int size){
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(runningRecordService.findRunningRecords(userId, pageable));
     }
