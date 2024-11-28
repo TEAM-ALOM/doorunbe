@@ -5,6 +5,7 @@ import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
+import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.repository.RankingRepository;
 import com.alom.dorundorunbe.domain.ranking.repository.UserRankingRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
@@ -116,6 +117,28 @@ public class RankingService {
         return getStartOfRanking()
                 .plusWeeks(1)
                 .withHour(0).withMinute(0).withSecond(0).withNano(0);
+    }
+
+    @Transactional
+    public ClaimRankingResponseDto claimReward(Long userId, Long rankingId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        Ranking ranking = rankingRepository.findById(rankingId)
+                .orElseThrow(() -> new IllegalArgumentException("랭킹 정보를 찾을 수 없습니다."));
+
+        UserRanking result = userRankingRepository.findByUserAndRanking(user, ranking)
+                .orElseThrow(() -> new IllegalArgumentException("보상 정보를 찾을 수 없습니다."));
+
+        if (result.isClaimed()) {
+            throw new IllegalStateException("이미 보상을 수령했습니다.");
+        }
+
+        // LP 지급
+        user.addLp(result.getLpAwarded());
+        result.markClaimed(); // 보상 수령 상태 업데이트
+        UserRanking userRanking = userRankingRepository.save(result);
+
+        return ClaimRankingResponseDto.of(userRanking);
     }
 
 
