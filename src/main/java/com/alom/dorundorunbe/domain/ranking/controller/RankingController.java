@@ -1,6 +1,5 @@
 package com.alom.dorundorunbe.domain.ranking.controller;
 
-import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.dto.*;
 import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingRequestDto;
 import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingResponseDto;

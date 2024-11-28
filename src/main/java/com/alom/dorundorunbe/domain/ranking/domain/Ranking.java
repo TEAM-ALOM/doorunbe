@@ -1,7 +1,7 @@
 package com.alom.dorundorunbe.domain.ranking.domain;
 
 import com.alom.dorundorunbe.domain.user.domain.User;
-import com.alom.dorundorunbe.global.enums.Tier;
+
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import org.hibernate.annotations.BatchSize;
 import java.util.ArrayList;
 import java.util.List;
 
-import static jakarta.persistence.FetchType.LAZY;
+
 
 @Entity @Getter
 @Builder
