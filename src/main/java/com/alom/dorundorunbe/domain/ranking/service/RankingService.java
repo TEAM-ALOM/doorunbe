@@ -6,6 +6,7 @@ import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordReposi
 import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
 import com.alom.dorundorunbe.domain.ranking.dto.RankingResultDto;
+import com.alom.dorundorunbe.domain.ranking.dto.RankingUserStatusDto;
 import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.repository.RankingRepository;
 import com.alom.dorundorunbe.domain.ranking.repository.UserRankingRepository;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -149,6 +151,46 @@ public class RankingService {
         return userRankingRepository.findByRanking(ranking).stream()
                 .map(RankingResultDto::of)
                 .collect(Collectors.toList());
+    }
+
+    public List<RankingUserStatusDto> findRankingStatus(Long rankingId) {
+        Ranking ranking = rankingRepository.findById(rankingId)
+                .orElseThrow(() -> new IllegalArgumentException("랭킹 정보를 찾을 수 없습니다."));
+
+        LocalDateTime startTime = getStartOfRanking();
+        LocalDateTime now = LocalDateTime.now();
+
+        // 참가자의 평균 시간과 뛴 횟수를 계산하여 정렬
+        List<RankingUserStatusDto> sortedParticipants = ranking.getParticipants().stream()
+                .map(user -> {
+                    double averageElapsedTime = calculateTop3AverageElapsedTime(user, startTime, now);
+                    int runningCount = runningRecordRepository.countRunsBetween(user, startTime, now);
+                    return RankingUserStatusDto.of(
+                            user.getName(),
+                            startTime,
+                            runningCount,
+                            averageElapsedTime,
+                            0 // 초기 grade 값
+                    );
+                })
+                .sorted(Comparator.comparingDouble(RankingUserStatusDto::averageElapsedTime)) // 평균 시간 기준 정렬
+                .toList();
+
+        // 순위 설정
+        List<RankingUserStatusDto> updatedParticipants = new ArrayList<>();
+        for (int i = 0; i < sortedParticipants.size(); i++) {
+            RankingUserStatusDto participant = sortedParticipants.get(i);
+            updatedParticipants.add(RankingUserStatusDto.of(
+                    participant.userName(),
+                    participant.rankingStartTime(),
+                    participant.runningCount(),
+                    participant.averageElapsedTime(),
+                    i + 1 // 1등부터 시작
+            ));
+        }
+
+        // 상위 10명만 반환
+        return updatedParticipants.stream().limit(10).toList();
     }
 
 
