@@ -115,4 +115,12 @@ public class RankingQueueService {
 
         log.info("랭킹 방 생성 완료: 참가자 수 = {}", group.size());
     }
+    private void handleFailedParticipants(List<RankingQueue> failedGroup) {
+        failedGroup.forEach(queue -> {
+            User user = queue.getUser();
+            rankingQueueRepository.delete(queue);
+            log.info("참가 실패: 사용자 ID={}, 평균 기록={}", user.getId(), queue.getAverageElapsedTime());
+
+        });
+    }
 }
