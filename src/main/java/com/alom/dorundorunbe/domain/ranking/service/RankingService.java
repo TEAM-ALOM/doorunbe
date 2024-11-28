@@ -112,6 +112,12 @@ public class RankingService {
                 .withHour(17).withMinute(0).withSecond(0).withNano(0);
     }
 
+    private LocalDateTime getEndOfRanking() {
+        return getStartOfRanking()
+                .plusWeeks(1)
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+    }
+
 
 
 }
