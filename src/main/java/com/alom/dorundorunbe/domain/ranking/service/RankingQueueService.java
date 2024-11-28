@@ -1,6 +1,7 @@
 package com.alom.dorundorunbe.domain.ranking.service;
 
 import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
+import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.domain.RankingQueue;
 import com.alom.dorundorunbe.domain.ranking.dto.create.CreateRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.dto.delete.DeleteRankingResponseDto;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -97,5 +99,20 @@ public class RankingQueueService {
                 queue.getCreatedAt(),
                 LocalDateTime.now()
         );
+    }
+    private void createRanking(List<RankingQueue> group) {
+        Ranking ranking = Ranking.builder()
+                .isFinished(false)
+                .build();
+
+        rankingRepository.save(ranking);
+
+        group.forEach(queue -> {
+            User user = queue.getUser();
+            ranking.addParticipant(user);
+            rankingQueueRepository.delete(queue);
+        });
+
+        log.info("랭킹 방 생성 완료: 참가자 수 = {}", group.size());
     }
 }
