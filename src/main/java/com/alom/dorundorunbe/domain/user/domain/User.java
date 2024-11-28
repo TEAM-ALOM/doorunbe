@@ -22,24 +22,26 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // 소셜 로그인 서비스의 사용자 id (사용자 인증 시 필요)
+    private String socialId;
+
+    // 소셜 로그인 시 받아올 정보 -> 두런 내에서 사용자 식별에 사용
     @Column(nullable = false, unique = true)
     private String email;
 
+    // 앱 내에서 사용할 닉네임 (ㅇㅇ두)
     @Column(nullable = false, unique = true, length = 32)
     private String nickname;
 
+    // 필요 없는 필드 같음
     @Column(nullable = false, length = 32)
     private String name;
 
-    private int age;
-
+    // 없애야 하는 필드!!
     private String password;
 
     @OneToOne(mappedBy = "user") //ranking 객체를 참조하는데, 이때 ranking 내의 user가 관계 주인
     private Ranking ranking;
-
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
 
     @Column(nullable = false)
     private Long cash;

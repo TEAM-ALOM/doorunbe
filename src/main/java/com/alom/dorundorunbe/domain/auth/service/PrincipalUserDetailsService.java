@@ -3,7 +3,6 @@ package com.alom.dorundorunbe.domain.auth.service;
 import com.alom.dorundorunbe.domain.auth.dto.AuthUserDto;
 import com.alom.dorundorunbe.domain.auth.dto.PrincipalUserDetails;
 import com.alom.dorundorunbe.domain.auth.provider.OAuth2AttributeProvider;
-import com.alom.dorundorunbe.domain.user.domain.Gender;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.service.UserService;
 import lombok.AllArgsConstructor;
@@ -52,10 +51,8 @@ public class PrincipalUserDetailsService extends DefaultOAuth2UserService implem
         // age과 gender의 경우 oauth 로그인으로 바로 가져오려면 사업자 정보 등록이 필요해서 이 부분은 논의 필요
 
         return User.builder()
+                .socialId(authUserDto.socialId())
                 .email(authUserDto.email())
-                .nickname(authUserDto.nickname())
-                .age(0)
-                .gender(Gender.MALE)
                 .cash(0L)
                 .build();
     }

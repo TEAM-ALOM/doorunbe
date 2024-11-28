@@ -21,8 +21,8 @@ public class OAuth2AttributeProvider {
     private AuthUserDto kakaoUserAttribute(OAuth2User oAuth2User) {
         Map<String, Object> attribute = oAuth2User.getAttributes();
         Map<String, Object> kakaoAccount = (Map<String, Object>) attribute.get("kakao_account");
-        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+        // Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
 
-        return AuthUserDto.of(profile.get("nickname").toString(), kakaoAccount.get("email").toString());
+        return AuthUserDto.of(attribute.get("id").toString(), kakaoAccount.get("email").toString());
     }
 }

@@ -1,10 +1,10 @@
 package com.alom.dorundorunbe.domain.auth.dto;
 
 public record AuthUserDto(
-        String nickname,
+        String socialId,
         String email
 ) {
-    public static AuthUserDto of (String nickname, String email) {
-        return new AuthUserDto(nickname, email);
+    public static AuthUserDto of (String socialId, String email) {
+        return new AuthUserDto(socialId, email);
     }
 }
