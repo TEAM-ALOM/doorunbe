@@ -5,6 +5,7 @@ import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
+import com.alom.dorundorunbe.domain.ranking.dto.RankingResultDto;
 import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.repository.RankingRepository;
 import com.alom.dorundorunbe.domain.ranking.repository.UserRankingRepository;
@@ -139,6 +140,15 @@ public class RankingService {
         UserRanking userRanking = userRankingRepository.save(result);
 
         return ClaimRankingResponseDto.of(userRanking);
+    }
+
+    public List<RankingResultDto> findRankingResults(Long rankingId) {
+        Ranking ranking = rankingRepository.findById(rankingId)
+                .orElseThrow(() -> new IllegalArgumentException("랭킹 정보를 찾을 수 없습니다."));
+
+        return userRankingRepository.findByRanking(ranking).stream()
+                .map(RankingResultDto::of)
+                .collect(Collectors.toList());
     }
 
 

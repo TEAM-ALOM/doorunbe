@@ -1,5 +1,7 @@
 package com.alom.dorundorunbe.domain.ranking.dto;
 
+import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
+
 public record RankingResultDto(
         String userName,
         int grade,
