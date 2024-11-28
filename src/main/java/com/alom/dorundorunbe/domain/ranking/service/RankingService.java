@@ -106,6 +106,12 @@ public class RankingService {
 
         userRankingRepository.saveAll(results);
     }
+    private LocalDateTime getStartOfRanking() {
+        LocalDateTime now = LocalDateTime.now();
+        return now.with(java.time.DayOfWeek.MONDAY)
+                .withHour(17).withMinute(0).withSecond(0).withNano(0);
+    }
+
 
 
 }
