@@ -8,12 +8,15 @@ import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
 import com.alom.dorundorunbe.domain.ranking.dto.RankingResultDto;
 import com.alom.dorundorunbe.domain.ranking.dto.RankingUserStatusDto;
 import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingResponseDto;
+import com.alom.dorundorunbe.domain.ranking.dto.query.RankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.repository.RankingRepository;
 import com.alom.dorundorunbe.domain.ranking.repository.UserRankingRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -191,6 +194,12 @@ public class RankingService {
 
         // 상위 10명만 반환
         return updatedParticipants.stream().limit(10).toList();
+    }
+
+    public Page<RankingResponseDto> findAllRankings(Pageable pageable){
+        Page<Ranking> rankings = rankingRepository.findRankings(pageable);
+        return rankings.map(RankingResponseDto::new);
+
     }
 
 
