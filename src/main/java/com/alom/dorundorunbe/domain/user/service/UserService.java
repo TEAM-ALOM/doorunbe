@@ -13,6 +13,10 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    public User findById(Long userId) {
+        return userRepository.findById(userId).orElseThrow();
+    }
+
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }

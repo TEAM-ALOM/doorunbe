@@ -2,17 +2,17 @@ package com.alom.dorundorunbe.domain.doodle.domain;
 
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.List;
 
 @Entity @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
+@Table(name = "doodle")
 public class Doodle extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,5 +20,24 @@ public class Doodle extends BaseEntity {
     @Column(nullable = false, length = 32)
     private String name;
 
-    private long goal;
+    @Column(nullable = false)
+    private double goalDistance;
+
+    @Column(nullable = false)
+    private double goalCadence;
+
+    @Column(nullable = false)
+    private double goalPace;
+
+    @Column(nullable = false)
+    private int goalParticipationCount;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private int maxParticipant;
+
+    @OneToMany(mappedBy = "doodle")
+    private List<UserDoodle> participants;
 }
