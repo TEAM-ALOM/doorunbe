@@ -6,9 +6,11 @@ import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingRequestDto;
 import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.dto.create.CreateRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.dto.delete.DeleteRankingResponseDto;
+import com.alom.dorundorunbe.domain.ranking.dto.query.RankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.service.RankingQueueService;
 import com.alom.dorundorunbe.domain.ranking.service.RankingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,6 +50,11 @@ public class RankingController {
     public ResponseEntity<List<RankingResultDto>> fetchRankingResults(@PathVariable("id") Long rankingId) {
         List<RankingResultDto> results = rankingService.findRankingResults(rankingId);
         return ResponseEntity.ok(results);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<RankingResponseDto>> fetchAllRankings(Pageable pageable) {
+        return ResponseEntity.ok(rankingService.findAllRankings(pageable).getContent());
     }
 
 
