@@ -22,7 +22,6 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 임의로 추가한 필드 -> kakao 로그인 구현 시 수정
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -31,9 +30,6 @@ public class User extends BaseEntity {
 
     @Column(nullable = false, length = 32)
     private String name;
-
-    @Column(nullable = false, length = 50)
-    private String email;
 
     private int age;
 
@@ -49,10 +45,9 @@ public class User extends BaseEntity {
     private Long cash;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
     private Tier tier; // BACKGROUND 업적일 때 사용 (유저의 티어와 매칭)
 
-    @Column(nullable = true, length = 64)
+    @Column(length = 64)
     private String background; // BACKGROUND 업적일 때 보상 배경
 
     public void updateCash(Long cash) {

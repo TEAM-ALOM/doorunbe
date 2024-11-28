@@ -56,7 +56,7 @@ public class PrincipalUserDetailsService extends DefaultOAuth2UserService implem
                 .nickname(authUserDto.nickname())
                 .age(0)
                 .gender(Gender.MALE)
-                .cash(0)
+                .cash(0L)
                 .build();
     }
 }
