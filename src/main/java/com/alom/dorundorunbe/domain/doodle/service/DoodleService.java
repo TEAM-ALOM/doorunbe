@@ -90,7 +90,7 @@ public class DoodleService {
                 orElseThrow(()->new RuntimeException("존재하지 않는 Doodle 입니다."));
         User user = userRepository.findById(userId).
                 orElseThrow(()->new RuntimeException("존재하지 않는 유저 ID 입니다."));
-        UserDoodle userDoodle = userDoodleRepository.findByDoodleAndUser(doodleId, userId).
+        UserDoodle userDoodle = userDoodleRepository.findByDoodleAndUser(doodle, user).
                 orElseThrow(()->new RuntimeException("유저가 해당 Doodle에 존재하지 않습니다."));
 
         userDoodleRepository.delete(userDoodle);
