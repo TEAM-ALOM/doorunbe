@@ -44,6 +44,12 @@ public class RankingController {
         return ResponseEntity.ok(rankingStatus);
     }
 
+    @GetMapping("/results/{id}")
+    public ResponseEntity<List<RankingResultDto>> fetchRankingResults(@PathVariable("id") Long rankingId) {
+        List<RankingResultDto> results = rankingService.findRankingResults(rankingId);
+        return ResponseEntity.ok(results);
+    }
+
 
 
 }
