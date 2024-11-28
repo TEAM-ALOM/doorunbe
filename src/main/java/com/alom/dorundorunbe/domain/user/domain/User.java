@@ -52,13 +52,13 @@ public class User extends BaseEntity {
     private Long cash;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Tier tier; // BACKGROUND 업적일 때 사용 (유저의 티어와 매칭)
 
-    @Column(nullable = true, length = 64)
+    @Column(nullable = false, length = 64)
     private String background; // BACKGROUND 업적일 때 보상 배경
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private double lp;
 
     public void updateCash(Long cash) {
