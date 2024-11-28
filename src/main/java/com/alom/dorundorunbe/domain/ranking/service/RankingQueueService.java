@@ -11,6 +11,9 @@ import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -100,6 +103,34 @@ public class RankingQueueService {
                 LocalDateTime.now()
         );
     }
+
+    @Transactional
+    @Scheduled(cron = "0 0 17 ? * MON") // 매주 월요일 오후 5시에 실행
+    public void processRankingQueue() {
+        int pageNumber = 0;
+        int pageSize = 10; // 한 번에 처리할 그룹 크기
+        boolean hasMoreData = true;
+
+        while (hasMoreData) {
+            // 페이징 처리를 통해 대기열 데이터를 가져옴
+            Pageable pageable = PageRequest.of(pageNumber, pageSize);
+            List<RankingQueue> group = rankingQueueRepository.findAllOrderedByElapsedTime(pageable);
+
+            if (group.isEmpty()) {
+                hasMoreData = false; // 더 이상 데이터가 없으면 루프 종료
+                continue;
+            }
+
+            if (group.size() >= 4) {
+                createRanking(group); // 방 생성
+            } else {
+                handleFailedParticipants(group); // 4명 미만 실패 처리
+            }
+
+            pageNumber++; // 다음 페이지로 이동
+        }
+    }
+
     private void createRanking(List<RankingQueue> group) {
         Ranking ranking = Ranking.builder()
                 .isFinished(false)
