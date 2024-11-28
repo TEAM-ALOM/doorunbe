@@ -3,6 +3,7 @@ package com.alom.dorundorunbe.domain.ranking.service;
 import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.ranking.domain.RankingQueue;
 import com.alom.dorundorunbe.domain.ranking.dto.create.CreateRankingResponseDto;
+import com.alom.dorundorunbe.domain.ranking.dto.delete.DeleteRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.repository.RankingQueueRepository;
 import com.alom.dorundorunbe.domain.ranking.repository.RankingRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
@@ -70,5 +71,31 @@ public class RankingQueueService {
         return now.getDayOfWeek() == java.time.DayOfWeek.MONDAY // 월요일인지 확인
                 && now.getHour() >= 1
                 && now.getHour() < 17;
+    }
+
+    @Transactional
+    public DeleteRankingResponseDto cancelQueue(Long userId) {
+        return executeCancelQueue(userId);
+    }
+
+    private DeleteRankingResponseDto executeCancelQueue(Long userId) {
+        if (!isRegistrationOpen()) {
+            throw new IllegalStateException("참가 신청 해제는 월요일 새벽 1시부터 오후 5시까지만 가능합니다.");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+        RankingQueue queue = rankingQueueRepository.findByUser(user)
+                .orElseThrow(() -> new IllegalStateException("사용자가 대기열에 존재하지 않습니다."));
+
+        rankingQueueRepository.delete(queue);
+        log.info("랭킹 대기열에서 사용자 제거: 사용자 ID={}", userId);
+        return DeleteRankingResponseDto.of(
+                queue.getId(),
+                user.getName(),
+                queue.getCreatedAt(),
+                LocalDateTime.now()
+        );
     }
 }
