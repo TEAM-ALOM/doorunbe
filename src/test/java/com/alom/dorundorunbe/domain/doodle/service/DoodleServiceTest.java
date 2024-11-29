@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -271,7 +270,7 @@ public class DoodleServiceTest {
     @DisplayName("deleteParticipant : Doodle 참가자 삭제에 성공한다.")
     public void deleteParticipant(){
         when(doodleRepository.findById(anyLong())).thenReturn(Optional.of(doodle1));
-        when(userDoodleRepository.findByDoodleIdAndUserId(doodle1.getId(), user.getId()))
+        when(userDoodleRepository.findByDoodleIdAndUserId(doodle1, user))
                 .thenReturn(Optional.of(userDoodle));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
@@ -308,8 +307,9 @@ public class DoodleServiceTest {
     @Test
     @DisplayName("updateParticipantStatus : Doodle 참가자 완료 상태 수정에 성공한다.")
     public void updateParticipantStatus(){
-
-        when(userDoodleRepository.findByDoodleIdAndUserId(anyLong(), anyLong())).thenReturn(Optional.of(userDoodle));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
+        when(doodleRepository.findById(anyLong())).thenReturn(Optional.of(doodle1));
+        when(userDoodleRepository.findByDoodleIdAndUserId(any(Doodle.class), any(User.class))).thenReturn(Optional.of(userDoodle));
         when(userDoodleRepository.save(any(UserDoodle.class))).thenReturn(userDoodle);
 
         userDoodleDto = doodleService.updateParticipantStatus(doodle1.getId(), user.getId(), UserDoodleStatus.COMPLETED);
@@ -318,7 +318,7 @@ public class DoodleServiceTest {
         assertEquals(UserDoodleStatus.COMPLETED, userDoodleDto.getStatus());
 
         verify(userDoodleRepository, times(1)).save(any(UserDoodle.class));
-        verify(userDoodleRepository, times(1)).findByDoodleIdAndUserId(anyLong(), anyLong());
+        verify(userDoodleRepository, times(1)).findByDoodleIdAndUserId(any(Doodle.class), any(User.class));
     }
 
 
