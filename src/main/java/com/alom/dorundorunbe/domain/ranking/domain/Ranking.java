@@ -1,15 +1,19 @@
 package com.alom.dorundorunbe.domain.ranking.domain;
 
 import com.alom.dorundorunbe.domain.user.domain.User;
-import com.alom.dorundorunbe.global.enums.Tier;
+
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
-import static jakarta.persistence.FetchType.LAZY;
+import java.util.ArrayList;
+import java.util.List;
+
+
 
 @Entity @Getter
 @Builder
@@ -23,29 +27,39 @@ public class Ranking extends BaseEntity {
     @Column(name = "rank_id")
     private Long id;
 
-    @OneToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @OneToMany(mappedBy = "ranking", cascade = CascadeType.ALL)
+    @BatchSize(size = 10)
+    @Builder.Default
+    private List<User> participants = new ArrayList<>(); // 랭킹 참가자 목록
 
-    @Column(name = "rank_level", nullable = true)
-    @Enumerated(EnumType.STRING)
-    private Tier tier; //user에도 rank핗드가 있어야 될 것 같습니다 user.getRank로..일단 true로 테스트
-    //이름 변경->티어
 
-    private long time;
 
-    private long distance;
+    @Column(nullable = false)
+    private boolean isFinished;
 
-    private int cadence;
-
-    private int grade;
-
-    public void updateRanking(Tier tier, long distance, long time, int cadence, int grade){
-        this.tier = tier;
-        this.distance = distance;
-        this.time = time;
-        this.cadence = cadence;
-        this.grade = grade;
+    public void finish(){
+        isFinished =true;
     }
+
+    public void addParticipant(User user) {
+        if (!participants.contains(user)) { // 중복 방지
+            participants.add(user);
+            user.joinRanking(this); // 양방향 관계 설정
+        }
+    }
+
+    public void removeAllParticipants() {
+
+        new ArrayList<>(this.participants).forEach(this::removeParticipant);
+    }
+
+    public void removeParticipant(User user) {
+        if (participants.contains(user)) {
+            participants.remove(user); // 랭킹에서 사용자 제거
+            user.leaveRanking(); // 사용자의 랭킹 관계 제거
+        }
+    }
+
+
 
 }
