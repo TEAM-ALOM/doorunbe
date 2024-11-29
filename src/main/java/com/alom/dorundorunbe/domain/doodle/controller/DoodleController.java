@@ -1,15 +1,17 @@
 package com.alom.dorundorunbe.domain.doodle.controller;
 
+import com.alom.dorundorunbe.domain.doodle.domain.UserDoodleStatus;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleRequestDto;
+import com.alom.dorundorunbe.domain.doodle.dto.DoodleResponseDto;
+import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
-import com.alom.dorundorunbe.domain.doodle.domain.Doodle;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -19,64 +21,68 @@ public class DoodleController {
     @Autowired
     private DoodleService doodleService;
 
-    @PostMapping("/create")
-    public ResponseEntity<Doodle> createDoodle(@RequestBody DoodleRequestDto doodleRequestDto) {
-        Doodle newDoodle = doodleService.createDoodle(doodleRequestDto);
-        return new ResponseEntity<>(newDoodle, HttpStatus.CREATED);
+    @Autowired
+    public DoodleController(DoodleService doodleService){
+        this.doodleService = doodleService;
+    }
+
+    @PostMapping("/create/{userId}")
+    @Operation(summary = "새로운 Doodle 생성")
+    public ResponseEntity<DoodleResponseDto> createDoodle(@RequestBody DoodleRequestDto doodleRequestDto) {
+        DoodleResponseDto doodleResponseDto = doodleService.createDoodle(doodleRequestDto, doodleRequestDto.getUserId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(doodleResponseDto);
     }
 
     @GetMapping
-    public ResponseEntity<List<Doodle>> getAllDoodles(){
-        List<Doodle> doodles = doodleService.getAllDoodles();
-        if (doodles.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return ResponseEntity.ok(doodles);
+    @Operation(summary = "모든 Doodle 조회")
+    public ResponseEntity<List<DoodleResponseDto>> getAllDoodles(){
+        return ResponseEntity.ok(doodleService.getAllDoodles());
     }
 
     @GetMapping("/{doodleId}")
-    public ResponseEntity<Doodle> getDoodle(@PathVariable Long doodleId) {
-        Optional<Doodle> doodle = doodleService.getDoodleById(doodleId);
-        return doodle.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @Operation(summary = "특정 Doodle 조회")
+    public ResponseEntity<DoodleResponseDto> getDoodleById(@PathVariable Long doodleId) {
+        return ResponseEntity.ok(doodleService.getDoodleById(doodleId));
     }
 
     @PutMapping("/{doodleId}")
-    public ResponseEntity<Doodle> updateDoodle(@PathVariable Long doodleId, @RequestBody DoodleRequestDto doodleRequestDto){
-        Optional<Doodle> updatedDoodle = doodleService.updateDoodle(doodleId, doodleRequestDto);
-        return updatedDoodle.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @Operation(summary = "특정 Doodle 수정")
+    public ResponseEntity<DoodleResponseDto> updateDoodle(@PathVariable Long doodleId, @RequestBody DoodleRequestDto doodleRequestDto){
+        DoodleResponseDto updatedDoodle = doodleService.updateDoodle(doodleId, doodleRequestDto);
+        return ResponseEntity.ok(updatedDoodle);
     }
 
     @DeleteMapping("/{doodleId}")
+    @Operation(summary = "특정 Doodle 삭제")
     public ResponseEntity<Void> deleteDoodle(@PathVariable Long doodleId){
-        boolean isDeleted = doodleService.deleteDoodle(doodleId);
-
-        if (isDeleted){
-            return ResponseEntity.noContent().build();
-        }
-        else{
-            return ResponseEntity.notFound().build();
-        }
+        doodleService.deleteDoodle(doodleId);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{doodleId}/User/{userId}")
-    public ResponseEntity<String> addParticipantToDoodle(@PathVariable Long doodleId, @PathVariable Long userId){
-        try{
-            doodleService.addParticipants(doodleId, userId);
-            return ResponseEntity.ok("참가자가 성공적으로 추가되었습니다.");
-        }
-        catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    @Operation(summary = "특정 Doodle에 User 추가")
+    public ResponseEntity<DoodleResponseDto> addParticipantToDoodle(@PathVariable Long doodleId, @PathVariable Long userId){
+        return ResponseEntity.ok(doodleService.addParticipantToDoodle(doodleId, userId));
     }
 
     @DeleteMapping("/{doodleId}/User/{userId}")
-    public ResponseEntity<String> deleteParticipant(@PathVariable Long doodleId, @PathVariable Long userId){
-        try{
-            doodleService.deleteParticipant(doodleId, userId);
-            return ResponseEntity.ok("참가자가 성공적으로 제거되었습니다.");
-        }
-        catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    @Operation(summary = "특정 Doodle의 User 삭제")
+    public ResponseEntity<DoodleResponseDto> deleteParticipant(@PathVariable Long doodleId, @PathVariable Long userId){
+       return ResponseEntity.ok(doodleService.deleteParticipant(doodleId, userId));
+    }
+
+    @GetMapping("/{doodleId}/participants")
+    @Operation(summary = "특정 Doodle의 모든 User 조회")
+    public ResponseEntity<List<UserDoodleDto>> getParticipants(@PathVariable Long doodleId) {
+        List<UserDoodleDto> userDoodleDtos = doodleService.getParticipants(doodleId);
+        return ResponseEntity.ok(userDoodleDtos);
+    }
+
+    @PutMapping("/{doodleId}/participants/{userId}")
+    @Operation(summary = "특정 Doodle의 User 완료 상태 변경")
+    public ResponseEntity<UserDoodleDto> updateParticipantStatus(@PathVariable Long doodleId,
+                                                                 @PathVariable Long userId,
+                                                                 @RequestParam UserDoodleStatus status){
+        return ResponseEntity.ok(doodleService.updateParticipantStatus(doodleId, userId, status));
     }
 }

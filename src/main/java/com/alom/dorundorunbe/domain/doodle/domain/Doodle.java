@@ -1,5 +1,6 @@
 package com.alom.dorundorunbe.domain.doodle.domain;
 
+import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,6 +39,6 @@ public class Doodle extends BaseEntity {
     @Column(nullable = false)
     private int maxParticipant;
 
-    @OneToMany(mappedBy = "doodle")
+    @OneToMany(mappedBy = "doodle", cascade = CascadeType.ALL)
     private List<UserDoodle> participants;
 }
