@@ -79,7 +79,7 @@ public class MyPageService {
     public ResponseEntity<String> updateByName(UserUpdateDTO userDTO, String username) {
         Optional<User> userOpt = userRepository.findByName(username);
         if (userOpt.isPresent()) {
-            User existingUser = userRepository.findByName(username).get();
+            User existingUser = userOpt.get();
             if(userDTO.getName() == null)
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Name is required");
             if(checkNameDuplicate(userDTO.getName()))

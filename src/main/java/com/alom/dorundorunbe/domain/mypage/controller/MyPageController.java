@@ -3,9 +3,7 @@ package com.alom.dorundorunbe.domain.mypage.controller;
 
 import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.mypage.dto.*;
-import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.mypage.service.MyPageService;
-import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class MyPageController {
@@ -52,10 +49,11 @@ public class MyPageController {
     @PutMapping("/myPage/updateUser")
     public ResponseEntity<String> updateUser(@RequestBody UserUpdateDTO userDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(myPageService.updateByName(userDTO, username) == null){
+        ResponseEntity<String> response = myPageService.updateByName(userDTO, username);
+        if(response == null){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
-        else return myPageService.updateByName(userDTO, username);
+        else return response;
     }
 
     @PutMapping("/myPage/changePassword")
