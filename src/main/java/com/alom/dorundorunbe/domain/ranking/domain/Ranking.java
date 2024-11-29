@@ -20,7 +20,6 @@ public class Ranking extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "rank_id")
     private Long id;
 
     @OneToOne(fetch = LAZY)
