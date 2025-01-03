@@ -120,12 +120,12 @@ public class DoodleService {
     }
 
     public DoodleResponseDto deleteParticipant(Long doodleId, Long userId){
-        Doodle doodle = doodleRepository.findById(doodleId).
-                orElseThrow(()->new RuntimeException("NOT FOUND"));
-        User user = userRepository.findById(userId).
-                orElseThrow(()->new RuntimeException("NOT FOUND"));
-        UserDoodle userDoodle = userDoodleRepository.findByDoodleIdAndUserId(doodle, user).
-                orElseThrow(()->new RuntimeException("유저가 해당 Doodle에 존재하지 않습니다."));
+        Doodle doodle = doodleRepository.findById(doodleId)
+                .orElseThrow(()->new RuntimeException("NOT FOUND"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new RuntimeException("NOT FOUND"));
+        UserDoodle userDoodle = userDoodleRepository.findByDoodleAndUser(doodle, user)
+                .orElseThrow(()->new RuntimeException("유저가 해당 Doodle에 존재하지 않습니다."));
 
         userDoodleRepository.delete(userDoodle);
         doodle.getParticipants().remove(userDoodle);
@@ -143,11 +143,11 @@ public class DoodleService {
    }
    //참가자 doodle 완료 상태 업데이트 로직 구현
     public UserDoodleDto updateParticipantStatus(Long doodleId, Long userId, UserDoodleStatus status){
-        Doodle doodle = doodleRepository.findById(doodleId).
-                orElseThrow(()->new RuntimeException("NOT FOUND"));
-        User user = userRepository.findById(userId).
-                orElseThrow(()->new RuntimeException("NOT FOUND"));
-        UserDoodle userDoodle = userDoodleRepository.findByDoodleIdAndUserId(doodle, user)
+        Doodle doodle = doodleRepository.findById(doodleId)
+                .orElseThrow(()->new RuntimeException("NOT FOUND"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(()->new RuntimeException("NOT FOUND"));
+        UserDoodle userDoodle = userDoodleRepository.findByDoodleAndUser(doodle, user)
                 .orElseThrow(()->new IllegalArgumentException("NOT FOUND"));
         userDoodle.setStatus(status);
         userDoodleRepository.save(userDoodle);

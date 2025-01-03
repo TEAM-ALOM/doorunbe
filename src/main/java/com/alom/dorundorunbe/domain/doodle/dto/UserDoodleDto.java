@@ -1,11 +1,9 @@
 package com.alom.dorundorunbe.domain.doodle.dto;
 
-import com.alom.dorundorunbe.domain.doodle.domain.Doodle;
 import com.alom.dorundorunbe.domain.doodle.domain.UserDoodle;
 import com.alom.dorundorunbe.domain.doodle.domain.UserDoodleStatus;
 import lombok.Builder;
 import lombok.Data;
-import com.alom.dorundorunbe.domain.user.domain.User;
 
 import java.time.LocalDate;
 

@@ -1,19 +1,16 @@
 package com.alom.dorundorunbe.domain.doodle.controller;
 
 import com.alom.dorundorunbe.domain.doodle.domain.Doodle;
-import com.alom.dorundorunbe.domain.doodle.domain.UserDoodle;
 import com.alom.dorundorunbe.domain.doodle.domain.UserDoodleStatus;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleRequestDto;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleResponseDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
 import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
-import com.alom.dorundorunbe.domain.user.domain.Gender;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.global.enums.Tier;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +20,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,12 +27,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(DoodleController.class)
@@ -69,10 +63,8 @@ public class DoodleControllerTest {
                 .nickname("runner123")
                 .name("testUser")
                 .email("example@example.com")
-                .age(20)
                 .cash(1000L)
                 .tier(Tier.AMATEUR)
-                .gender(Gender.FEMALE)
                 .build();
 
         doodle = Doodle.builder()

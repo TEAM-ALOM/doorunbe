@@ -9,11 +9,9 @@ import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
 import com.alom.dorundorunbe.domain.doodle.repository.DoodleRepository;
 import com.alom.dorundorunbe.domain.doodle.repository.UserDoodleRepository;
-import com.alom.dorundorunbe.domain.user.domain.Gender;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.global.enums.Tier;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +20,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,10 +60,8 @@ public class DoodleServiceTest {
                 .nickname("runner123")
                 .name("testUser")
                 .email("example@example.com")
-                .age(20)
                 .cash(1000L)
                 .tier(Tier.AMATEUR)
-                .gender(Gender.FEMALE)
                 .build();
 
         doodle1 = Doodle.builder()
@@ -270,7 +265,7 @@ public class DoodleServiceTest {
     @DisplayName("deleteParticipant : Doodle 참가자 삭제에 성공한다.")
     public void deleteParticipant(){
         when(doodleRepository.findById(anyLong())).thenReturn(Optional.of(doodle1));
-        when(userDoodleRepository.findByDoodleIdAndUserId(doodle1, user))
+        when(userDoodleRepository.findByDoodleAndUser(doodle1, user))
                 .thenReturn(Optional.of(userDoodle));
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
@@ -309,7 +304,7 @@ public class DoodleServiceTest {
     public void updateParticipantStatus(){
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(doodleRepository.findById(anyLong())).thenReturn(Optional.of(doodle1));
-        when(userDoodleRepository.findByDoodleIdAndUserId(any(Doodle.class), any(User.class))).thenReturn(Optional.of(userDoodle));
+        when(userDoodleRepository.findByDoodleAndUser(any(Doodle.class), any(User.class))).thenReturn(Optional.of(userDoodle));
         when(userDoodleRepository.save(any(UserDoodle.class))).thenReturn(userDoodle);
 
         userDoodleDto = doodleService.updateParticipantStatus(doodle1.getId(), user.getId(), UserDoodleStatus.COMPLETED);
@@ -318,7 +313,7 @@ public class DoodleServiceTest {
         assertEquals(UserDoodleStatus.COMPLETED, userDoodleDto.getStatus());
 
         verify(userDoodleRepository, times(1)).save(any(UserDoodle.class));
-        verify(userDoodleRepository, times(1)).findByDoodleIdAndUserId(any(Doodle.class), any(User.class));
+        verify(userDoodleRepository, times(1)).findByDoodleAndUser(any(Doodle.class), any(User.class));
     }
 
 

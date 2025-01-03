@@ -1,6 +1,5 @@
 package com.alom.dorundorunbe.domain.doodle.domain;
 
-import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
