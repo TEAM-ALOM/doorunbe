@@ -12,13 +12,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-<<<<<<< HEAD:src/main/generated/com/alom/dorundorunbe/domain/RunningRecord/mapper/RunningRecordMapperImpl.java
     date = "2025-01-03T11:02:42+0900",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.8 (Oracle Corporation)"
-=======
-    date = "2024-11-25T20:38:32+0900",
-    comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.13 (Amazon.com Inc.)"
->>>>>>> 7d433fb (test: 러닝 기록 controller unit test):src/main/generated/com/alom/dorundorunbe/domain/runningrecord/mapper/RunningRecordMapperImpl.java
 )
 @Component
 public class RunningRecordMapperImpl implements RunningRecordMapper {
