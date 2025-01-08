@@ -21,6 +21,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.swing.text.html.Option;
 import java.time.LocalDate;
@@ -46,15 +47,20 @@ public class DoodleServiceTest {
     @Mock
     private DoodleRepository doodleRepository;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     @InjectMocks
     private DoodleService doodleService;
 
     private static User user;
+    private static User user2;
     private static DoodleRequestDto doodleRequestDto;
     private static Doodle doodle1;
     private static Doodle doodle2;
     private static UserDoodleDto userDoodleDto;
     private static UserDoodle userDoodle;
+    private static UserDoodle CreatorUserDoodle;
 
     @BeforeEach
     public void setUp(){
@@ -63,6 +69,17 @@ public class DoodleServiceTest {
                 .nickname("runner123")
                 .name("testUser")
                 .email("example@example.com")
+                .age(20)
+                .cash(1000L)
+                .tier(Tier.AMATEUR)
+                .gender(Gender.FEMALE)
+                .build();
+
+        user2 = User.builder()
+                .id(2L)
+                .nickname("runner456")
+                .name("testUser2")
+                .email("example2@example.com")
                 .age(20)
                 .cash(1000L)
                 .tier(Tier.AMATEUR)
@@ -99,6 +116,15 @@ public class DoodleServiceTest {
                 .doodle(doodle1)
                 .status(UserDoodleStatus.PARTICIPATING)
                 .role(UserDoodleRole.PARTICIPANT)
+                .joinDate(LocalDate.now())
+                .build();
+
+        CreatorUserDoodle = UserDoodle.builder()
+                .id(2L)
+                .user(user)
+                .doodle(doodle1)
+                .status(UserDoodleStatus.PARTICIPATING)
+                .role(UserDoodleRole.CREATOR)
                 .joinDate(LocalDate.now())
                 .build();
 
@@ -251,10 +277,12 @@ public class DoodleServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(doodleRepository.findById(anyLong())).thenReturn(Optional.of(doodle1));
 
+        when(passwordEncoder.matches(eq("testPassword"), anyString())).thenReturn(true);
+
         when(userDoodleRepository.save(any(UserDoodle.class))).thenReturn(userDoodle);
         when(doodleRepository.save(any(Doodle.class))).thenReturn(doodle1);
 
-        DoodleResponseDto doodleResponseDto = doodleService.addParticipantToDoodle(doodle1.getId(), user.getId());
+        DoodleResponseDto doodleResponseDto = doodleService.addParticipantToDoodle(doodle1.getId(), user.getId(), doodleRequestDto);
 
         assertNotNull(doodleResponseDto);
         assertEquals("Doodle 1", doodleResponseDto.getName());
@@ -319,6 +347,25 @@ public class DoodleServiceTest {
 
         verify(userDoodleRepository, times(1)).save(any(UserDoodle.class));
         verify(userDoodleRepository, times(1)).findByDoodleIdAndUserId(any(Doodle.class), any(User.class));
+    }
+
+    @Test
+    @DisplayName("updateDoodlePassword : Doodle 비밀번호 변경에 성공한다.")
+    public void updateDoodlePassword(){
+        String newPassword = "newSecurePassword";
+        String encodedPassword = "encodedPassword";
+
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
+        when(doodleRepository.findById(anyLong())).thenReturn(Optional.of(doodle1));
+        when(userDoodleRepository.findByDoodleIdAndUserId(any(Doodle.class), any(User.class))).thenReturn(Optional.of(CreatorUserDoodle));
+        when(passwordEncoder.encode(newPassword)).thenReturn(encodedPassword);
+        when(doodleRepository.save(any(Doodle.class))).thenReturn(doodle1);
+
+        DoodleResponseDto doodleResponseDto = doodleService.updateDoodlePassword(doodle1.getId(), user2.getId(), newPassword);
+        assertNotNull(doodleResponseDto);
+        assertEquals(doodle1.getId(), doodleResponseDto.getId());
+        verify(passwordEncoder, times(1)).encode(newPassword);
+        verify(doodleRepository, times(1)).save(doodle1);
     }
 
 
