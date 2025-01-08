@@ -179,6 +179,18 @@ class AchievementServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Test
+    @DisplayName("업적 업데이트 - 이름이 null 또는 빈 문자열이면 업데이트되지 않음")
+    void updateAchievement_fail_emptyName() {
+        UpdateAchievementRequestDto requestDto = new UpdateAchievementRequestDto("", RewardType.DISTANCE, null, null);
+
+        when(achievementRepository.findById(1L)).thenReturn(Optional.of(sampleAchievement));
+
+        achievementService.updateAchievement(1L, requestDto);
+
+        assertThat(sampleAchievement.getName()).isEqualTo("Test Achievement");
+    }
+
 
 
 }
