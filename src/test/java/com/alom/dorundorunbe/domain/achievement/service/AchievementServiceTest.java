@@ -2,6 +2,7 @@ package com.alom.dorundorunbe.domain.achievement.service;
 import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.achievement.domain.Achievement;
 import com.alom.dorundorunbe.domain.achievement.domain.RewardType;
+import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.exception.AchievementAlreadyExistsException;
@@ -21,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.SliceImpl;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -240,6 +242,24 @@ class AchievementServiceTest {
         assertThrows(AchievementNotFoundException.class, () -> {
             achievementService.findOneAchievement(1L);
         });
+    }
+
+    @Test
+    @DisplayName("사용자 업적 조회 - 성공")
+    void findUserAchievements_success() {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .user(sampleUser)
+                .achievement(sampleAchievement)
+                .rewardClaimed(false)
+                .build();
+
+        when(userAchievementRepository.findAllSliceByUserId(eq(1L), any(PageRequest.class)))
+                .thenReturn(new SliceImpl<>(List.of(userAchievement)));
+
+        var result = achievementService.findUserAchievement(1L, PageRequest.of(0, 10));
+
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).id()).isEqualTo(sampleAchievement.getId());
     }
 
 
