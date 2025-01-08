@@ -136,4 +136,24 @@ class AchievementServiceTest {
         assertThat(sampleAchievement.getCash()).isEqualTo(2000L);
     }
 
+    @Test
+    @DisplayName("업적 업데이트 - 성공 (배경 변경)")
+    void updateAchievement_success_backgroundChange() {
+        Achievement bgAchievement = Achievement.builder()
+                .id(2L)
+                .name("Original Achievement")
+                .rewardType(RewardType.TIER)
+                .background("original_background")
+                .build();
+
+
+        UpdateAchievementRequestDto requestDto = new UpdateAchievementRequestDto(null, RewardType.TIER, null, "new_background");
+
+        when(achievementRepository.findById(2L)).thenReturn(Optional.of(bgAchievement));
+
+        achievementService.updateAchievement(2L, requestDto);
+
+        assertThat(bgAchievement.getBackground()).isEqualTo("new_background");
+    }
+
 }
