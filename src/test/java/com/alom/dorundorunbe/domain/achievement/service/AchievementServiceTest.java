@@ -124,4 +124,16 @@ class AchievementServiceTest {
         assertThat(sampleAchievement.getName()).isEqualTo("Updated Name");
     }
 
+    @Test
+    @DisplayName("업적 업데이트 - 성공 (보상 금액 변경)")
+    void updateAchievement_success_cashChange() {
+        UpdateAchievementRequestDto requestDto = new UpdateAchievementRequestDto(null, RewardType.DISTANCE, 2000L, null);
+
+        when(achievementRepository.findById(1L)).thenReturn(Optional.of(sampleAchievement));
+
+        achievementService.updateAchievement(1L, requestDto);
+
+        assertThat(sampleAchievement.getCash()).isEqualTo(2000L);
+    }
+
 }
