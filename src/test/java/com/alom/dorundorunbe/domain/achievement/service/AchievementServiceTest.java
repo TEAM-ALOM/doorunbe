@@ -7,10 +7,7 @@ import com.alom.dorundorunbe.domain.achievement.dto.assign.AssignAchievementRequ
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
-import com.alom.dorundorunbe.domain.achievement.exception.AchievementAlreadyExistsException;
-import com.alom.dorundorunbe.domain.achievement.exception.AchievementConditionNotMetException;
-import com.alom.dorundorunbe.domain.achievement.exception.AchievementNotFoundException;
-import com.alom.dorundorunbe.domain.achievement.exception.UserAchievementAlreadyClaimedException;
+import com.alom.dorundorunbe.domain.achievement.exception.*;
 import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository;
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
@@ -366,6 +363,25 @@ class AchievementServiceTest {
 
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
     }
+
+    @Test
+    @DisplayName("보상 수령 - 이미 받은 보상 예외 발생")
+    void claimReward_fail_alreadyClaimed() {
+        UserAchievement userAchievement = UserAchievement.builder()
+                .user(sampleUser)
+                .achievement(sampleAchievement)
+                .rewardClaimed(true)
+                .build();
+
+        when(userAchievementRepository.findByUserIdAndAchievementId(1L, 1L))
+                .thenReturn(Optional.of(userAchievement));
+
+        assertThrows(RewardAlreadyClaimedException.class, () -> {
+            achievementService.claimReward(new RewardAchievementRequestDto(1L, 1L));
+        });
+    }
+
+
 
 
 
