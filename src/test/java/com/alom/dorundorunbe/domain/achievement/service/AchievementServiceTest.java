@@ -419,6 +419,46 @@ class AchievementServiceTest {
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
     }
 
+    @Test
+    @DisplayName("업적 할당 - 거리 조건 충족 시 정상 생성")
+    void checkAndAssignAchievement_success() {
+
+        when(achievementRepository.findById(1L))
+                .thenReturn(Optional.of(sampleAchievement));
+
+
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(sampleUser));
+
+
+        when(runningRecordRepository.findTotalDistanceByUserId(1L))
+                .thenReturn(150.0);
+
+
+        when(userAchievementRepository.existsByUserIdAndAchievementId(1L, 1L))
+                .thenReturn(false);
+
+
+        UserAchievement newAchievement = UserAchievement.builder()
+                .id(1L)
+                .user(sampleUser)
+                .achievement(sampleAchievement)
+                .rewardClaimed(false)
+                .build();
+
+        when(userAchievementRepository.save(any(UserAchievement.class)))
+                .thenReturn(newAchievement);
+
+
+        Long achievementId = achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 1L));
+
+
+        assertThat(achievementId).isEqualTo(1L);
+
+
+        verify(userAchievementRepository, times(1)).save(any(UserAchievement.class));
+    }
+
 
 
 
