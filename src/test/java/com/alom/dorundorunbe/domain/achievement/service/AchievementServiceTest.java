@@ -381,6 +381,19 @@ class AchievementServiceTest {
         });
     }
 
+    @Test
+    @DisplayName("보상 수령 - 존재하지 않는 업적 예외 발생")
+    void claimReward_fail_notFound() {
+        when(userAchievementRepository.findByUserIdAndAchievementId(1L, 1L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(UserAchievementNotFoundException.class, () -> {
+            achievementService.claimReward(new RewardAchievementRequestDto(1L, 1L));
+        });
+    }
+
+
+
 
 
 
