@@ -7,6 +7,7 @@ import com.alom.dorundorunbe.domain.doodle.dto.DoodleRequestDto;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleResponseDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
+import com.alom.dorundorunbe.domain.doodle.repository.UserDoodleRepository;
 import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
 import com.alom.dorundorunbe.domain.user.domain.Gender;
 import com.alom.dorundorunbe.domain.user.domain.User;
@@ -45,6 +46,9 @@ public class DoodleControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @MockBean
     private static DoodleService doodleService;
 
@@ -53,14 +57,11 @@ public class DoodleControllerTest {
 
     static private Doodle doodle;
 
-    static private Doodle doodle2;
-
     static private User user;
 
     static private DoodleRequestDto doodleRequestDto;
 
     static private DoodleResponseDto doodleResponseDto;
-
 
     @BeforeEach
     public void setUp() {
@@ -107,7 +108,6 @@ public class DoodleControllerTest {
                 .goalParticipationCount(10)
                 .maxParticipant(20)
                 .build();
-
     }
 
     @Test
@@ -202,7 +202,6 @@ public class DoodleControllerTest {
     @DisplayName("Put /doodle/{doodleId} : 특정 Doodle을 수정한다.")
     @WithMockUser(username = "runner123", roles = {"ADMIN"})
     public void updatedDoodle() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
 
         DoodleRequestDto updateRequest = DoodleRequestDto.builder()
                 .name("Updated Doodle Name")
@@ -250,16 +249,16 @@ public class DoodleControllerTest {
     @DisplayName("Post /{doodleId}/User/{userId} : 특정 Doodle에 User를 추가한다.")
     @WithMockUser(username = "runner123", roles = {"USER"})
     public void addParticipantToDoodle() throws Exception{
-        when(doodleService.addParticipantToDoodle(1L, 1L)).thenReturn(DoodleResponseDto.from(doodle));
+        when(doodleService.addParticipantToDoodle(eq(1L), eq(1L), any(DoodleRequestDto.class))).thenReturn(doodleResponseDto);
 
         mockMvc.perform(post("/doodle/{doodleId}/User/{userId}", 1L, 1L)
         .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(doodleRequestDto))
                 .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("testDoodle"));
 
-        verify(doodleService, times(1)).addParticipantToDoodle(1L, 1L);
+        verify(doodleService, times(1)).addParticipantToDoodle(eq(1L), eq(1L), any(DoodleRequestDto.class));
     }
 
     @Test
@@ -357,5 +356,23 @@ public class DoodleControllerTest {
         verify(doodleService, times(1)).updateParticipantStatus(1L,1L, updatedStatus);
     }
 
+    @Test
+    @DisplayName("Put /{doodleId}/password} : 특정 Doodle의 비밀번호를 변경한다.")
+    @WithMockUser(username = "runner123", roles = {"USER"})
+    public void updateDoodlePassword() throws Exception {
+        String newPassword = "newSecurePassword";
 
+        when(userRepository.findById(eq(1L))).thenReturn(Optional.of(user));
+        when(doodleService.updateDoodlePassword(eq(1L), eq(1L), eq(newPassword)))
+                .thenReturn(doodleResponseDto);
+
+        mockMvc.perform(put("/doodle/{doodleId}/password", 1L)
+                .param("userId", String.valueOf(user.getId()))
+                .param("newPassword", newPassword)
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(doodleResponseDto.getId()))
+                .andExpect(jsonPath("$.name").value(doodleResponseDto.getName()));
+    }
 }
