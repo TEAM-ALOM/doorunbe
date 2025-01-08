@@ -232,5 +232,15 @@ class AchievementServiceTest {
         assertThat(foundAchievement).isEqualTo(sampleAchievement);
     }
 
+    @Test
+    @DisplayName("업적 조회 - 존재하지 않는 경우 예외 발생")
+    void findOneAchievement_fail_notFound() {
+        when(achievementRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(AchievementNotFoundException.class, () -> {
+            achievementService.findOneAchievement(1L);
+        });
+    }
+
 
 }
