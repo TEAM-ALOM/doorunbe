@@ -3,6 +3,7 @@ import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordReposi
 import com.alom.dorundorunbe.domain.achievement.domain.Achievement;
 import com.alom.dorundorunbe.domain.achievement.domain.RewardType;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
+import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.exception.AchievementAlreadyExistsException;
 import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository;
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
@@ -109,6 +110,18 @@ class AchievementServiceTest {
                 .isInstanceOf(AchievementAlreadyExistsException.class);
 
         verify(achievementRepository, never()).save(any(Achievement.class));
+    }
+
+    @Test
+    @DisplayName("업적 업데이트 - 성공 (이름 변경)")
+    void updateAchievement_success_nameChange() {
+        UpdateAchievementRequestDto requestDto = new UpdateAchievementRequestDto("Updated Name", null, null, null);
+
+        when(achievementRepository.findById(1L)).thenReturn(Optional.of(sampleAchievement));
+
+        achievementService.updateAchievement(1L, requestDto);
+
+        assertThat(sampleAchievement.getName()).isEqualTo("Updated Name");
     }
 
 }
