@@ -222,5 +222,15 @@ class AchievementServiceTest {
         assertThat(sampleAchievement.getBackground()).isEqualTo("original_background");
     }
 
+    @Test
+    @DisplayName("업적 조회 - 성공")
+    void findOneAchievement_success() {
+        when(achievementRepository.findById(1L)).thenReturn(Optional.of(sampleAchievement));
+
+        Achievement foundAchievement = achievementService.findOneAchievement(1L);
+
+        assertThat(foundAchievement).isEqualTo(sampleAchievement);
+    }
+
 
 }
