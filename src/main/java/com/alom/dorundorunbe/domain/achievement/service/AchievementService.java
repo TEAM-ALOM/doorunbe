@@ -64,6 +64,11 @@ public class AchievementService {
         if (requestDto.name() != null && !requestDto.name().isEmpty()) {
             achievement.updateName(requestDto.name());
         }
+
+        if (requestDto.rewardType() != null && requestDto.rewardType() != achievement.getRewardType()) {
+            throw new IllegalArgumentException("Reward type cannot be changed. Ensure correct input.");
+        }
+
         if (requestDto.rewardType() != null) {
             if (requestDto.rewardType() == RewardType.DISTANCE ||
                     requestDto.rewardType() == RewardType.CADENCE ||
@@ -79,7 +84,7 @@ public class AchievementService {
 
             }
             else{
-                throw new IllegalArgumentException("Invalid RewardType");
+                throw new IllegalArgumentException("Invalid Reward");
             }
         }
     }
