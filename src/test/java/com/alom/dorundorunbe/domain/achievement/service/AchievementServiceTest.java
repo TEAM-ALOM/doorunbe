@@ -191,6 +191,17 @@ class AchievementServiceTest {
         assertThat(sampleAchievement.getName()).isEqualTo("Test Achievement");
     }
 
+    @Test
+    @DisplayName("업적 업데이트 - 보상 금액이 null 이면 업데이트되지 않음")
+    void updateAchievement_fail_nullCash() {
+        UpdateAchievementRequestDto requestDto = new UpdateAchievementRequestDto(null, RewardType.DISTANCE, null, null);
+
+        when(achievementRepository.findById(1L)).thenReturn(Optional.of(sampleAchievement));
+
+        achievementService.updateAchievement(1L, requestDto);
+
+        assertThat(sampleAchievement.getCash()).isEqualTo(1000L);
+    }
 
 
 }
