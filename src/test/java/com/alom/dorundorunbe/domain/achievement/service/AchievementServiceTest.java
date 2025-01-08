@@ -203,5 +203,24 @@ class AchievementServiceTest {
         assertThat(sampleAchievement.getCash()).isEqualTo(1000L);
     }
 
+    @Test
+    @DisplayName("업적 업데이트 - 배경이 null 또는 빈 문자열이면 업데이트되지 않음")
+    void updateAchievement_fail_emptyBackground() {
+        Achievement bgAchievement = Achievement.builder()
+                .id(2L)
+                .name("Original Achievement")
+                .rewardType(RewardType.TIER)
+                .background("original_background")
+                .build();
+
+        UpdateAchievementRequestDto requestDto = new UpdateAchievementRequestDto(null, RewardType.TIER, null, "");
+
+        when(achievementRepository.findById(2L)).thenReturn(Optional.of(bgAchievement));
+
+        achievementService.updateAchievement(2L, requestDto);
+
+        assertThat(sampleAchievement.getBackground()).isEqualTo("original_background");
+    }
+
 
 }
