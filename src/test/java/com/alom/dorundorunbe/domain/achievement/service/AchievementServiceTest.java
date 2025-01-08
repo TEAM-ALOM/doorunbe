@@ -8,6 +8,7 @@ import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequ
 import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.exception.AchievementAlreadyExistsException;
+import com.alom.dorundorunbe.domain.achievement.exception.AchievementConditionNotMetException;
 import com.alom.dorundorunbe.domain.achievement.exception.AchievementNotFoundException;
 import com.alom.dorundorunbe.domain.achievement.exception.UserAchievementAlreadyClaimedException;
 import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository;
@@ -339,6 +340,34 @@ class AchievementServiceTest {
 
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
     }
+
+    @Test
+    @DisplayName("업적 할당 - TIER 업적이지만 사용자 Tier 불일치 예외 발생")
+    void checkAndAssignAchievement_fail_wrongTier() {
+        Achievement tierAchievement = Achievement.builder()
+                .id(2L)
+                .name("Tier Achievement")
+                .rewardType(RewardType.TIER)
+                .tier(Tier.PRO) //업적의 Tier = PRO
+                .background("gold")
+                .build();
+
+        when(achievementRepository.findById(2L))
+                .thenReturn(Optional.of(tierAchievement));
+
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(sampleUser)); //user 의 Tier = BEGINNER
+
+
+        assertThrows(AchievementConditionNotMetException.class, () -> {
+            achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 2L));
+        });
+
+
+        verify(userAchievementRepository, never()).save(any(UserAchievement.class));
+    }
+
+
 
 
 
