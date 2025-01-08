@@ -3,11 +3,13 @@ import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordReposi
 import com.alom.dorundorunbe.domain.achievement.domain.Achievement;
 import com.alom.dorundorunbe.domain.achievement.domain.RewardType;
 import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
+import com.alom.dorundorunbe.domain.achievement.dto.assign.AssignAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.exception.AchievementAlreadyExistsException;
 import com.alom.dorundorunbe.domain.achievement.exception.AchievementNotFoundException;
+import com.alom.dorundorunbe.domain.achievement.exception.UserAchievementAlreadyClaimedException;
 import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository;
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
@@ -316,6 +318,28 @@ class AchievementServiceTest {
         assertThat(achievementId).isEqualTo(2L);
         assertThat(sampleUser.getBackground()).isEqualTo("gold");
     }
+
+    @Test
+    @DisplayName("업적 할당 - 이미 할당된 업적인 경우 예외 발생")
+    void checkAndAssignAchievement_fail_alreadyAssigned() {
+        when(achievementRepository.findById(1L))
+                .thenReturn(Optional.of(sampleAchievement));
+
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(sampleUser));
+
+
+        when(userAchievementRepository.existsByUserIdAndAchievementId(1L, 1L))
+                .thenReturn(true);
+
+        assertThrows(UserAchievementAlreadyClaimedException.class, () -> {
+            achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 1L));
+        });
+
+
+        verify(userAchievementRepository, never()).save(any(UserAchievement.class));
+    }
+
 
 
 }
