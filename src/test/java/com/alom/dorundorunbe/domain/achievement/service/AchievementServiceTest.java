@@ -3,6 +3,7 @@ import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordReposi
 import com.alom.dorundorunbe.domain.achievement.domain.Achievement;
 import com.alom.dorundorunbe.domain.achievement.domain.RewardType;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
+import com.alom.dorundorunbe.domain.achievement.exception.AchievementAlreadyExistsException;
 import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository;
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.SliceImpl;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -84,6 +86,29 @@ class AchievementServiceTest {
 
         assertThat(achievementId).isEqualTo(sampleAchievement.getId());
         verify(achievementRepository, times(1)).save(any(Achievement.class));
+    }
+
+    @Test
+    @DisplayName("업적 생성 - 중복 예외 발생")
+    void createAchievement_fail_duplicate() {
+        CreateAchievementRequestDto requestDto = new CreateAchievementRequestDto(
+                "Test Achievement",
+                RewardType.DISTANCE,
+                100,
+                null,
+                null,
+                1000L,
+                null,
+                null
+        );
+
+        when(achievementRepository.findByName(requestDto.name())).thenReturn(Optional.of(sampleAchievement));
+
+
+        assertThatThrownBy(()->achievementService.createAchievement(requestDto))
+                .isInstanceOf(AchievementAlreadyExistsException.class);
+
+        verify(achievementRepository, never()).save(any(Achievement.class));
     }
 
 }
