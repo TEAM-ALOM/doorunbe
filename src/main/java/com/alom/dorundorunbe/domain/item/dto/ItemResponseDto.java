@@ -1,7 +1,7 @@
 package com.alom.dorundorunbe.domain.item.dto;
 
 public record ItemResponseDto(
-        Long itemId,
+        Long id,
         String name,
         Long cost,
         Boolean owned
