@@ -285,5 +285,37 @@ class AchievementServiceTest {
         assertThat(sampleUser.getCash()).isEqualTo(1000L);//캐시 증가 여부를 확인
     }
 
+    @Test
+    @DisplayName("보상 수령 - TIER 업적 배경 변경 성공")
+    void claimReward_tierReward_success() {
+
+        Achievement tierAchievement = Achievement.builder()
+                .id(2L)
+                .name("Tier Achievement")
+                .rewardType(RewardType.TIER)
+                .tier(Tier.BEGINNER) //동일 tier
+                .background("gold")
+                .build();
+
+
+
+
+        UserAchievement userAchievement = UserAchievement.builder()
+                .id(2L)
+                .user(sampleUser)
+                .achievement(tierAchievement)
+                .rewardClaimed(false)
+                .build();
+
+        when(userAchievementRepository.findByUserIdAndAchievementId(1L, 2L))
+                .thenReturn(Optional.of(userAchievement));
+
+        Long achievementId = achievementService.claimReward(new RewardAchievementRequestDto(1L, 2L));
+
+
+        assertThat(achievementId).isEqualTo(2L);
+        assertThat(sampleUser.getBackground()).isEqualTo("gold");
+    }
+
 
 }
