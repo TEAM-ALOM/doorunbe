@@ -4,6 +4,7 @@ import com.alom.dorundorunbe.domain.achievement.domain.Achievement;
 import com.alom.dorundorunbe.domain.achievement.domain.RewardType;
 import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
+import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.exception.AchievementAlreadyExistsException;
 import com.alom.dorundorunbe.domain.achievement.exception.AchievementNotFoundException;
@@ -260,6 +261,28 @@ class AchievementServiceTest {
 
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).id()).isEqualTo(sampleAchievement.getId());
+    }
+
+    @Test
+    @DisplayName("보상 수령 - 성공(cash 관련)")
+    void claimReward_success() {
+
+        UserAchievement userAchievement = UserAchievement.builder()
+                .id(1L)
+                .user(sampleUser)
+                .achievement(sampleAchievement)
+                .rewardClaimed(false)
+                .build();
+
+
+        when(userAchievementRepository.findByUserIdAndAchievementId(1L, 1L))
+                .thenReturn(Optional.of(userAchievement));
+
+        Long achievementId = achievementService.claimReward(new RewardAchievementRequestDto(1L, 1L));
+
+        assertThat(achievementId).isEqualTo(userAchievement.getAchievement().getId());
+        assertThat(userAchievement.isRewardClaimed()).isTrue();
+        assertThat(sampleUser.getCash()).isEqualTo(1000L);//캐시 증가 여부를 확인
     }
 
 
