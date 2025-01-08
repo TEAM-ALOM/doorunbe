@@ -5,6 +5,7 @@ import com.alom.dorundorunbe.domain.achievement.domain.RewardType;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.exception.AchievementAlreadyExistsException;
+import com.alom.dorundorunbe.domain.achievement.exception.AchievementNotFoundException;
 import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository;
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
@@ -155,5 +156,18 @@ class AchievementServiceTest {
 
         assertThat(bgAchievement.getBackground()).isEqualTo("new_background");
     }
+
+    @Test
+    @DisplayName("업적 업데이트 - 존재하지 않는 경우 예외 발생")
+    void updateAchievement_fail_notFound() {
+        UpdateAchievementRequestDto requestDto = new UpdateAchievementRequestDto("Updated Name", RewardType.DISTANCE, 1000L, null);
+
+        when(achievementRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> achievementService.updateAchievement(1L, requestDto))
+                .isInstanceOf(AchievementNotFoundException.class);
+    }
+
+
 
 }
