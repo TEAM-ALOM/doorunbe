@@ -392,6 +392,34 @@ class AchievementServiceTest {
         });
     }
 
+    @Test
+    @DisplayName("업적 할당 - 거리 조건 미충족 예외 발생")
+    void checkAndAssignAchievement_fail_conditionNotMet() {
+
+        when(achievementRepository.findById(1L))
+                .thenReturn(Optional.of(sampleAchievement));
+
+
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(sampleUser));
+
+
+        when(runningRecordRepository.findTotalDistanceByUserId(1L))
+                .thenReturn(50.0);
+
+        when(userAchievementRepository.existsByUserIdAndAchievementId(1L, 1L))
+                .thenReturn(false);
+
+
+        assertThrows(AchievementConditionNotMetException.class, () -> {
+            achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 1L));
+        });
+
+
+        verify(userAchievementRepository, never()).save(any(UserAchievement.class));
+    }
+
+
 
 
 
