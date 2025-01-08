@@ -73,7 +73,7 @@ public class AchievementService {
             if (requestDto.rewardType() == RewardType.DISTANCE ||
                     requestDto.rewardType() == RewardType.CADENCE ||
                     requestDto.rewardType() == RewardType.WEEK) {
-                if (requestDto.cash() != null) {
+                if (requestDto.cash() != null && requestDto.cash() != 0) {
                     achievement.updateCash(requestDto.cash());
                 }
             }
