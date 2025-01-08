@@ -7,6 +7,7 @@ import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.achievement.dto.assign.AssignAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.query.AchievementDto;
+import com.alom.dorundorunbe.domain.achievement.dto.query.UserAchievementDto;
 import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.exception.*;
@@ -82,10 +83,13 @@ public class AchievementService {
             }
         }
     }
-    public Slice<AchievementDto> findUserAchievement(Long userId, Pageable pageable) {
-        Slice<UserAchievement> userAchievementsSlice = userAchievementRepository.findAllSliceByUserId(userId, pageable);
-        return userAchievementsSlice.map(userAchievement ->
-                AchievementDto.of(userAchievement.getAchievement()));
+    public Slice<AchievementDto> findAllAchievement(Pageable pageable) {
+        return achievementRepository.findAll(pageable)
+                .map(AchievementDto::of);
+    }
+    public Slice<UserAchievementDto> findUserAchievement(Long userId, Pageable pageable) {
+        return userAchievementRepository.findAllSliceByUserId(userId, pageable)
+                .map(UserAchievementDto::of);
     }
 
     @Transactional
