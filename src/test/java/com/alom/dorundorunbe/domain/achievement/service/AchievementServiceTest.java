@@ -460,6 +460,36 @@ class AchievementServiceTest {
     }
 
 
+    @Test
+    @DisplayName("업적 할당 - Cadence(스텝) 조건 미충족 예외 발생")
+    void checkAndAssignAchievement_fail_cadenceNotMet() {
+        Achievement cadenceAchievement = Achievement.builder()
+                .id(3L)
+                .name("Cadence Achievement")
+                .rewardType(RewardType.CADENCE)
+                .cadence(170) //170 이상의 cadence 필요
+                .cash(500L)
+                .build();
+
+        when(achievementRepository.findById(3L))
+                .thenReturn(Optional.of(cadenceAchievement));
+
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(sampleUser));
+
+        when(runningRecordRepository.findAverageCadenceByUserId(1L))
+                .thenReturn(160.0); //160 → 조건 미충족
+
+        when(userAchievementRepository.existsByUserIdAndAchievementId(1L, 3L))
+                .thenReturn(false);
+
+        assertThrows(AchievementConditionNotMetException.class, () -> {
+            achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 3L));
+        });
+
+        verify(userAchievementRepository, never()).save(any(UserAchievement.class));
+    }
+
 
 
 
