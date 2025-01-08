@@ -18,7 +18,7 @@ public interface RunningRecordRepository extends JpaRepository<RunningRecord, Lo
     Page<RunningRecord> findByUser(User user, Pageable pageable);
     List<RunningRecord> findAllByUser(User user);
     @Query("SELECT SUM(r.distance) FROM RunningRecord r WHERE r.user.id = :userId")
-    Long findTotalDistanceByUserId(@Param("userId") Long userId);
+    Double findTotalDistanceByUserId(@Param("userId") Long userId);
 
     @Query("SELECT AVG(r.cadence) FROM RunningRecord r WHERE r.user.id = :userId")
     Double findAverageCadenceByUserId(@Param("userId") Long userId);
