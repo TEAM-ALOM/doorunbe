@@ -168,6 +168,17 @@ class AchievementServiceTest {
                 .isInstanceOf(AchievementNotFoundException.class);
     }
 
+    @Test
+    @DisplayName("업적 업데이트 - RewardType 에 따른 보상 값 잘못 기입")
+    void updateAchievement_fail_invalidRewardType() {
+        UpdateAchievementRequestDto requestDto = new UpdateAchievementRequestDto(null, RewardType.TIER, 500L, null);
+
+        when(achievementRepository.findById(1L)).thenReturn(Optional.of(sampleAchievement));
+
+        assertThatThrownBy(() -> achievementService.updateAchievement(1L, requestDto))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
 
 
 }
