@@ -225,7 +225,7 @@ class ItemServiceTest {
         when(userService.findById(1L)).thenReturn(mockUser);
         when(userItemRepository.findAllByUserAndEquipped(mockUser, true)).thenReturn(List.of(equippedUserItem));
 
-        List<EquippedItemResponseDto> dtoList = itemService.findEquippedItem(1L);
+        List<EquippedItemResponseDto> dtoList = itemService.findEquippedItemList(1L);
 
         assertNotNull(dtoList);
         assertEquals(1, dtoList.size());

@@ -92,7 +92,7 @@ public class ItemService {
         return findEquippedItemList(user);
     }
 
-    public List<EquippedItemResponseDto> findEquippedItem(Long userId) {
+    public List<EquippedItemResponseDto> findEquippedItemList(Long userId) {
         User user = userService.findById(userId);
         return findEquippedItemList(user);
     }
