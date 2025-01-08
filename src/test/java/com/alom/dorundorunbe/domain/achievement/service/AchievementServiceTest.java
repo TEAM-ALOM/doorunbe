@@ -2,6 +2,7 @@ package com.alom.dorundorunbe.domain.achievement.service;
 import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.achievement.domain.Achievement;
 import com.alom.dorundorunbe.domain.achievement.domain.RewardType;
+import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository;
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
@@ -16,7 +17,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.SliceImpl;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AchievementServiceTest {
@@ -55,6 +62,28 @@ class AchievementServiceTest {
                 .cash(0L)
                 .tier(Tier.BEGINNER)
                 .build();
+    }
+    @Test
+    @DisplayName("업적 생성 - 성공")
+    void createAchievement_success() {
+        CreateAchievementRequestDto requestDto = new CreateAchievementRequestDto(
+                "Test Achievement",
+                RewardType.DISTANCE,
+                100,
+                null,
+                null,
+                1000L,
+                null,
+                null
+        );
+
+        when(achievementRepository.findByName(requestDto.name())).thenReturn(Optional.empty());
+        when(achievementRepository.save(any(Achievement.class))).thenReturn(sampleAchievement);
+
+        Long achievementId = achievementService.createAchievement(requestDto);
+
+        assertThat(achievementId).isEqualTo(sampleAchievement.getId());
+        verify(achievementRepository, times(1)).save(any(Achievement.class));
     }
 
 }
