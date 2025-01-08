@@ -490,6 +490,33 @@ class AchievementServiceTest {
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
     }
 
+    @Test
+    @DisplayName("업적 할당 - Week(주간 러닝 횟수) 조건 미충족 예외 발생")
+    void checkAndAssignAchievement_fail_weekNotMet() {
+        Achievement weekAchievement = Achievement.builder()
+                .id(4L)
+                .name("Weekly Runner")
+                .rewardType(RewardType.WEEK)
+                .week(5) //5회 이상 필요
+                .cash(300L)
+                .build();
+
+        when(achievementRepository.findById(4L))
+                .thenReturn(Optional.of(weekAchievement));
+
+        when(userRepository.findById(1L))
+                .thenReturn(Optional.of(sampleUser));
+
+        when(runningRecordRepository.countRecordsByUserIdAndDateRange(eq(1L), any(), any()))
+                .thenReturn(3L); //3회 → 조건 미충족
+
+        assertThrows(AchievementConditionNotMetException.class, () -> {
+            achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 4L));
+        });
+
+        verify(userAchievementRepository, never()).save(any(UserAchievement.class));
+    }
+
 
 
 
