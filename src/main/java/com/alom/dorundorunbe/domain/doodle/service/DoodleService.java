@@ -14,7 +14,6 @@ import com.alom.dorundorunbe.domain.doodle.repository.DoodleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +38,7 @@ public class DoodleService {
 
     @Transactional
     public DoodleResponseDto createDoodle(DoodleRequestDto doodleRequestDto, Long userId) { //doodle 생성 기능
-        User user = userRepository.findById(userId).orElseThrow(()->new IllegalArgumentException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(()->new IllegalArgumentException("USER NOT FOUND"));
 
         //Doodle 생성
         Doodle doodle = Doodle.builder()
@@ -78,19 +77,19 @@ public class DoodleService {
     public DoodleResponseDto getDoodleById(Long doodleId) { //doodle 상세 조회
         Optional<Doodle> doodle =  doodleRepository.findById(doodleId);
         return doodle.map(DoodleResponseDto::from)
-                .orElseThrow(()->new IllegalArgumentException("Doodle not found"));
+                .orElseThrow(()->new IllegalArgumentException("NOT FOUND"));
     }
 
     public void deleteDoodle(Long doodleId){
         Doodle doodle = doodleRepository.findById(doodleId)
-                .orElseThrow(()->new IllegalArgumentException("Doodle not found"));
+                .orElseThrow(()->new IllegalArgumentException("NOT FOUND"));
 
         doodleRepository.delete(doodle);
     }
 
     public DoodleResponseDto updateDoodle(Long doodleId, DoodleRequestDto doodleRequestDto) {
         Doodle doodle = doodleRepository.findById(doodleId)
-                .orElseThrow(()->new IllegalArgumentException("Doodle not found"));
+                .orElseThrow(()->new IllegalArgumentException("NOT FOUND"));
         doodle.setName(doodleRequestDto.getName());
         doodle.setGoalDistance(doodleRequestDto.getGoalDistance());
         doodle.setGoalCadence(doodleRequestDto.getGoalCadence());
@@ -119,7 +118,6 @@ public class DoodleService {
             throw new IllegalArgumentException("Participant already exists");
         }
 
-        //Doodle과 user 관계추가
         UserDoodle userDoodle = new UserDoodle();
         userDoodle.setDoodle(doodle);
         userDoodle.setUser(user);
@@ -138,10 +136,10 @@ public class DoodleService {
 
     public DoodleResponseDto deleteParticipant(Long doodleId, Long userId){
         Doodle doodle = doodleRepository.findById(doodleId).
-                orElseThrow(()->new RuntimeException("Doodle not found"));
+                orElseThrow(()->new RuntimeException("NOT FOUND"));
         User user = userRepository.findById(userId).
-                orElseThrow(()->new RuntimeException("User not found"));
-        UserDoodle userDoodle = userDoodleRepository.findByDoodleIdAndUserId(doodle, user).
+                orElseThrow(()->new RuntimeException("NOT FOUND"));
+        UserDoodle userDoodle = userDoodleRepository.findByDoodleAndUser(doodle, user).
                 orElseThrow(()->new RuntimeException("유저가 해당 Doodle에 존재하지 않습니다."));
 
         userDoodleRepository.delete(userDoodle);
@@ -152,7 +150,7 @@ public class DoodleService {
 
    public List<UserDoodleDto> getParticipants(Long doodleId){
         Doodle doodle = doodleRepository.findById(doodleId)
-                .orElseThrow(()->new IllegalArgumentException("Doodle not found"));
+                .orElseThrow(()->new IllegalArgumentException("NOT FOUND"));
 
         return doodle.getParticipants().stream()
                 .map(UserDoodleDto::from)
@@ -161,11 +159,11 @@ public class DoodleService {
    //참가자 doodle 완료 상태 업데이트 로직 구현
     public UserDoodleDto updateParticipantStatus(Long doodleId, Long userId, UserDoodleStatus status){
         Doodle doodle = doodleRepository.findById(doodleId).
-                orElseThrow(()->new RuntimeException("Doodle not found"));
+                orElseThrow(()->new RuntimeException("NOT FOUND"));
         User user = userRepository.findById(userId).
-                orElseThrow(()->new RuntimeException("User not found"));
-        UserDoodle userDoodle = userDoodleRepository.findByDoodleIdAndUserId(doodle, user)
-                .orElseThrow(()->new IllegalArgumentException("Userdoodle not found"));
+                orElseThrow(()->new RuntimeException("NOT FOUND"));
+        UserDoodle userDoodle = userDoodleRepository.findByDoodleAndUser(doodle, user)
+                .orElseThrow(()->new IllegalArgumentException("NOT FOUND"));
         userDoodle.setStatus(status);
         userDoodleRepository.save(userDoodle);
         return UserDoodleDto.from(userDoodle);
@@ -175,7 +173,7 @@ public class DoodleService {
     public DoodleResponseDto updateDoodlePassword(Long doodleId, Long userId, String newPassword){
         Doodle doodle = doodleRepository.findById(doodleId).orElseThrow(()->new RuntimeException(("Doodle not found")));
         User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
-        UserDoodle userDoodle = userDoodleRepository.findByDoodleIdAndUserId(doodle, user).orElseThrow(()->new RuntimeException("UserDoodle not found"));
+        UserDoodle userDoodle = userDoodleRepository.findByDoodleAndUser(doodle, user).orElseThrow(()->new RuntimeException("UserDoodle not found"));
         if (userDoodle.getRole()!=UserDoodleRole.CREATOR){
             throw new IllegalArgumentException("비밀번호를 변경할 자격이 없습니다.");
         }
@@ -184,5 +182,4 @@ public class DoodleService {
         Doodle updatedDoodle = doodleRepository.save(doodle);
         return DoodleResponseDto.from(updatedDoodle);
     }
-
 }
