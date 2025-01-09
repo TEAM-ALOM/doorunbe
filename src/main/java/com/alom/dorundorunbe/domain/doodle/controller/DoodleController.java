@@ -88,7 +88,7 @@ public class DoodleController {
     }
 
     @PutMapping("/{doodleId}/password")
-    @Operation(summary = "특정 Doodle의 비밀번호를 변경")
+    @Operation(summary = "특정 Doodle 비밀번호를 변경")
     public ResponseEntity<DoodleResponseDto> updatedDoodlePassword(
             @PathVariable("doodleId") Long doodleId,
             @RequestParam("userId") Long userId,
