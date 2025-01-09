@@ -5,6 +5,8 @@ import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -13,5 +15,9 @@ public class UserService {
 
     public User findById(Long userId) {
         return userRepository.findById(userId).orElseThrow();
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

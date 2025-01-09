@@ -8,6 +8,7 @@ import com.alom.dorundorunbe.domain.achievement.dto.assign.AssignAchievementResp
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementResponseDto;
 import com.alom.dorundorunbe.domain.achievement.dto.query.AchievementDto;
+import com.alom.dorundorunbe.domain.achievement.dto.query.UserAchievementDto;
 import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementResponseDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
@@ -47,13 +48,19 @@ public class AchievementController {
         Achievement updatedAchievement = achievementService.findOneAchievement(id);
         return ResponseEntity.ok(UpdateAchievementResponseDto.of(updatedAchievement));
     }
+    @GetMapping
+    public ResponseEntity<Slice<AchievementDto>> fetchAllAchievements(
+            @PageableDefault(size = 10) Pageable pageable) {
+        Slice<AchievementDto> achievementDtos = achievementService.findAllAchievement(pageable);
+        return ResponseEntity.ok(achievementDtos);
+    }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<Slice<AchievementDto>> fetchUserAchievements(
+    public ResponseEntity<Slice<UserAchievementDto>> fetchUserAchievements(
             @PathVariable Long userId,
             @PageableDefault(size = 10) Pageable pageable) {
-        Slice<AchievementDto> achievementDtosSlice = achievementService.findUserAchievement(userId, pageable);
-        return ResponseEntity.ok(achievementDtosSlice);
+        Slice<UserAchievementDto> userAchievements = achievementService.findUserAchievement(userId, pageable);
+        return ResponseEntity.ok(userAchievements);
     }
 
     /**

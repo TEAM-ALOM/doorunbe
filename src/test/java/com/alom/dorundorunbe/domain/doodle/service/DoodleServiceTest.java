@@ -9,7 +9,6 @@ import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
 import com.alom.dorundorunbe.domain.doodle.repository.DoodleRepository;
 import com.alom.dorundorunbe.domain.doodle.repository.UserDoodleRepository;
-import com.alom.dorundorunbe.domain.user.domain.Gender;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.global.enums.Tier;
@@ -79,7 +78,6 @@ public class DoodleServiceTest {
                 .age(20)
                 .cash(1000L)
                 .tier(Tier.AMATEUR)
-                .gender(Gender.FEMALE)
                 .build();
 
         doodle1 = Doodle.builder()

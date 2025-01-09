@@ -23,30 +23,25 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 임의로 추가한 필드 -> kakao 로그인 구현 시 수정
-    @Column(name = "kakao_id", nullable = false, unique = true)
-    private String kakaoId;
+    // 소셜 로그인 시 받아올 정보 -> 두런 내에서 사용자 식별에 사용
+    @Column(nullable = false, unique = true)
+    private String email;
 
+    // 앱 내에서 사용할 닉네임 (ㅇㅇ두)
     @Column(nullable = false, unique = true, length = 32)
     private String nickname;
 
+    // 필요 없는 필드 같음
     @Column(nullable = false, length = 32)
     private String name;
 
-    @Column(nullable = false, length = 50)
-    private String email;
-
-    private int age;
-
+    // 없애야 하는 필드!!
     private String password;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ranking_id")
     @JsonIgnore
     private Ranking ranking; // 현재 참가 중인 랭킹
-
-    @Enumerated(EnumType.STRING)
-    private Gender gender;
 
     @Column(nullable = false)
     private Long cash;
