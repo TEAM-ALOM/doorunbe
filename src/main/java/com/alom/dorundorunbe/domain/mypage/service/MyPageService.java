@@ -36,7 +36,7 @@ public class MyPageService {
         if (userOpt.isPresent()) {
             User user = userOpt.get();
             List<RunningRecord> runningRecords = runningRecordRepository.findAllByUser(user);
-            Collections.sort(runningRecords, Comparator.comparing(RunningRecord::getDate).reversed());
+            runningRecords.sort(Comparator.comparing(RunningRecord::getDate).reversed());
             return runningRecords;
         }
         else return null;
