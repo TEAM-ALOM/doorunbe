@@ -1,5 +1,6 @@
 package com.alom.dorundorunbe.domain.runningrecord.domain;
 
+import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
@@ -7,6 +8,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -42,4 +45,12 @@ public class RunningRecord extends BaseEntity {
     private Double speed;
 
     private Boolean isFinished = false;
+
+    @OneToMany(mappedBy = "runningRecord", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RunningRecordItem> items = new ArrayList<>();
+
+    public void addRunningRecordItem(RunningRecordItem runningRecordItem){
+        items.add(runningRecordItem);
+        runningRecordItem.setRunningRecord(this);
+    }
 }

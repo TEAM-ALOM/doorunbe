@@ -1,6 +1,8 @@
 package com.alom.dorundorunbe.domain.runningrecord.mapper;
 
+import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecordItem;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordEndRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordStartRequestDto;
@@ -11,12 +13,14 @@ import org.mapstruct.MappingTarget;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Mapper(componentModel = "spring", imports = {LocalDateTime.class, LocalDate.class, DateTimeFormatter.class})
 public interface RunningRecordMapper {
     @Mapping(target = "date", expression = "java(toStringDate(runningRecord.getDate()))")
     @Mapping(target = "startTime", expression = "java(toStringDateTime(runningRecord.getStartTime()))")
     @Mapping(target = "endTime", expression = "java(toStringDateTime(runningRecord.getEndTime()))")
+    @Mapping(target = "items", expression = "java(mapItems(runningRecord.getItems()))")
     RunningRecordResponseDto toResponseDto(RunningRecord runningRecord);
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "date", expression = "java(toLocalDate(startRequestDto.getDate()))")
@@ -47,6 +51,15 @@ public interface RunningRecordMapper {
 
     default LocalDateTime toLocalDateTime(String dateTimeString) {
         return dateTimeString != null ? LocalDateTime.parse(dateTimeString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")) : null;
+    }
+
+    default List<EquippedItemResponseDto> mapItems(List<RunningRecordItem> runningRecordItems){
+        return runningRecordItems == null ? List.of() : runningRecordItems.stream()
+                .map(item -> EquippedItemResponseDto.of(
+                        item.getItem().getId(),
+                        item.getItem().getName(),
+                        item.getItem().getItemCategory()
+                )).toList();
     }
 
 }

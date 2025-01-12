@@ -36,6 +36,7 @@ public class RunningRecordMapperImpl implements RunningRecordMapper {
         runningRecordResponseDto.date( toStringDate(runningRecord.getDate()) );
         runningRecordResponseDto.startTime( toStringDateTime(runningRecord.getStartTime()) );
         runningRecordResponseDto.endTime( toStringDateTime(runningRecord.getEndTime()) );
+        runningRecordResponseDto.items( mapItems(runningRecord.getItems()) );
 
         return runningRecordResponseDto.build();
     }

@@ -1,9 +1,11 @@
 package com.alom.dorundorunbe.domain.runningrecord.dto;
 
+import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,4 +30,6 @@ public class RunningRecordResponseDto {
     private Double speed;
 
     private Boolean isFinished;
+
+    private List<EquippedItemResponseDto> items;
 }

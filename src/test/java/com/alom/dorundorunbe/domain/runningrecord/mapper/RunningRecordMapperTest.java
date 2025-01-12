@@ -1,6 +1,10 @@
 package com.alom.dorundorunbe.domain.runningrecord.mapper;
 
+import com.alom.dorundorunbe.domain.item.domain.Item;
+import com.alom.dorundorunbe.domain.item.domain.ItemCategory;
+import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecordItem;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordEndRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordStartRequestDto;
@@ -8,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,6 +33,11 @@ public class RunningRecordMapperTest {
                 .date(LocalDate.of(2024, 10, 30))
                 .startTime(LocalDateTime.of(2024, 10, 30, 8, 0, 0))
                 .endTime(LocalDateTime.of(2024, 10, 30, 8, 33, 58))
+                .items(List.of(
+                        RunningRecordItem.builder()
+                                .item(Item.builder().id(1L).name("Item1").itemCategory(ItemCategory.ACCESSORY).build())
+                                .build()
+                ))
                 .build();
 
         // when
@@ -44,6 +54,12 @@ public class RunningRecordMapperTest {
         assertThat(responseDto.getDate()).isEqualTo("2024-10-30");
         assertThat(responseDto.getStartTime()).isEqualTo("2024-10-30T08:00:00");
         assertThat(responseDto.getEndTime()).isEqualTo("2024-10-30T08:33:58");
+
+        assertThat(responseDto.getItems()).hasSize(1);
+        EquippedItemResponseDto itemDto = responseDto.getItems().get(0);
+        assertThat(itemDto.itemId()).isEqualTo(1L);
+        assertThat(itemDto.name()).isEqualTo("Item1");
+        assertThat(itemDto.itemCategory()).isEqualTo(ItemCategory.ACCESSORY);
     }
 
     @Test

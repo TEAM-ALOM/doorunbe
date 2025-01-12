@@ -1,5 +1,7 @@
 package com.alom.dorundorunbe.domain.runningrecord.controller;
 
+import com.alom.dorundorunbe.domain.item.domain.ItemCategory;
+import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordEndRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordStartRequestDto;
@@ -20,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -55,7 +58,8 @@ public class RunningRecordControllerTest {
                 null,
                 null,
                 null,
-                false
+                false,
+                List.of()
         );
         when(runningRecordService.saveStartRecord(any(RunningRecordStartRequestDto.class))).thenReturn(responseDto);
 
@@ -82,7 +86,8 @@ public class RunningRecordControllerTest {
                 150,
                 2038,
                 8.86,
-                true
+                true,
+                List.of(new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY))
         );
         when(runningRecordService.saveEndRecord(eq(1L), any(RunningRecordEndRequestDto.class))).thenReturn(responseDto);
 
@@ -101,7 +106,10 @@ public class RunningRecordControllerTest {
                 .andExpect(jsonPath("$.cadence").value(150))
                 .andExpect(jsonPath("$.elapsedTime").value(2038))
                 .andExpect(jsonPath("$.speed").value(8.86))
-                .andExpect(jsonPath("$.isFinished").value(true));
+                .andExpect(jsonPath("$.isFinished").value(true))
+                .andExpect(jsonPath("$.items[0].itemId").value(1L))
+                .andExpect(jsonPath("$.items[0].name").value("Item1"))
+                .andExpect(jsonPath("$.items[0].itemCategory").value("ACCESSORY"));
     }
 
     @Test
@@ -115,7 +123,8 @@ public class RunningRecordControllerTest {
                 150,
                 2038,
                 8.86,
-                true
+                true,
+                List.of(new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY))
         );
         when(runningRecordService.findRunningRecord(1L)).thenReturn(responseDto);
 
@@ -130,7 +139,10 @@ public class RunningRecordControllerTest {
                 .andExpect(jsonPath("$.cadence").value(150))
                 .andExpect(jsonPath("$.elapsedTime").value(2038))
                 .andExpect(jsonPath("$.speed").value(8.86))
-                .andExpect(jsonPath("$.isFinished").value(true));
+                .andExpect(jsonPath("$.isFinished").value(true))
+                .andExpect(jsonPath("$.items[0].itemId").value(1L))
+                .andExpect(jsonPath("$.items[0].name").value("Item1"))
+                .andExpect(jsonPath("$.items[0].itemCategory").value("ACCESSORY"));
     }
 
     @Test
@@ -144,7 +156,8 @@ public class RunningRecordControllerTest {
                 150,
                 2038,
                 8.86,
-                true
+                true,
+                List.of(new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY))
         );
         Page<RunningRecordResponseDto> responsePage = new PageImpl<>(Collections.singletonList(responseDto));
         when(runningRecordService.findRunningRecords(eq(1L), any(Pageable.class))).thenReturn(responsePage);
@@ -163,7 +176,10 @@ public class RunningRecordControllerTest {
                 .andExpect(jsonPath("$.content[0].cadence").value(150))
                 .andExpect(jsonPath("$.content[0].elapsedTime").value(2038))
                 .andExpect(jsonPath("$.content[0].speed").value(8.86))
-                .andExpect(jsonPath("$.content[0].isFinished").value(true));
+                .andExpect(jsonPath("$.content[0].isFinished").value(true))
+                .andExpect(jsonPath("$.content[0].items[0].itemId").value(1L))
+                .andExpect(jsonPath("$.content[0].items[0].name").value("Item1"))
+                .andExpect(jsonPath("$.content[0].items[0].itemCategory").value("ACCESSORY"));
     }
 
 }
