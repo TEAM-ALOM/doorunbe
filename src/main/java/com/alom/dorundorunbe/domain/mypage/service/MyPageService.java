@@ -99,6 +99,7 @@ public class MyPageService {
             return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
         }
         else return null;
+
     }
     public ResponseEntity<String> updatePassword(UserPasswordChangeDTO userPasswordChangeDTO, String username){
         Optional<User> userOpt = userRepository.findByName(username);

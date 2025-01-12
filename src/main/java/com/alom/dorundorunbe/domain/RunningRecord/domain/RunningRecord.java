@@ -40,5 +40,5 @@ public class RunningRecord extends BaseEntity {
 
     private double speed;
 
-    private boolean isFinished = false;
+    private boolean isFinished;
 }

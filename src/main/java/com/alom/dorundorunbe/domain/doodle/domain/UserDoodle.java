@@ -1,5 +1,6 @@
 package com.alom.dorundorunbe.domain.doodle.domain;
 
+import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
@@ -30,6 +31,9 @@ public class UserDoodle extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private UserDoodleStatus status; //참가 상태
+
+    @Enumerated(EnumType.STRING)
+    private UserDoodleRole role;
 
     private LocalDate joinDate; //참가날짜
 
