@@ -92,7 +92,7 @@ public class MyPageService {
             if(checkNickNameDuplicate(userDTO.getNickname()))
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nickname already exists");
             existingUser.setNickname(userDTO.getNickname());
-            existingUser.setAge(userDTO.getAge());
+//            existingUser.setAge(userDTO.getAge());
             existingUser.setName(userDTO.getName());
             userRepository.save(existingUser);
             return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
