@@ -12,6 +12,7 @@ jobs:
       MYSQL_DB_URL: ${{ secrets.MYSQL_DB_URL }} 
       MYSQL_DB_PORT: ${{ secrets.MYSQL_DB_PORT }}
       MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
+      MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME}}
       MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
       
 
