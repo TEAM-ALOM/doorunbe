@@ -1,4 +1,4 @@
-name: BE CI / CD for Dev
+name: BE CI for Dev
 
 on:
   pull_request:
@@ -40,5 +40,3 @@ jobs:
       - name: Build With Gradle
         run: ./gradlew bootjar
 
-      - name: Run Application
-        run: java -jar build/libs/dorundorun-Be-0.0.1-SNAPSHOT.jar
