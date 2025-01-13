@@ -14,10 +14,6 @@ jobs:
       MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
       MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
       
-      # Spring Boot에 넘길 환경 변수 설정
-      SPRING_DATASOURCE_URL: ${MYSQL_DB_URL} 
-      SPRING_DATASOURCE_USERNAME: ${MYSQL_DB_NAME}
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_DB_PASSWORD}
 
     steps:
       - name: Checkout code
@@ -28,6 +24,11 @@ jobs:
         with:
           java-version: '17'
           distribution: 'corretto'
+      - name: Create application-dev.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-dev.yml
+          echo "${{ secrets.APPLICATION }}" > ./application-dev.yml
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
