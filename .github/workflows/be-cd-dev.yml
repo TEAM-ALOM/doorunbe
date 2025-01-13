@@ -28,11 +28,9 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      - name: Create application-dev.yml
+      - name: Update application.yml
         run: |
-          cd ./src/main/resources
-          touch ./application-dev.yml
-          echo "${{ secrets.APPLICATION }}" > ./application-dev.yml
+          echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
