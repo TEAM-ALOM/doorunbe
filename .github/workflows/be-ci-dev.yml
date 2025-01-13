@@ -1,18 +1,24 @@
-name: BE CI / CD For dev
+name: BE CI / CD for Dev
 
 on:
   pull_request:
-    branches: ["dev"]
+    branches:
+      - dev
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     env:
-      host port: ${{secrets.MYSQL_DB_PORT}}
-      container port: ${{secrets.MYSQL_DB_PORT}}
-      database user: ${{secrets.MYSQL_DB_NAME}}
-      mysql password: ${{secrets.MYSQL_DB_PASSWORD}}
+      MYSQL_DB_URL: ${{ secrets.MYSQL_DB_URL }} 
+      MYSQL_DB_PORT: ${{ secrets.MYSQL_DB_PORT }}
+      MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
+      MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
       
+      # Spring Boot에 넘길 환경 변수 설정
+      SPRING_DATASOURCE_URL: ${MYSQL_DB_URL} 
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_DB_NAME}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_DB_PASSWORD}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -29,13 +35,10 @@ jobs:
           cache-write-only: true
 
       - name: Grant Execute Permission For Gradlew
-        run:  chmod +x gradlew
+        run: chmod +x gradlew
 
       - name: Build With Gradle
-        run:  ./gradlew bootjar
+        run: ./gradlew bootjar
 
-      - name: Run code
-        run:  ./gradlew --info
-
-      
-          
+      - name: Run Application
+        run: java -jar build/libs/your-app.jar
