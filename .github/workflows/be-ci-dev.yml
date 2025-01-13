@@ -1,4 +1,4 @@
-name: BE CI for Dev
+name: BE CD for Dev
 
 on:
   pull_request:
@@ -12,9 +12,11 @@ jobs:
       MYSQL_DB_URL: ${{ secrets.MYSQL_DB_URL }} 
       MYSQL_DB_PORT: ${{ secrets.MYSQL_DB_PORT }}
       MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
-      MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME}}
+      MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME }}
       MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
-      
+      EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}   
+      EC2_HOST: ${{ secrets.EC2_HOST }}  
+      RDS_ENDPOINT: ${{ secrets.RDS_ENDPOINT }} 
 
     steps:
       - name: Checkout code
@@ -25,6 +27,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'corretto'
+
       - name: Create application-dev.yml
         run: |
           cd ./src/main/resources
@@ -39,6 +42,22 @@ jobs:
       - name: Grant Execute Permission For Gradlew
         run: chmod +x gradlew
 
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Add EC2 to known hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Set up SSH tunnel to RDS
+        run: |
+          ssh -i ~/.ssh/id_rsa -L 3306:${{ secrets.RDS_ENDPOINT }}:3306 -f -N ec2-user@${{ secrets.EC2_HOST }} || exit 1
+
       - name: Build With Gradle
         run: ./gradlew bootjar
 
+      - name: Run Application
+        run: java -jar build/libs/dorundorun-Be-0.0.1-SNAPSHOT.jar
