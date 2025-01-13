@@ -1,4 +1,4 @@
-name: BE CI For Dev
+name: BE CI / CD For dev
 
 on:
   pull_request:
