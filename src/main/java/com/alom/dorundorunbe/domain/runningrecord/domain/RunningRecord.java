@@ -1,6 +1,5 @@
 package com.alom.dorundorunbe.domain.runningrecord.domain;
 
-import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
@@ -42,7 +41,7 @@ public class RunningRecord extends BaseEntity {
 
     private Integer elapsedTime;
 
-    private Double speed;
+    private Double averageSpeed;
 
     private Boolean isFinished = false;
 

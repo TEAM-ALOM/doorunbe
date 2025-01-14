@@ -49,7 +49,7 @@ public class RunningRecordMapperTest {
         assertThat(responseDto.getDistance()).isEqualTo(5.02);
         assertThat(responseDto.getCadence()).isEqualTo(150);
         assertThat(responseDto.getElapsedTime()).isEqualTo(2038);
-        assertThat(responseDto.getSpeed()).isEqualTo(8.86);
+        assertThat(responseDto.getAverageSpeed()).isEqualTo(8.86);
         assertThat(responseDto.getIsFinished()).isTrue();
         assertThat(responseDto.getDate()).isEqualTo("2024-10-30");
         assertThat(responseDto.getStartTime()).isEqualTo("2024-10-30T08:00:00");
@@ -95,7 +95,7 @@ public class RunningRecordMapperTest {
                 .distance(5.02)
                 .cadence(150)
                 .elapsedTime(2038)
-                .speed(8.86)
+                .averageSpeed(8.86)
                 .endTime("2024-10-30T08:33:58")
                 .build();
 
@@ -106,7 +106,7 @@ public class RunningRecordMapperTest {
         assertThat(runningRecord.getDistance()).isEqualTo(5.02);
         assertThat(runningRecord.getCadence()).isEqualTo(150);
         assertThat(runningRecord.getElapsedTime()).isEqualTo(2038);
-        assertThat(runningRecord.getSpeed()).isEqualTo(8.86);
+        assertThat(runningRecord.getAverageSpeed()).isEqualTo(8.86);
         assertThat(runningRecord.getEndTime()).isEqualTo(LocalDateTime.of(2024, 10, 30, 8, 33, 58));
         assertThat(runningRecord.getIsFinished()).isTrue();
     }

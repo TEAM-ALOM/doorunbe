@@ -3,8 +3,6 @@ package com.alom.dorundorunbe.domain.runningrecord.dto;
 import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -27,7 +25,7 @@ public class RunningRecordResponseDto {
 
     private Integer elapsedTime;
 
-    private Double speed;
+    private Double averageSpeed;
 
     private Boolean isFinished;
 

@@ -1,9 +1,6 @@
 package com.alom.dorundorunbe.domain.runningrecord.dto;
 
-import jakarta.persistence.Entity;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 
 @Getter
@@ -20,5 +17,5 @@ public class RunningRecordEndRequestDto {
 
     private String endTime;
 
-    private Double speed;
+    private Double averageSpeed;
 }
