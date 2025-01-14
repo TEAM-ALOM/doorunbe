@@ -1,4 +1,4 @@
-name: BE CD for Dev
+name: BE CI for Dev
 
 on:
   pull_request:
@@ -28,11 +28,9 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
-      - name: Create application-dev.yml
+      - name: Update application.yml
         run: |
-          cd ./src/main/resources
-          touch ./application-dev.yml
-          echo "${{ secrets.APPLICATION }}" > ./application-dev.yml
+          echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v3
@@ -54,10 +52,10 @@ jobs:
 
       - name: Set up SSH tunnel to RDS
         run: |
-          ssh -i ~/.ssh/id_rsa -L 3306:${{ secrets.RDS_ENDPOINT }}:3306 -f -N ec2-user@${{ secrets.EC2_HOST }} || exit 1
+          ssh -i ~/.ssh/id_rsa -L 3306:${{ secrets.RDS_ENDPOINT }}:3306 -f -N ubuntu@${{ secrets.EC2_HOST }} || exit 1
 
       - name: Build With Gradle
-        run: ./gradlew bootjar
+        run: ./gradlew build
 
-      - name: Run Application
-        run: java -jar build/libs/dorundorun-Be-0.0.1-SNAPSHOT.jar
+      - name: Run Tests
+        run: ./gradlew test
