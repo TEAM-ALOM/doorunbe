@@ -2,6 +2,7 @@ package com.alom.dorundorunbe.domain.runningrecord.dto;
 
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -27,5 +28,5 @@ public class RunningRecordRequestDto {
 
     private Double averageSpeed;
 
-    private List<GpsCoordinateDto> gpsCoordinates;
+    private List<GpsCoordinateDto> gpsCoordinates = new ArrayList<>();
 }

@@ -68,22 +68,16 @@ public class RunningRecordService {
         return runningRecordMapper.toResponseDto(runningRecord);
     }
 
-    public RunningRecordResponseDto toResponseDto(RunningRecord runningRecord){
-        RunningRecordResponseDto responseDto = runningRecordMapper.toResponseDto(runningRecord);
-        responseDto.setGpsCoordinates(runningRecord.getGpsCoordinates().stream().map(gpsCoordinateMapper::toDto).toList());
-        return responseDto;
-    }
-
     // user별 최신순 특정 개수의 기록 조회
     public Page<RunningRecordResponseDto> findRunningRecords(Long userId, Pageable pageable){
         User user = userService.findById(userId);
         Page<RunningRecord> records = runningRecordRepository.findByUser(user, pageable);
-        return records.map(this::toResponseDto);
+        return records.map(runningRecordMapper::toResponseDto);
     }
 
     // 특정 기록의 상세 조회
     public RunningRecordResponseDto findRunningRecord(Long id){
-        return toResponseDto(runningRecordRepository.findById(id)
+        return runningRecordMapper.toResponseDto(runningRecordRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Running record with id "+id+" does not exist")));
     }
 }

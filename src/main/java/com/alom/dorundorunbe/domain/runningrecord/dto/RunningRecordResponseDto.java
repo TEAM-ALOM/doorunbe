@@ -3,6 +3,7 @@ package com.alom.dorundorunbe.domain.runningrecord.dto;
 import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,7 +28,9 @@ public class RunningRecordResponseDto {
 
     private Double averageSpeed;
 
-    private List<EquippedItemResponseDto> items;
+    private Double pace;
 
-    private List<GpsCoordinateDto> gpsCoordinates;
+    private List<EquippedItemResponseDto> items = new ArrayList<>();
+
+    private List<GpsCoordinateDto> gpsCoordinates = new ArrayList<>();
 }

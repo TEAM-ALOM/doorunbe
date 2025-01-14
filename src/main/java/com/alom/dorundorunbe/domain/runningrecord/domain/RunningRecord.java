@@ -51,11 +51,6 @@ public class RunningRecord extends BaseEntity {
     @OneToMany(mappedBy = "runningRecord", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GpsCoordinate> gpsCoordinates = new ArrayList<>();
 
-    public void addRunningRecordItem(RunningRecordItem runningRecordItem){
-        items.add(runningRecordItem);
-        runningRecordItem.setRunningRecord(this);
-    }
-
     public void addGpsCoordinate(GpsCoordinate gpsCoordinate) {
         gpsCoordinates.add(gpsCoordinate);
         gpsCoordinate.setRunningRecord(this);
@@ -63,8 +58,7 @@ public class RunningRecord extends BaseEntity {
 
     public void calculatePace() {
         if (distance != null && elapsedTime != null && distance > 0 && elapsedTime > 0) {
-            double paceInMinutesPerKm = (elapsedTime / 60.0) / (distance / 1000.0);
-            this.pace = paceInMinutesPerKm;
+            this.pace = (elapsedTime / 60.0) / (distance / 1000.0);
         }
     }
 }

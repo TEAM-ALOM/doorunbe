@@ -4,16 +4,19 @@ import com.alom.dorundorunbe.domain.item.domain.Item;
 import com.alom.dorundorunbe.domain.item.domain.ItemCategory;
 import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import com.alom.dorundorunbe.domain.item.service.ItemService;
+import com.alom.dorundorunbe.domain.runningrecord.domain.GpsCoordinate;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
-import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecordItem;
+import com.alom.dorundorunbe.domain.runningrecord.dto.GpsCoordinateDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
-import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordStartRequestDto;
+import com.alom.dorundorunbe.domain.runningrecord.mapper.GpsCoordinateMapper;
 import com.alom.dorundorunbe.domain.runningrecord.mapper.RunningRecordMapper;
+import com.alom.dorundorunbe.domain.runningrecord.repository.GpsCoordinateRepository;
 import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordItemRepository;
 import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.user.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -48,6 +51,12 @@ public class RunningRecordServiceTest {
     @Mock
     private RunningRecordItemRepository runningRecordItemRepository;
 
+    @Mock
+    private GpsCoordinateMapper gpsCoordinateMapper;
+
+    @Mock
+    private GpsCoordinateRepository gpsCoordinateRepository;
+
     @InjectMocks
     private RunningRecordService runningRecordService;
 
@@ -57,83 +66,80 @@ public class RunningRecordServiceTest {
     }
 
     @Test
-    void saveStartRecord() {
+    @DisplayName("saveRunningRecord : RunningRecord 생성")
+    void saveRunningRecord() {
         // given
         Long userId = 1L;
-        RunningRecordStartRequestDto startRequestDto = new RunningRecordStartRequestDto();
-        startRequestDto.setUserId(userId);
+        RunningRecordRequestDto requestDto = new RunningRecordRequestDto();
+        requestDto.setUserId(userId);
 
         User user = new User();
         RunningRecord runningRecord = new RunningRecord();
         RunningRecordResponseDto responseDto = new RunningRecordResponseDto();
-        responseDto.setItems(List.of());
+        List<GpsCoordinateDto> gpsCoordinateDtos = List.of(
+                new GpsCoordinateDto(37.7749, -122.4194, "2025-01-01T08:00:00Z")
+        );
+        requestDto.setGpsCoordinates(gpsCoordinateDtos);
+
+        GpsCoordinate gpsCoordinate = new GpsCoordinate();
 
         when(userService.findById(userId)).thenReturn(user);
-        when(runningRecordMapper.toEntityFromStartRequestDto(startRequestDto)).thenReturn(runningRecord);
-        when(runningRecordRepository.save(runningRecord)).thenReturn(runningRecord);
+        when(runningRecordMapper.toEntityFromRequestDto(requestDto)).thenReturn(runningRecord);
+        when(gpsCoordinateMapper.toEntity(gpsCoordinateDtos.get(0))).thenReturn(gpsCoordinate);
         when(runningRecordMapper.toResponseDto(runningRecord)).thenReturn(responseDto);
 
         // when
-        RunningRecordResponseDto result = runningRecordService.saveStartRecord(startRequestDto);
+        RunningRecordResponseDto result = runningRecordService.saveRunningRecord(requestDto);
 
         // then
-        verify(userService).findById(userId);
         verify(runningRecordRepository).save(runningRecord);
+        verify(runningRecordItemRepository).saveAll(anyList());
+        verify(gpsCoordinateRepository).saveAll(anyList());
         assertEquals(responseDto, result);
-        assertEquals(List.of(), responseDto.getItems());
     }
 
     @Test
-    void saveEndRecord(){
+    @DisplayName("setEquippedItems : 착용한 아이템 정보 설정")
+    void setEquippedItems() {
         // given
-        Long id = 1L;
-        Long userId = 10L;
-
         RunningRecord runningRecord = new RunningRecord();
-        runningRecord.setId(id);
-        User user = new User();
-        user.setId(userId);
-        runningRecord.setUser(user);
+        runningRecord.setUser(User.builder().id(1L).build());
 
-        RunningRecordRequestDto endRequestDto = new RunningRecordRequestDto();
-        RunningRecordResponseDto responseDto = new RunningRecordResponseDto();
+        EquippedItemResponseDto itemDto = new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY);
+        Item item = new Item();
 
-        EquippedItemResponseDto equippedItem1 = new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY);
-        EquippedItemResponseDto equippedItem2 = new EquippedItemResponseDto(2L, "Item2", ItemCategory.HAIR);
-        List<EquippedItemResponseDto> equippedItems = List.of(equippedItem1, equippedItem2);
-
-        Item item1 = Item.builder().id(1L).build();
-        Item item2 = Item.builder().id(2L).build();
-
-        RunningRecordItem runningRecordItem1 = RunningRecordItem.builder().runningRecord(runningRecord).item(item1).build();
-        RunningRecordItem runningRecordItem2 = RunningRecordItem.builder().runningRecord(runningRecord).item(item2).build();
-
-        when(runningRecordRepository.findById(id)).thenReturn(Optional.of(runningRecord));
-        doNothing().when(runningRecordMapper).updateEntityFromEndRequestDto(runningRecord, endRequestDto);
-        when(itemService.findEquippedItem(userId)).thenReturn(equippedItems);
-        when(itemService.findItemById(1L)).thenReturn(item1);
-        when(itemService.findItemById(2L)).thenReturn(item2);
-        when(runningRecordMapper.toResponseDto(runningRecord)).thenReturn(responseDto);
+        when(itemService.findEquippedItem(1L)).thenReturn(List.of(itemDto));
+        when(itemService.findItemById(1L)).thenReturn(item);
 
         // when
-        RunningRecordResponseDto result = runningRecordService.saveEndRecord(id, endRequestDto);
+        runningRecordService.setEquippedItems(runningRecord);
 
         // then
-        verify(runningRecordRepository).findById(id);
-        verify(runningRecordMapper).updateEntityFromEndRequestDto(runningRecord, endRequestDto);
-        verify(itemService).findEquippedItem(userId);
+        verify(itemService).findEquippedItem(1L);
         verify(itemService).findItemById(1L);
-        verify(itemService).findItemById(2L);
-        verify(runningRecordItemRepository).saveAll(runningRecord.getItems());
-        verify(runningRecordRepository).save(runningRecord);
-
-        assertEquals(result, responseDto);
-        assertEquals(2, runningRecord.getItems().size());
-        assertEquals(item1, runningRecord.getItems().get(0).getItem());
-        assertEquals(item2, runningRecord.getItems().get(1).getItem());
+        verify(runningRecordItemRepository).saveAll(anyList());
     }
 
     @Test
+    @DisplayName("setGpsCoordinate : gps 정보 설정")
+    void setGpsCoordinate() {
+        // given
+        RunningRecord runningRecord = new RunningRecord();
+        GpsCoordinateDto gpsCoordinateDto = new GpsCoordinateDto(37.7749, -122.4194, "2025-01-01T08:00:00Z");
+        GpsCoordinate gpsCoordinate = new GpsCoordinate();
+
+        when(gpsCoordinateMapper.toEntity(gpsCoordinateDto)).thenReturn(gpsCoordinate);
+
+        // when
+        runningRecordService.setGpsCoordinate(runningRecord, List.of(gpsCoordinateDto));
+
+        // then
+        verify(gpsCoordinateRepository).saveAll(anyList());
+        assertEquals(1, runningRecord.getGpsCoordinates().size());
+    }
+
+    @Test
+    @DisplayName("findRunningRecords : RunningRecord 유저별 조회")
     void findRunningRecords(){
         // given
         Long userId = 1L;
@@ -162,6 +168,7 @@ public class RunningRecordServiceTest {
     }
 
     @Test
+    @DisplayName("findRunningRecord : RunningRecord 단일 조회")
     void findRunningRecord(){
         // given
         Long id = 1L;
@@ -183,6 +190,7 @@ public class RunningRecordServiceTest {
     }
 
     @Test
+    @DisplayName("findRunningRecord_NotFound : RunningRecord Not Found")
     void findRunningRecord_NotFound(){
         // given
         Long id = 1L;

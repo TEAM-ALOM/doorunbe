@@ -22,11 +22,6 @@ public class RunningRecordController {
         return ResponseEntity.status(HttpStatus.CREATED).body(runningRecordService.saveRunningRecord(requestDto));
     }
 
-    /*@PutMapping("/{id}")
-    public ResponseEntity<RunningRecordResponseDto> updateRunningRecord(@PathVariable(name = "id") Long id, @RequestBody RunningRecordRequestDto endRequestDto){
-        return ResponseEntity.ok(runningRecordService.saveEndRecord(id, endRequestDto));
-    }*/
-
     @GetMapping("/{id}")
     public ResponseEntity<RunningRecordResponseDto> fetchRunningRecord(@PathVariable(name = "id") Long id){
         return ResponseEntity.ok(runningRecordService.findRunningRecord(id));

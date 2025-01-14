@@ -1,8 +1,10 @@
 package com.alom.dorundorunbe.domain.runningrecord.mapper;
 
 import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
+import com.alom.dorundorunbe.domain.runningrecord.domain.GpsCoordinate;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecordItem;
+import com.alom.dorundorunbe.domain.runningrecord.dto.GpsCoordinateDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
 import org.mapstruct.Mapper;
@@ -22,7 +24,7 @@ public interface RunningRecordMapper {
     @Mapping(target = "endTime", expression = "java(toStringDateTime(runningRecord.getEndTime()))")
     @Mapping(target = "date", expression = "java(toStringDate(runningRecord.getDate()))")
     @Mapping(target = "items", expression = "java(mapItems(runningRecord.getItems()))")
-    @Mapping(target = "gpsCoordinates", ignore = true)
+    @Mapping(target = "gpsCoordinates", expression = "java(mapGpsCoordinates(runningRecord.getGpsCoordinates()))")
     RunningRecordResponseDto toResponseDto(RunningRecord runningRecord);
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "pace", ignore = true)
@@ -32,14 +34,6 @@ public interface RunningRecordMapper {
     @Mapping(target = "date", expression = "java(toLocalDate(requestDto.getDate()))")
     RunningRecord toEntityFromRequestDto(RunningRecordRequestDto requestDto);
 
-    /*@Mapping(target = "distance", source = "endRequestDto.distance")
-    @Mapping(target = "cadence", source = "endRequestDto.cadence")
-    @Mapping(target = "elapsedTime", source = "endRequestDto.elapsedTime")
-    @Mapping(target = "endTime", expression = "java(toLocalDateTime(endRequestDto.getEndTime()))")
-    @Mapping(target = "speed", source = "endRequestDto.speed")
-    @Mapping(target = "isFinished", constant = "true")
-    void updateEntityFromEndRequestDto(@MappingTarget RunningRecord runningRecord, RunningRecordRequestDto endRequestDto);
-*/
     default String toStringDate(LocalDate date){
         return date != null ? date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
     }
@@ -69,6 +63,16 @@ public interface RunningRecordMapper {
                         item.getItem().getId(),
                         item.getItem().getName(),
                         item.getItem().getItemCategory()
+                )).toList();
+    }
+
+    default List<GpsCoordinateDto> mapGpsCoordinates(List<GpsCoordinate> gpsCoordinates) {
+        return gpsCoordinates == null ? List.of() : gpsCoordinates.stream()
+                .map(coord -> new GpsCoordinateDto(
+                        coord.getLatitude(),
+                        coord.getLongitude(),
+                        coord.getTimestamp().atZone(ZoneOffset.UTC)
+                                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
                 )).toList();
     }
 

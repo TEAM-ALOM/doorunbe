@@ -2,22 +2,23 @@ package com.alom.dorundorunbe.domain.runningrecord.controller;
 
 import com.alom.dorundorunbe.domain.item.domain.ItemCategory;
 import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
+import com.alom.dorundorunbe.domain.runningrecord.dto.GpsCoordinateDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
-import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordStartRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.service.RunningRecordService;
-import com.alom.dorundorunbe.global.util.config.SecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
@@ -26,8 +27,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RunningRecordController.class)
-@Import(SecurityConfig.class)
+@WithMockUser
 public class RunningRecordControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -47,138 +47,134 @@ public class RunningRecordControllerTest {
     private RunningRecordService runningRecordService;
 
     @Test
+    @DisplayName("Post /records : RunningRecord 생성")
     public void testCreateRunningRecord() throws Exception {
-        RunningRecordResponseDto responseDto = new RunningRecordResponseDto(
-                1L,
-                "2024-10-30",
-                "2024-10-30T08:00:00",
-                null,
-                null,
-                null,
-                null,
-                null,
-                false,
-                List.of()
-        );
-        when(runningRecordService.saveStartRecord(any(RunningRecordStartRequestDto.class))).thenReturn(responseDto);
+        RunningRecordResponseDto responseDto = RunningRecordResponseDto.builder()
+                .id(1L)
+                .distance(5.02)
+                .cadence(150)
+                .elapsedTime(2038)
+                .averageSpeed(8.86)
+                .pace(6766.2682)
+                .startTime("2024-10-30T08:00:00Z")
+                .endTime("2024-10-30T08:33:58Z")
+                .date("2024-10-30")
+                .items(List.of(new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY)))
+                .gpsCoordinates(List.of(new GpsCoordinateDto(37.7749, -122.4194, "2024-10-30T08:05:00Z")))
+                .build();
 
-        String requestBody = objectMapper.writeValueAsString(new RunningRecordStartRequestDto(1L, "2024-10-30", "2024-10-30T08:00:00"));
+        when(runningRecordService.saveRunningRecord(any(RunningRecordRequestDto.class))).thenReturn(responseDto);
+
+        String requestBody = objectMapper.writeValueAsString(
+                RunningRecordRequestDto.builder()
+                        .userId(1L)
+                        .distance(5.02)
+                        .cadence(150)
+                        .elapsedTime(2038)
+                        .startTime("2024-10-30T08:00:00Z")
+                        .endTime("2024-10-30T08:33:58Z")
+                        .date("2024-10-30")
+                        .averageSpeed(8.86)
+                        .gpsCoordinates(List.of(new GpsCoordinateDto(37.7749, -122.4194, "2024-10-30T08:05:00Z")))
+                        .build()
+        );
 
         mockMvc.perform(post("/records")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody)
-                .with(httpBasic("user", "password")))
+                .with(csrf()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.startTime").value("2024-10-30T08:00:00Z"))
+                .andExpect(jsonPath("$.endTime").value("2024-10-30T08:33:58Z"))
                 .andExpect(jsonPath("$.date").value("2024-10-30"))
-                .andExpect(jsonPath("$.startTime").value("2024-10-30T08:00:00"));
-    }
-
-    @Test
-    public void testUpdateRunningRecord() throws Exception {
-        RunningRecordResponseDto responseDto = new RunningRecordResponseDto(
-                1L,
-                "2024-10-30",
-                "2024-10-30T08:00:00",
-                "2024-10-30T08:33:58",
-                5.02,
-                150,
-                2038,
-                8.86,
-                true,
-                List.of(new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY))
-        );
-        when(runningRecordService.saveEndRecord(eq(1L), any(RunningRecordRequestDto.class))).thenReturn(responseDto);
-
-        String requestBody = objectMapper.writeValueAsString(new RunningRecordRequestDto(5.02, 150, 2038, "2024-10-30T08:33:58", 8.86));
-
-        mockMvc.perform(put("/records/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody)
-                .with(httpBasic("user", "password")))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.date").value("2024-10-30"))
-                .andExpect(jsonPath("$.startTime").value("2024-10-30T08:00:00"))
-                .andExpect(jsonPath("$.endTime").value("2024-10-30T08:33:58"))
                 .andExpect(jsonPath("$.distance").value(5.02))
                 .andExpect(jsonPath("$.cadence").value(150))
                 .andExpect(jsonPath("$.elapsedTime").value(2038))
-                .andExpect(jsonPath("$.speed").value(8.86))
-                .andExpect(jsonPath("$.isFinished").value(true))
+                .andExpect(jsonPath("$.averageSpeed").value(8.86))
+                .andExpect(jsonPath("$.pace").value(6766.2682))
                 .andExpect(jsonPath("$.items[0].itemId").value(1L))
                 .andExpect(jsonPath("$.items[0].name").value("Item1"))
-                .andExpect(jsonPath("$.items[0].itemCategory").value("ACCESSORY"));
+                .andExpect(jsonPath("$.items[0].itemCategory").value("ACCESSORY"))
+                .andExpect(jsonPath("$.gpsCoordinates[0].latitude").value(37.7749))
+                .andExpect(jsonPath("$.gpsCoordinates[0].longitude").value(-122.4194))
+                .andExpect(jsonPath("$.gpsCoordinates[0].timestamp").value("2024-10-30T08:05:00Z"));
     }
 
     @Test
+    @DisplayName("Get /records/{id} : RunningRecord 단일 조회")
     public void testFetchRunningRecord() throws Exception {
-        RunningRecordResponseDto responseDto = new RunningRecordResponseDto(
-                1L,
-                "2024-10-30",
-                "2024-10-30T08:00:00",
-                "2024-10-30T08:33:58",
-                5.02,
-                150,
-                2038,
-                8.86,
-                true,
-                List.of(new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY))
-        );
+        RunningRecordResponseDto responseDto = RunningRecordResponseDto.builder()
+                .id(1L)
+                .distance(5.02)
+                .cadence(150)
+                .elapsedTime(2038)
+                .averageSpeed(8.86)
+                .pace(6766.2682)
+                .startTime("2024-10-30T08:00:00Z")
+                .endTime("2024-10-30T08:33:58Z")
+                .date("2024-10-30")
+                .items(List.of(new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY)))
+                .gpsCoordinates(List.of(new GpsCoordinateDto(37.7749, -122.4194, "2024-10-30T08:05:00Z")))
+                .build();
         when(runningRecordService.findRunningRecord(1L)).thenReturn(responseDto);
 
-        mockMvc.perform(get("/records/1")
-                .with(httpBasic("user", "password")))
+        mockMvc.perform(get("/records/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.startTime").value("2024-10-30T08:00:00Z"))
+                .andExpect(jsonPath("$.endTime").value("2024-10-30T08:33:58Z"))
                 .andExpect(jsonPath("$.date").value("2024-10-30"))
-                .andExpect(jsonPath("$.startTime").value("2024-10-30T08:00:00"))
-                .andExpect(jsonPath("$.endTime").value("2024-10-30T08:33:58"))
                 .andExpect(jsonPath("$.distance").value(5.02))
                 .andExpect(jsonPath("$.cadence").value(150))
                 .andExpect(jsonPath("$.elapsedTime").value(2038))
-                .andExpect(jsonPath("$.speed").value(8.86))
-                .andExpect(jsonPath("$.isFinished").value(true))
+                .andExpect(jsonPath("$.averageSpeed").value(8.86))
                 .andExpect(jsonPath("$.items[0].itemId").value(1L))
                 .andExpect(jsonPath("$.items[0].name").value("Item1"))
-                .andExpect(jsonPath("$.items[0].itemCategory").value("ACCESSORY"));
+                .andExpect(jsonPath("$.items[0].itemCategory").value("ACCESSORY"))
+                .andExpect(jsonPath("$.gpsCoordinates[0].latitude").value(37.7749))
+                .andExpect(jsonPath("$.gpsCoordinates[0].longitude").value(-122.4194))
+                .andExpect(jsonPath("$.gpsCoordinates[0].timestamp").value("2024-10-30T08:05:00Z"));
     }
 
     @Test
+    @DisplayName("Get /records/user/{userId} : RunningRecord 유저별 조회")
     public void testFetchRunningRecords() throws Exception {
-        RunningRecordResponseDto responseDto = new RunningRecordResponseDto(
-                1L,
-                "2024-10-30",
-                "2024-10-30T08:00:00",
-                "2024-10-30T08:33:58",
-                5.02,
-                150,
-                2038,
-                8.86,
-                true,
-                List.of(new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY))
-        );
+        RunningRecordResponseDto responseDto = RunningRecordResponseDto.builder()
+                .id(1L)
+                .distance(5.02)
+                .cadence(150)
+                .elapsedTime(2038)
+                .averageSpeed(8.86)
+                .pace(6766.2682)
+                .startTime("2024-10-30T08:00:00Z")
+                .endTime("2024-10-30T08:33:58Z")
+                .date("2024-10-30")
+                .items(List.of(new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY)))
+                .gpsCoordinates(List.of(new GpsCoordinateDto(37.7749, -122.4194, "2024-10-30T08:05:00Z")))
+                .build();
         Page<RunningRecordResponseDto> responsePage = new PageImpl<>(Collections.singletonList(responseDto));
         when(runningRecordService.findRunningRecords(eq(1L), any(Pageable.class))).thenReturn(responsePage);
 
         mockMvc.perform(get("/records/user/1")
-                .with(httpBasic("user", "password"))
                 .param("page", "0")
                 .param("size", "5"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].id").value(1L))
+                .andExpect(jsonPath("$.content[0].startTime").value("2024-10-30T08:00:00Z"))
+                .andExpect(jsonPath("$.content[0].endTime").value("2024-10-30T08:33:58Z"))
                 .andExpect(jsonPath("$.content[0].date").value("2024-10-30"))
-                .andExpect(jsonPath("$.content[0].startTime").value("2024-10-30T08:00:00"))
-                .andExpect(jsonPath("$.content[0].endTime").value("2024-10-30T08:33:58"))
                 .andExpect(jsonPath("$.content[0].distance").value(5.02))
                 .andExpect(jsonPath("$.content[0].cadence").value(150))
                 .andExpect(jsonPath("$.content[0].elapsedTime").value(2038))
-                .andExpect(jsonPath("$.content[0].speed").value(8.86))
-                .andExpect(jsonPath("$.content[0].isFinished").value(true))
+                .andExpect(jsonPath("$.content[0].averageSpeed").value(8.86))
                 .andExpect(jsonPath("$.content[0].items[0].itemId").value(1L))
                 .andExpect(jsonPath("$.content[0].items[0].name").value("Item1"))
-                .andExpect(jsonPath("$.content[0].items[0].itemCategory").value("ACCESSORY"));
+                .andExpect(jsonPath("$.content[0].items[0].itemCategory").value("ACCESSORY"))
+                .andExpect(jsonPath("$.content[0].gpsCoordinates[0].latitude").value(37.7749))
+                .andExpect(jsonPath("$.content[0].gpsCoordinates[0].longitude").value(-122.4194))
+                .andExpect(jsonPath("$.content[0].gpsCoordinates[0].timestamp").value("2024-10-30T08:05:00Z"));
     }
 
 }
