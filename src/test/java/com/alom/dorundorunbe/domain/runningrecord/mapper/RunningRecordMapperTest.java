@@ -5,7 +5,7 @@ import com.alom.dorundorunbe.domain.item.domain.ItemCategory;
 import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecordItem;
-import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordEndRequestDto;
+import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordStartRequestDto;
 import org.junit.jupiter.api.Test;
@@ -91,7 +91,7 @@ public class RunningRecordMapperTest {
                 .endTime(null)
                 .build();
 
-        RunningRecordEndRequestDto endRequestDto = RunningRecordEndRequestDto.builder()
+        RunningRecordRequestDto endRequestDto = RunningRecordRequestDto.builder()
                 .distance(5.02)
                 .cadence(150)
                 .elapsedTime(2038)

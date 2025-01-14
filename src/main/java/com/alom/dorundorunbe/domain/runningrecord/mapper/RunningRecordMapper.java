@@ -3,54 +3,64 @@ package com.alom.dorundorunbe.domain.runningrecord.mapper;
 import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecordItem;
-import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordEndRequestDto;
+import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
-import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordStartRequestDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Mapper(componentModel = "spring", imports = {LocalDateTime.class, LocalDate.class, DateTimeFormatter.class})
 public interface RunningRecordMapper {
-    @Mapping(target = "date", expression = "java(toStringDate(runningRecord.getDate()))")
     @Mapping(target = "startTime", expression = "java(toStringDateTime(runningRecord.getStartTime()))")
     @Mapping(target = "endTime", expression = "java(toStringDateTime(runningRecord.getEndTime()))")
+    @Mapping(target = "date", expression = "java(toStringDate(runningRecord.getDate()))")
     @Mapping(target = "items", expression = "java(mapItems(runningRecord.getItems()))")
+    @Mapping(target = "gpsCoordinates", ignore = true)
     RunningRecordResponseDto toResponseDto(RunningRecord runningRecord);
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "date", expression = "java(toLocalDate(startRequestDto.getDate()))")
-    @Mapping(target = "startTime", expression = "java(toLocalDateTime(startRequestDto.getStartTime()))")
-    RunningRecord toEntityFromStartRequestDto(RunningRecordStartRequestDto startRequestDto);
+    @Mapping(target = "pace", ignore = true)
+    @Mapping(target = "gpsCoordinates", ignore = true)
+    @Mapping(target = "startTime", expression = "java(toLocalDateTime(requestDto.getStartTime()))")
+    @Mapping(target = "endTime", expression = "java(toLocalDateTime(requestDto.getEndTime()))")
+    @Mapping(target = "date", expression = "java(toLocalDate(requestDto.getDate()))")
+    RunningRecord toEntityFromRequestDto(RunningRecordRequestDto requestDto);
 
-//    @Mapping(target = "endTime", expression = "java(toLocalDateTime(endRequestDto.getEndTime()))")
-//    RunningRecord toEntityFromEndRequestDto(RunningRecordEndRequestDto endRequestDto);
-
-    @Mapping(target = "distance", source = "endRequestDto.distance")
+    /*@Mapping(target = "distance", source = "endRequestDto.distance")
     @Mapping(target = "cadence", source = "endRequestDto.cadence")
     @Mapping(target = "elapsedTime", source = "endRequestDto.elapsedTime")
     @Mapping(target = "endTime", expression = "java(toLocalDateTime(endRequestDto.getEndTime()))")
     @Mapping(target = "speed", source = "endRequestDto.speed")
     @Mapping(target = "isFinished", constant = "true")
-    void updateEntityFromEndRequestDto(@MappingTarget RunningRecord runningRecord, RunningRecordEndRequestDto endRequestDto);
-
+    void updateEntityFromEndRequestDto(@MappingTarget RunningRecord runningRecord, RunningRecordRequestDto endRequestDto);
+*/
     default String toStringDate(LocalDate date){
         return date != null ? date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
     }
 
     default String toStringDateTime(LocalDateTime dateTime){
-        return dateTime != null ? dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")) : null;
+        if (dateTime != null) {
+            return dateTime.atZone(ZoneOffset.UTC)
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+        }
+        return null;
     }
     default LocalDate toLocalDate(String dateString) {
         return dateString != null ? LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
     }
 
     default LocalDateTime toLocalDateTime(String dateTimeString) {
-        return dateTimeString != null ? LocalDateTime.parse(dateTimeString, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")) : null;
+        if (dateTimeString != null) {
+            OffsetDateTime offsetDateTime = OffsetDateTime.parse(dateTimeString, DateTimeFormatter.ISO_DATE_TIME);
+            return offsetDateTime.toLocalDateTime();
+        }
+        return null;
     }
 
     default List<EquippedItemResponseDto> mapItems(List<RunningRecordItem> runningRecordItems){

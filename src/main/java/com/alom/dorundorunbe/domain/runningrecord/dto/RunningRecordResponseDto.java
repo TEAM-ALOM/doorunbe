@@ -13,11 +13,11 @@ import java.util.List;
 public class RunningRecordResponseDto {
     private Long id;
 
-    private String date;
-
     private String startTime;
 
     private String endTime;
+
+    private String date;
 
     private Double distance;
 
@@ -27,7 +27,7 @@ public class RunningRecordResponseDto {
 
     private Double averageSpeed;
 
-    private Boolean isFinished;
-
     private List<EquippedItemResponseDto> items;
+
+    private List<GpsCoordinateDto> gpsCoordinates;
 }

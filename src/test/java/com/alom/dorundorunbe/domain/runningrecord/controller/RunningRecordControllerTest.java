@@ -2,7 +2,7 @@ package com.alom.dorundorunbe.domain.runningrecord.controller;
 
 import com.alom.dorundorunbe.domain.item.domain.ItemCategory;
 import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
-import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordEndRequestDto;
+import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordStartRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.service.RunningRecordService;
@@ -18,7 +18,6 @@ import org.springframework.data.domain.PageImpl;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
@@ -89,9 +88,9 @@ public class RunningRecordControllerTest {
                 true,
                 List.of(new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY))
         );
-        when(runningRecordService.saveEndRecord(eq(1L), any(RunningRecordEndRequestDto.class))).thenReturn(responseDto);
+        when(runningRecordService.saveEndRecord(eq(1L), any(RunningRecordRequestDto.class))).thenReturn(responseDto);
 
-        String requestBody = objectMapper.writeValueAsString(new RunningRecordEndRequestDto(5.02, 150, 2038, "2024-10-30T08:33:58", 8.86));
+        String requestBody = objectMapper.writeValueAsString(new RunningRecordRequestDto(5.02, 150, 2038, "2024-10-30T08:33:58", 8.86));
 
         mockMvc.perform(put("/records/1")
                 .contentType(MediaType.APPLICATION_JSON)

@@ -6,7 +6,7 @@ import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
 import com.alom.dorundorunbe.domain.item.service.ItemService;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecordItem;
-import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordEndRequestDto;
+import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordStartRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.mapper.RunningRecordMapper;
@@ -21,7 +21,6 @@ import org.mockito.MockitoAnnotations;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Collections;
@@ -96,7 +95,7 @@ public class RunningRecordServiceTest {
         user.setId(userId);
         runningRecord.setUser(user);
 
-        RunningRecordEndRequestDto endRequestDto = new RunningRecordEndRequestDto();
+        RunningRecordRequestDto endRequestDto = new RunningRecordRequestDto();
         RunningRecordResponseDto responseDto = new RunningRecordResponseDto();
 
         EquippedItemResponseDto equippedItem1 = new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY);
