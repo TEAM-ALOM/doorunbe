@@ -1,5 +1,6 @@
 package com.alom.dorundorunbe.domain.doodle.service;
 
+import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.doodle.domain.UserDoodleStatus;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleRequestDto;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleResponseDto;
@@ -13,11 +14,9 @@ import com.alom.dorundorunbe.domain.doodle.domain.Doodle;
 import com.alom.dorundorunbe.domain.doodle.repository.DoodleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -27,23 +26,19 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DoodleService {
 
-    @Autowired
-    private DoodleRepository doodleRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserDoodleRepository userDoodleRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final DoodleRepository doodleRepository;
+    private final UserRepository userRepository;
+    private final UserDoodleRepository userDoodleRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserDoodleService userDoodleService;
 
     @Transactional
-    public DoodleResponseDto createDoodle(DoodleRequestDto doodleRequestDto, Long userId) { //doodle 생성 기능
-        User user = userRepository.findById(userId).orElseThrow(()->new IllegalArgumentException("USER NOT FOUND"));
-
+    public DoodleResponseDto createDoodle(DoodleRequestDto doodleRequestDto) { //doodle 생성 기능
         //Doodle 생성
         Doodle doodle = Doodle.builder()
                 .name(doodleRequestDto.getName())
-                .goalDistance(doodleRequestDto.getGoalDistance())
+                .weeklyGoalDistance(doodleRequestDto.getWeeklyGoalDistance())
+                .weeklyGoalCount(doodleRequestDto.getWeeklyGoalCount())
                 .goalCadence(doodleRequestDto.getGoalCadence())
                 .goalPace(doodleRequestDto.getGoalPace())
                 .goalParticipationCount(doodleRequestDto.getGoalParticipationCount())
@@ -51,15 +46,9 @@ public class DoodleService {
                 .maxParticipant(doodleRequestDto.getMaxParticipant())
                 .participants(new ArrayList<>())
                 .build();
-        Doodle savedDoodle = doodleRepository.save(doodle);
 
-        UserDoodle userDoodle = new UserDoodle();
-        userDoodle.setStatus(UserDoodleStatus.PARTICIPATING);
-        userDoodle.setRole(UserDoodleRole.CREATOR);
-        userDoodle.setJoinDate(LocalDate.now());
-        userDoodle.setUser(user);
-        userDoodle.setDoodle(savedDoodle);
-        userDoodleRepository.save(userDoodle);
+        Doodle savedDoodle = doodleRepository.save(doodle);
+        UserDoodle userDoodle = userDoodleService.createUserDoodle(savedDoodle.getId(), doodleRequestDto.getUserId());
 
         savedDoodle.getParticipants().add(userDoodle);
 
@@ -91,7 +80,8 @@ public class DoodleService {
         Doodle doodle = doodleRepository.findById(doodleId)
                 .orElseThrow(()->new IllegalArgumentException("NOT FOUND"));
         doodle.setName(doodleRequestDto.getName());
-        doodle.setGoalDistance(doodleRequestDto.getGoalDistance());
+        doodle.setWeeklyGoalDistance(doodleRequestDto.getWeeklyGoalDistance());
+        doodle.setWeeklyGoalCount(doodleRequestDto.getWeeklyGoalCount());
         doodle.setGoalCadence(doodleRequestDto.getGoalCadence());
         doodle.setMaxParticipant(doodleRequestDto.getMaxParticipant());
         doodle.setGoalPace(doodleRequestDto.getGoalPace());
@@ -102,35 +92,24 @@ public class DoodleService {
         return DoodleResponseDto.from(updatedDoodle);
     }
 
-    public DoodleResponseDto addParticipantToDoodle(Long doodleId, Long userId, DoodleRequestDto doodleRequestDto) { //참가자 추가
+    public DoodleResponseDto addParticipantToDoodle(Long doodleId, Long userId, String password) { //참가자 추가
         Doodle doodle = doodleRepository.findById(doodleId).orElseThrow(()->new RuntimeException("Doodle not found"));
-        User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
-
         //비밀번호 검증
-        if (!passwordEncoder.matches(doodleRequestDto.getPassword(), doodle.getPassword())){
+        if (!passwordEncoder.matches(password, doodle.getPassword())){
             throw new IllegalArgumentException("Wrong password");
         }
 
         //참가자 중복 체크
-        boolean isAlreadyParticipating = doodle.getParticipants().stream()
-                .anyMatch(participant -> participant.getUser().getId().equals(userId));
-        if (isAlreadyParticipating){
-            throw new IllegalArgumentException("Participant already exists");
+        if (doodle.IsDuplicatedParticipant(doodle, userId)){
+            throw new IllegalArgumentException("Duplicated Participant");
         }
 
-        UserDoodle userDoodle = new UserDoodle();
-        userDoodle.setDoodle(doodle);
-        userDoodle.setUser(user);
-        userDoodle.setStatus(UserDoodleStatus.PARTICIPATING);
-        userDoodle.setJoinDate(LocalDate.now());
-        //userDoodle 저장
-        userDoodleRepository.save(userDoodle);
-        //참가자 리스트에 추가
-        List<UserDoodle> participants = new ArrayList<>(doodle.getParticipants());
-        participants.add(userDoodle);
-        doodle.setParticipants(participants);
+        //참가자 인원 제한 수 체크
+        if (!doodle.checkCanAddParticipant(doodle.getParticipants().size())){
+            throw new IllegalArgumentException("Full participants");
+        }
 
-        doodleRepository.save(doodle);
+        userDoodleService.addParticipantsToUserDoodle(doodleId, userId);
         return DoodleResponseDto.from(doodle);
     }
 
@@ -182,4 +161,41 @@ public class DoodleService {
         Doodle updatedDoodle = doodleRepository.save(doodle);
         return DoodleResponseDto.from(updatedDoodle);
     }
+
+    //주마다 목표 달성 여부 확인
+    public boolean isGoalAchieved(Long doodleId, Long userId, List<RunningRecord> runningRecords){
+        Doodle doodle = doodleRepository.findById(doodleId).orElseThrow(()->new RuntimeException("Doodle not found"));
+        User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
+        //주간 목표 거리 달성 여부
+        double weeklyTotalDistance = runningRecords.stream()
+                .mapToDouble(RunningRecord::getDistance)
+                .sum();
+        if (weeklyTotalDistance < doodle.getWeeklyGoalDistance()){
+            return false;
+        }
+        //주간 목표 러닝 횟수 달성 여부
+        if (runningRecords.size() < doodle.getWeeklyGoalCount()){
+            return false;
+        }
+        //목표 페이스 달성 여부
+        double averagePace = runningRecords.stream()
+                .mapToDouble(RunningRecord::getPace)
+                .average()
+                .orElse(0.0);
+        if (averagePace < doodle.getGoalPace()){
+            return false;
+        }
+        //목표 케이던스 달성 여부
+        double averageCadence = runningRecords.stream()
+                .mapToDouble(RunningRecord::getCadence)
+                .average()
+                .orElse(0.0);
+        if (averageCadence < doodle.getGoalCadence()){
+            return false;
+        }
+        return true;
+    }
+
+    //랭킹권에 달성했을 때?
+
 }
