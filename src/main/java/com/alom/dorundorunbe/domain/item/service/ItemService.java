@@ -4,6 +4,7 @@ import com.alom.dorundorunbe.domain.item.domain.Item;
 import com.alom.dorundorunbe.domain.item.domain.ItemCategory;
 import com.alom.dorundorunbe.domain.item.domain.UserItem;
 import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
+import com.alom.dorundorunbe.domain.item.dto.ItemRequestDto;
 import com.alom.dorundorunbe.domain.item.dto.ItemResponseDto;
 import com.alom.dorundorunbe.domain.item.repository.ItemRepository;
 import com.alom.dorundorunbe.domain.item.repository.UserItemRepository;
@@ -22,6 +23,24 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final UserItemRepository userItemRepository;
     private final UserService userService;
+
+    public void createItem(ItemRequestDto dto) {
+        Item item = Item.builder()
+                .name(dto.name())
+                .itemCategory(dto.itemCategory())
+                .cost(dto.cost())
+                .build();
+
+        itemRepository.save(item);
+    }
+
+    public void updateItem(Long itemId, ItemRequestDto dto) {
+
+    }
+
+    public void deleteItem(Long itemId) {
+
+    }
 
     public List<ItemResponseDto> findItemByCategory(ItemCategory itemCategory, Long userId) {
 
