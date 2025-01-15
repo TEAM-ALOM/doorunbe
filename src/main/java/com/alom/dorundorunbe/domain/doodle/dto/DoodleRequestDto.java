@@ -14,9 +14,13 @@ public class DoodleRequestDto {
     @NotBlank(message = "이름을 입력해 주세요.")
     private String name;
 
-    @NotNull(message = "목표 거리를 입력해 주세요.")
+    @NotNull(message = "주간 러닝 목표 거리를 입력해 주세요.")
     @Positive(message = "유효하지 않은 값입니다.")
-    private double goalDistance;
+    private double weeklyGoalDistance;
+
+    @NotNull(message = "주간 러닝 목표 횟수를 입력해 주세요.")
+    @Positive(message = "유효하지 않은 값입니다.")
+    private int weeklyGoalCount;
 
     @NotNull(message = "목표 케이던시를 입력해 주세요.")
     @Positive(message = "유효하지 않은 값입니다.")
