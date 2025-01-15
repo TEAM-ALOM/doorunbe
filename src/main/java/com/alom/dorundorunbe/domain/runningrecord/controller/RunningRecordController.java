@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping("/records")
 @Tag(name = "러닝 기록 관리 API")
-public class RunningRecordController {
+public class RunningRecordController implements RunningRecordControllerDocs {
     private final RunningRecordService runningRecordService;
 
     @PostMapping

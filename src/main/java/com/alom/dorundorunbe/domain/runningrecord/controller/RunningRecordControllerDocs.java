@@ -21,25 +21,25 @@ public interface RunningRecordControllerDocs {
                 
                 **입력 파라미터:**
                 
-                - **`Long userId`** : user id
-                - **`Double distance`** : 러닝 총 거리 (단위 : 미터)
-                - **`Integer cadence`** : 케이던스
-                - **`Integer elapsedTime`** : 러닝 시간 (단위 : 초)
-                - **`String startTime`** : 러닝 시작 시간 (형식 예시 : "2025-01-01T08:00:00Z")
-                - **`String endTime`** : 러닝 종료 시간 (형식 예시 : "2025-01-01T08:00:00Z")
-                - **`String date`** : 러닝 일자 (형식 예시 : "2025-01-01")
-                - **`Double averageSpeed`** : 평균 속도 (단위 : m/s)
-                - **`Integer heartRate`** : 평균 심장박동수
-                - **`List<GpsCoordinateDto> gpsCoordinates`** : gps 정보 목록
-                    - **`Double latitude`** : 위도
-                    - **`Double longitude`** : 경도
-                    - **`String timestamp`** : 좌표 측정 시간 (형식 예시 : "2025-01-01T08:00:00Z")
+                - `Long userId` : User id
+                - `String startTime` : 러닝 시작 시간 (형식 예시 : "2025-01-01T08:00:00Z")
+                - `String endTime` : 러닝 종료 시간 (형식 예시 : "2025-01-01T08:00:00Z")
+                - `String date` : 러닝 일자 (형식 예시 : "2025-01-01")
+                - `Double distance` : 러닝 총 거리 (단위 : 미터)
+                - `Integer cadence` : 케이던스
+                - `Integer elapsedTime` : 러닝 총 시간 (단위 : 초)
+                - `Double averageSpeed` : 평균 속도 (단위 : m/s)
+                - `Integer heartRate` : 평균 심장박동수
+                - `List<GpsCoordinateDto> gpsCoordinates` : gps 정보 목록
+                    - `Double latitude` : 위도
+                    - `Double longitude` : 경도
+                    - `String timestamp` : 좌표 측정 시간 (형식 예시 : "2025-01-01T08:00:00Z")
                     
                 
                 
                 **반환값:**
                 
-                -**`RunningRecordResponseDto`** : 생성된 러닝 기록 정보              
+                - `RunningRecordResponseDto` : 생성된 러닝 기록 정보              
                 """
     )
     public ResponseEntity<RunningRecordResponseDto> createRunningRecord(@RequestBody RunningRecordRequestDto requestDto);
@@ -53,11 +53,11 @@ public interface RunningRecordControllerDocs {
                 
                 **입력 파라미터:**
                 
-                - **`Long id`** : 러닝 기록 id
+                - `Long id` : RunningRecord id
                     
                 **반환값:**
                 
-                -**`RunningRecordResponseDto`** : id에 해당하는 러닝 기록 정보           
+                - `RunningRecordResponseDto` : id에 해당하는 러닝 기록 정보           
                 """
     )
     public ResponseEntity<RunningRecordResponseDto> fetchRunningRecord(@PathVariable(name = "id") Long id);
@@ -71,19 +71,19 @@ public interface RunningRecordControllerDocs {
                 
                 **입력 파라미터:**
                 
-                - **`Long userId`** : 조회할 user id
-                - **`int page`** : 조회할 페이지 번호 (기본값: 0)
-                - **`int size`** : 한 페이지에 표시할 데이터 수 (기본값: 5)
+                - `Long userId` : 조회할 User id
+                - `int page` : 조회할 페이지 번호 (기본값: 0)
+                - `int size` : 한 페이지에 표시할 데이터 수 (기본값: 5)
                     
                 **반환값:**
                 
-                -**`Page<RunningRecordResponseDto>`** : userId에 해당하는 유저의 러닝 기록 정보
-                    - `content` : 러닝 기록 데이터 목록
-                    - `totalPages` : 전체 페이지 수
-                    - `totalElements` : 전체 데이터 수
-                    - `size` : 요청된 페이지 크기
-                    - `number` : 현재 페이지 번호
-                    - `sort` : 정렬 정보
+                - `Page<RunningRecordResponseDto>` : userId에 해당하는 유저의 러닝 기록 정보
+                - `content` : 러닝 기록 데이터 목록
+                - `totalPages` : 전체 페이지 수
+                - `totalElements` : 전체 데이터 수
+                - `size` : 요청된 페이지 크기
+                - `number` : 현재 페이지 번호
+                - `sort` : 정렬 정보
                 """
     )
     public ResponseEntity<Page<RunningRecordResponseDto>> fetchRunningRecords(@PathVariable(name = "userId") Long userId,
