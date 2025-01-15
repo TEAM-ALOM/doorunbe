@@ -369,7 +369,6 @@ public class DoodleControllerTest {
         when(userRepository.findById(eq(1L))).thenReturn(Optional.of(user));
         when(doodleService.updateDoodlePassword(eq(1L), eq(1L), eq(newPassword)))
                 .thenReturn(doodleResponseDto);
-
         mockMvc.perform(put("/doodle/{doodleId}/password", 1L)
                 .param("userId", String.valueOf(user.getId()))
                 .param("newPassword", newPassword)
