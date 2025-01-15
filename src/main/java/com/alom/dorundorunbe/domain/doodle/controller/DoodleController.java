@@ -30,7 +30,7 @@ public class DoodleController {
     @PostMapping("/create/{userId}")
     @Operation(summary = "새로운 Doodle 생성")
     public ResponseEntity<DoodleResponseDto> createDoodle(@RequestBody DoodleRequestDto doodleRequestDto) {
-        DoodleResponseDto doodleResponseDto = doodleService.createDoodle(doodleRequestDto, doodleRequestDto.getUserId());
+        DoodleResponseDto doodleResponseDto = doodleService.createDoodle(doodleRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(doodleResponseDto);
     }
 
@@ -62,8 +62,8 @@ public class DoodleController {
 
     @PostMapping("/{doodleId}/User/{userId}")
     @Operation(summary = "특정 Doodle에 User 추가")
-    public ResponseEntity<DoodleResponseDto> addParticipantToDoodle(@PathVariable("doodleId") Long doodleId, @PathVariable("userId") Long userId, @RequestBody DoodleRequestDto doodleRequestDto){
-        return ResponseEntity.ok(doodleService.addParticipantToDoodle(doodleId, userId, doodleRequestDto));
+    public ResponseEntity<DoodleResponseDto> addParticipantToDoodle(@PathVariable("doodleId") Long doodleId, @PathVariable("userId") Long userId, @RequestParam("password") String password){
+        return ResponseEntity.ok(doodleService.addParticipantToDoodle(doodleId, userId, password));
     }
 
     @DeleteMapping("/{doodleId}/User/{userId}")
