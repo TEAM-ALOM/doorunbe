@@ -36,6 +36,7 @@ public class RunningRecordMapperTest {
                 .elapsedTime(2038)
                 .averageSpeed(8.86)
                 .pace(6766.2682)
+                .heartRate(150)
                 .date(LocalDate.of(2024, 10, 30))
                 .startTime(LocalDateTime.of(2024, 10, 30, 8, 0, 0))
                 .endTime(LocalDateTime.of(2024, 10, 30, 8, 33, 58))
@@ -64,6 +65,7 @@ public class RunningRecordMapperTest {
         assertThat(responseDto.getElapsedTime()).isEqualTo(2038);
         assertThat(responseDto.getAverageSpeed()).isEqualTo(8.86);
         assertThat(responseDto.getPace()).isEqualTo(6766.2682);
+        assertThat(responseDto.getHeartRate()).isEqualTo(150);
         assertThat(responseDto.getDate()).isEqualTo("2024-10-30");
         assertThat(responseDto.getStartTime()).isEqualTo("2024-10-30T08:00:00Z");
         assertThat(responseDto.getEndTime()).isEqualTo("2024-10-30T08:33:58Z");
@@ -93,6 +95,7 @@ public class RunningRecordMapperTest {
                 .endTime("2024-10-30T08:33:58Z")
                 .date("2024-10-30")
                 .averageSpeed(8.86)
+                .heartRate(150)
                 .build();
 
         // when
@@ -103,6 +106,7 @@ public class RunningRecordMapperTest {
         assertThat(runningRecord.getCadence()).isEqualTo(150);
         assertThat(runningRecord.getElapsedTime()).isEqualTo(2038);
         assertThat(runningRecord.getAverageSpeed()).isEqualTo(8.86);
+        assertThat(runningRecord.getHeartRate()).isEqualTo(150);
         assertThat(runningRecord.getDate()).isEqualTo(LocalDate.parse("2024-10-30"));
         assertThat(runningRecord.getStartTime()).isEqualTo(OffsetDateTime.parse("2024-10-30T08:00:00Z").toLocalDateTime());
         assertThat(runningRecord.getEndTime()).isEqualTo(OffsetDateTime.parse("2024-10-30T08:33:58Z").toLocalDateTime());

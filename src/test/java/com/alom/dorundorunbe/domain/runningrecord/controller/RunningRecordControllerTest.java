@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -56,6 +55,7 @@ public class RunningRecordControllerTest {
                 .elapsedTime(2038)
                 .averageSpeed(8.86)
                 .pace(6766.2682)
+                .heartRate(150)
                 .startTime("2024-10-30T08:00:00Z")
                 .endTime("2024-10-30T08:33:58Z")
                 .date("2024-10-30")
@@ -75,6 +75,7 @@ public class RunningRecordControllerTest {
                         .endTime("2024-10-30T08:33:58Z")
                         .date("2024-10-30")
                         .averageSpeed(8.86)
+                        .heartRate(150)
                         .gpsCoordinates(List.of(new GpsCoordinateDto(37.7749, -122.4194, "2024-10-30T08:05:00Z")))
                         .build()
         );
@@ -93,6 +94,7 @@ public class RunningRecordControllerTest {
                 .andExpect(jsonPath("$.elapsedTime").value(2038))
                 .andExpect(jsonPath("$.averageSpeed").value(8.86))
                 .andExpect(jsonPath("$.pace").value(6766.2682))
+                .andExpect(jsonPath("$.heartRate").value(150))
                 .andExpect(jsonPath("$.items[0].itemId").value(1L))
                 .andExpect(jsonPath("$.items[0].name").value("Item1"))
                 .andExpect(jsonPath("$.items[0].itemCategory").value("ACCESSORY"))
@@ -111,6 +113,7 @@ public class RunningRecordControllerTest {
                 .elapsedTime(2038)
                 .averageSpeed(8.86)
                 .pace(6766.2682)
+                .heartRate(150)
                 .startTime("2024-10-30T08:00:00Z")
                 .endTime("2024-10-30T08:33:58Z")
                 .date("2024-10-30")
@@ -129,6 +132,7 @@ public class RunningRecordControllerTest {
                 .andExpect(jsonPath("$.cadence").value(150))
                 .andExpect(jsonPath("$.elapsedTime").value(2038))
                 .andExpect(jsonPath("$.averageSpeed").value(8.86))
+                .andExpect(jsonPath("$.heartRate").value(150))
                 .andExpect(jsonPath("$.items[0].itemId").value(1L))
                 .andExpect(jsonPath("$.items[0].name").value("Item1"))
                 .andExpect(jsonPath("$.items[0].itemCategory").value("ACCESSORY"))
@@ -147,6 +151,7 @@ public class RunningRecordControllerTest {
                 .elapsedTime(2038)
                 .averageSpeed(8.86)
                 .pace(6766.2682)
+                .heartRate(150)
                 .startTime("2024-10-30T08:00:00Z")
                 .endTime("2024-10-30T08:33:58Z")
                 .date("2024-10-30")
@@ -169,6 +174,7 @@ public class RunningRecordControllerTest {
                 .andExpect(jsonPath("$.content[0].cadence").value(150))
                 .andExpect(jsonPath("$.content[0].elapsedTime").value(2038))
                 .andExpect(jsonPath("$.content[0].averageSpeed").value(8.86))
+                .andExpect(jsonPath("$.content[0].heartRate").value(150))
                 .andExpect(jsonPath("$.content[0].items[0].itemId").value(1L))
                 .andExpect(jsonPath("$.content[0].items[0].name").value("Item1"))
                 .andExpect(jsonPath("$.content[0].items[0].itemCategory").value("ACCESSORY"))

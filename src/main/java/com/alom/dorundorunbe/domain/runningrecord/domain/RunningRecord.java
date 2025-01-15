@@ -45,6 +45,10 @@ public class RunningRecord extends BaseEntity {
 
     private Double pace;
 
+    private Integer heartRate;
+
+    private boolean isRunning;
+
     @OneToMany(mappedBy = "runningRecord", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RunningRecordItem> items = new ArrayList<>();
 

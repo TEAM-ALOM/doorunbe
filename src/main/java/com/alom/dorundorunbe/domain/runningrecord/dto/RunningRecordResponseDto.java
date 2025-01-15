@@ -30,6 +30,8 @@ public class RunningRecordResponseDto {
 
     private Double pace;
 
+    private Integer heartRate;
+
     private List<EquippedItemResponseDto> items = new ArrayList<>();
 
     private List<GpsCoordinateDto> gpsCoordinates = new ArrayList<>();

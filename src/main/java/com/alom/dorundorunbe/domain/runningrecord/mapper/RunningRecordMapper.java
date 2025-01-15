@@ -26,6 +26,7 @@ public interface RunningRecordMapper {
     @Mapping(target = "items", expression = "java(mapItems(runningRecord.getItems()))")
     @Mapping(target = "gpsCoordinates", expression = "java(mapGpsCoordinates(runningRecord.getGpsCoordinates()))")
     RunningRecordResponseDto toResponseDto(RunningRecord runningRecord);
+
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "pace", ignore = true)
     @Mapping(target = "gpsCoordinates", ignore = true)
@@ -45,6 +46,7 @@ public interface RunningRecordMapper {
         }
         return null;
     }
+
     default LocalDate toLocalDate(String dateString) {
         return dateString != null ? LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd")) : null;
     }
@@ -75,5 +77,4 @@ public interface RunningRecordMapper {
                                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
                 )).toList();
     }
-
 }

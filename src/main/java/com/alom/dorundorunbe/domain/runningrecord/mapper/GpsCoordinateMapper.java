@@ -17,7 +17,6 @@ public interface GpsCoordinateMapper {
     @Mapping(target = "timestamp", expression = "java(toLocalDateTime(gpsCoordinateDto.getTimestamp()))")
     GpsCoordinate toEntity(GpsCoordinateDto gpsCoordinateDto);
 
-
     default LocalDateTime toLocalDateTime(String dateTimeString) {
         if (dateTimeString != null) {
             OffsetDateTime offsetDateTime = OffsetDateTime.parse(dateTimeString, DateTimeFormatter.ISO_DATE_TIME);

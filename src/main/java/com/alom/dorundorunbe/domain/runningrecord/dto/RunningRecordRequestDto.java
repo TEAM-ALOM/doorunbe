@@ -28,5 +28,7 @@ public class RunningRecordRequestDto {
 
     private Double averageSpeed;
 
+    private Integer heartRate;
+
     private List<GpsCoordinateDto> gpsCoordinates = new ArrayList<>();
 }
