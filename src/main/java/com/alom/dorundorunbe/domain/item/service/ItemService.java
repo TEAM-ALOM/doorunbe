@@ -35,7 +35,9 @@ public class ItemService {
     }
 
     public void updateItem(Long itemId, ItemRequestDto dto) {
+        Item item = itemRepository.findById(itemId).orElseThrow();
 
+        item.update(dto.name(), dto.itemCategory(), dto.cost());
     }
 
     public void deleteItem(Long itemId) {
