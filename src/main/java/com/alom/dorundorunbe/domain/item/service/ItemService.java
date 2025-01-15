@@ -41,7 +41,9 @@ public class ItemService {
     }
 
     public void deleteItem(Long itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow();
 
+        itemRepository.delete(item);
     }
 
     public List<ItemResponseDto> findItemByCategory(ItemCategory itemCategory, Long userId) {
