@@ -1,12 +1,12 @@
 package com.alom.dorundorunbe.domain.doodle.service;
 
-import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.doodle.domain.UserDoodleStatus;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleRequestDto;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleResponseDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
 import com.alom.dorundorunbe.domain.doodle.repository.UserDoodleRepository;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.domain.doodle.domain.UserDoodle;
@@ -196,7 +196,5 @@ public class DoodleService {
         }
         return true;
     }
-
-    //랭킹권에 달성했을 때?
 
 }
