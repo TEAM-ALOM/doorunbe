@@ -38,6 +38,6 @@ public class Doodle extends BaseEntity {
     @Column(nullable = false)
     private int maxParticipant;
 
-    @OneToMany(mappedBy = "doodle")
+    @OneToMany(mappedBy = "doodle", cascade = CascadeType.ALL)
     private List<UserDoodle> participants;
 }

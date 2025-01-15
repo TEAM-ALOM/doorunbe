@@ -1,8 +1,8 @@
 package com.alom.dorundorunbe.domain.mypage.service;
 
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
-import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
-import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
+import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
@@ -70,7 +70,6 @@ public class MyPageService {
         if(checkNickNameDuplicate(userDTO.getNickname()))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nickname already exists");
         existingUser.setNickname(userDTO.getNickname());
-        existingUser.setAge(userDTO.getAge());
         existingUser.setName(userDTO.getName());
         userRepository.save(existingUser);
         return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");

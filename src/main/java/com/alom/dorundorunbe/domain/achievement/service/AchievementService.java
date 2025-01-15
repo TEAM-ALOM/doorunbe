@@ -1,12 +1,13 @@
 package com.alom.dorundorunbe.domain.achievement.service;
 
-import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
+import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.achievement.domain.Achievement;
 import com.alom.dorundorunbe.domain.achievement.domain.RewardType;
 import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.achievement.dto.assign.AssignAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.query.AchievementDto;
+import com.alom.dorundorunbe.domain.achievement.dto.query.UserAchievementDto;
 import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.exception.*;
@@ -63,11 +64,16 @@ public class AchievementService {
         if (requestDto.name() != null && !requestDto.name().isEmpty()) {
             achievement.updateName(requestDto.name());
         }
+
+        if (requestDto.rewardType() != null && requestDto.rewardType() != achievement.getRewardType()) {
+            throw new IllegalArgumentException("Reward type cannot be changed. Ensure correct input.");
+        }
+
         if (requestDto.rewardType() != null) {
             if (requestDto.rewardType() == RewardType.DISTANCE ||
                     requestDto.rewardType() == RewardType.CADENCE ||
                     requestDto.rewardType() == RewardType.WEEK) {
-                if (requestDto.cash() != null) {
+                if (requestDto.cash() != null && requestDto.cash() != 0) {
                     achievement.updateCash(requestDto.cash());
                 }
             }
@@ -78,14 +84,17 @@ public class AchievementService {
 
             }
             else{
-                throw new IllegalArgumentException("Invalid RewardType");
+                throw new IllegalArgumentException("Invalid Reward");
             }
         }
     }
-    public Slice<AchievementDto> findUserAchievement(Long userId, Pageable pageable) {
-        Slice<UserAchievement> userAchievementsSlice = userAchievementRepository.findAllSliceByUserId(userId, pageable);
-        return userAchievementsSlice.map(userAchievement ->
-                AchievementDto.of(userAchievement.getAchievement()));
+    public Slice<AchievementDto> findAllAchievement(Pageable pageable) {
+        return achievementRepository.findAll(pageable)
+                .map(AchievementDto::of);
+    }
+    public Slice<UserAchievementDto> findUserAchievement(Long userId, Pageable pageable) {
+        return userAchievementRepository.findAllSliceByUserId(userId, pageable)
+                .map(UserAchievementDto::of);
     }
 
     @Transactional
