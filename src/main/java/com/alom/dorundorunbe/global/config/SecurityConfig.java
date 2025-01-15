@@ -37,7 +37,8 @@ public class SecurityConfig {
                 "/swagger-resources/**",
                 "/webjars/**",
                 "/actuator/**",
-                "/doodle/**"
+                "/doodle/**",
+                "/record/**"
             ).permitAll() // Swagger 및 관련 리소스 허용
             .anyRequest().authenticated()) // 나머지 요청은 인증 필요
         .sessionManagement(session -> session

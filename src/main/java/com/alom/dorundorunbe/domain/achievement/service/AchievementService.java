@@ -1,6 +1,6 @@
 package com.alom.dorundorunbe.domain.achievement.service;
 
-import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
+import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.achievement.domain.Achievement;
 import com.alom.dorundorunbe.domain.achievement.domain.RewardType;
 import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;

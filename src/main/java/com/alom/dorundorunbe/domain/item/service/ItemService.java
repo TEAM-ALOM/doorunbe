@@ -23,6 +23,11 @@ public class ItemService {
     private final UserItemRepository userItemRepository;
     private final UserService userService;
 
+    public Item findItemById(Long id){
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("아이템을 찾을 수 없습니다."));
+    }
+
     public List<ItemResponseDto> findItemByCategory(ItemCategory itemCategory, Long userId) {
 
         User user = userService.findById(userId);

@@ -1,6 +1,6 @@
-package com.alom.dorundorunbe.domain.RunningRecord.repository;
+package com.alom.dorundorunbe.domain.runningrecord.repository;
 
-import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
