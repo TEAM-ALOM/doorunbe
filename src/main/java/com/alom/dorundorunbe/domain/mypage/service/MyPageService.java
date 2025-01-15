@@ -1,8 +1,8 @@
 package com.alom.dorundorunbe.domain.mypage.service;
 
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
-import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
-import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
+import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;

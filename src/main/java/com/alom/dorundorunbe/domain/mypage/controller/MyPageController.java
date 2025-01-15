@@ -1,7 +1,7 @@
 package com.alom.dorundorunbe.domain.mypage.controller;
 
 
-import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.mypage.dto.*;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.mypage.service.MyPageService;
