@@ -20,6 +20,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class RunningRecordService {
     private final GpsCoordinateMapper gpsCoordinateMapper;
     private final GpsCoordinateRepository gpsCoordinateRepository;
 
+    @Transactional
     public void setEquippedItems(RunningRecord runningRecord){
         List<EquippedItemResponseDto> equippedItems = itemService.findEquippedItem(runningRecord.getUser().getId());
         List<RunningRecordItem> runningRecordItems = new ArrayList<>();
@@ -50,6 +52,7 @@ public class RunningRecordService {
         runningRecordItemRepository.saveAll(runningRecordItems);
     }
 
+    @Transactional
     public void setGpsCoordinate(RunningRecord runningRecord, List<GpsCoordinateDto> gpsCoordinateDtos){
         List<GpsCoordinate> gpsCoordinates = gpsCoordinateDtos.stream()
                 .map(gpsCoordinateMapper::toEntity)
@@ -57,6 +60,8 @@ public class RunningRecordService {
         gpsCoordinates.forEach(runningRecord::addGpsCoordinate);
         gpsCoordinateRepository.saveAll(gpsCoordinates);
     }
+
+    @Transactional
     public RunningRecordResponseDto saveRunningRecord(RunningRecordRequestDto requestDto){
         User user = userService.findById(requestDto.getUserId());
         RunningRecord runningRecord = runningRecordMapper.toEntityFromRequestDto(requestDto);
