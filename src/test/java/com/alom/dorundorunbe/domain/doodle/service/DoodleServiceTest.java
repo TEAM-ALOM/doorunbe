@@ -47,6 +47,9 @@ public class DoodleServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private UserDoodleService userDoodleService;
+
     @InjectMocks
     private DoodleService doodleService;
 
@@ -75,7 +78,6 @@ public class DoodleServiceTest {
                 .nickname("runner456")
                 .name("testUser2")
                 .email("example2@example.com")
-                .age(20)
                 .cash(1000L)
                 .tier(Tier.AMATEUR)
                 .build();
@@ -83,7 +85,8 @@ public class DoodleServiceTest {
         doodle1 = Doodle.builder()
                 .id(1L)
                 .name("Doodle 1")
-                .goalDistance(100.0)
+                .weeklyGoalDistance(1.0)
+                .weeklyGoalCount(1)
                 .goalCadence(50.0)
                 .goalPace(5.0)
                 .goalParticipationCount(10)
@@ -95,7 +98,8 @@ public class DoodleServiceTest {
         doodle2 = Doodle.builder()
                 .id(2L)
                 .name("Doodle 2")
-                .goalDistance(200.0)
+                .weeklyGoalDistance(1.0)
+                .weeklyGoalCount(1)
                 .goalCadence(60.0)
                 .goalPace(6.0)
                 .goalParticipationCount(20)
@@ -124,12 +128,14 @@ public class DoodleServiceTest {
 
         doodleRequestDto = DoodleRequestDto.builder()
                 .name("Test Doodle")
-                .goalDistance(1.0)
+                .weeklyGoalDistance(1.0)
+                .weeklyGoalCount(1)
                 .goalCadence(2.0)
                 .goalPace(3.0)
                 .goalParticipationCount(10)
                 .password("testPassword")
                 .maxParticipant(10)
+                .userId(1L)
                 .build();
 
     }
@@ -137,14 +143,12 @@ public class DoodleServiceTest {
     @Test
     @DisplayName("createDoodle : Doodle 생성에 성공한다.")
     public void createDoodle() {
-        //mock userRepository
-        when(userRepository.findById(anyLong())).thenReturn(java.util.Optional.of(user));
-
-        //mock doodleRepository
+        // mock doodleRepository
         Doodle savedDoodle = Doodle.builder()
                 .id(1L)
                 .name("Test Doodle")
-                .goalDistance(1.0)
+                .weeklyGoalDistance(1.0)
+                .weeklyGoalCount(1)
                 .goalCadence(2.0)
                 .goalPace(3.0)
                 .goalParticipationCount(10)
@@ -154,23 +158,24 @@ public class DoodleServiceTest {
                 .build();
         when(doodleRepository.save(any(Doodle.class))).thenReturn(savedDoodle);
 
-        //mock userDoodleRepository
+        // mock userDoodleService
         UserDoodle userDoodle = new UserDoodle();
         userDoodle.setRole(UserDoodleRole.CREATOR);
-        when(userDoodleRepository.save(any(UserDoodle.class))).thenReturn(userDoodle);
+        userDoodle.setUser(user);
+        userDoodle.setDoodle(savedDoodle);
+        when(userDoodleService.createUserDoodle(1L, 1L)).thenReturn(userDoodle);
 
-        //service call
-        DoodleResponseDto responseDto = doodleService.createDoodle(doodleRequestDto, user.getId());
+        // service call
+        DoodleResponseDto responseDto = doodleService.createDoodle(doodleRequestDto);
 
-        //Assertions
+        // Assertions
         assertNotNull(responseDto);
         assertEquals("Test Doodle", responseDto.getName());
 
-        //생성자 역할이 생성되었는지 확인
-        verify(userDoodleRepository, times(1)).save(any(UserDoodle.class));
-        assertEquals(UserDoodleRole.CREATOR, userDoodle.getRole());
+        // userDoodleService가 정확히 호출되었는지 확인
+        verify(userDoodleService, times(1)).createUserDoodle(1L, 1L);
 
-        //doodleRepository가 제대로 저장되었는지 확인
+        // doodleRepository가 제대로 저장되었는지 확인
         verify(doodleRepository, times(1)).save(any(Doodle.class));
     }
 
@@ -209,7 +214,8 @@ public class DoodleServiceTest {
         Doodle doodle = Doodle.builder()
                 .id(1L)
                 .name("Delete Test Doodle")
-                .goalDistance(1.0)
+                .weeklyGoalDistance(1.0)
+                .weeklyGoalCount(1)
                 .goalCadence(2.0)
                 .goalPace(3.0)
                 .goalParticipationCount(10)
@@ -234,7 +240,8 @@ public class DoodleServiceTest {
         Doodle oldDoodle = Doodle.builder()
                 .id(1L)
                 .name("Test Doodle")
-                .goalDistance(1.0)
+                .weeklyGoalDistance(1.0)
+                .weeklyGoalCount(1)
                 .goalCadence(2.0)
                 .goalPace(3.0)
                 .goalParticipationCount(10)
@@ -245,7 +252,8 @@ public class DoodleServiceTest {
 
         DoodleRequestDto updatedDoodleRequestDto = DoodleRequestDto.builder()
                 .name("Updated Test Doodle")
-                .goalDistance(2.0)
+                .weeklyGoalDistance(1.0)
+                .weeklyGoalCount(1)
                 .goalCadence(3.0)
                 .goalPace(4.0)
                 .goalParticipationCount(20)
@@ -266,27 +274,23 @@ public class DoodleServiceTest {
     }
 
     @Test
-    @DisplayName("addParticipantToDoodle : Doodle 참가자 추가에 성공한다.")
-    public void addParticipantToDoodle(){
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-        when(doodleRepository.findById(anyLong())).thenReturn(Optional.of(doodle1));
+    @DisplayName("addParticipantToDoodle : addParticipantToUserDoodle 호출에 성공한다.") //UserDoodleService에서 기능 테스트 필요
+    public void addParticipantToDoodle() {
+        // When: Mockito Mock 설정
+        when(doodleRepository.findById(anyLong())).thenReturn(Optional.of(doodle1)); // doodleRepository Mock 설정
+        when(passwordEncoder.matches(eq("testPassword"), eq(doodle1.getPassword()))).thenReturn(true); // 비밀번호 체크 Mock 설정
 
-        when(passwordEncoder.matches(eq("testPassword"), anyString())).thenReturn(true);
+        // UserDoodleService의 addParticipantsToUserDoodle 호출 Mock 설정
+        doNothing().when(userDoodleService).addParticipantsToUserDoodle(anyLong(), anyLong()); // addParticipantsToUserDoodle 호출이 잘 되도록 설정
 
-        when(userDoodleRepository.save(any(UserDoodle.class))).thenReturn(userDoodle);
-        when(doodleRepository.save(any(Doodle.class))).thenReturn(doodle1);
+        // Service 호출: 참가자 추가
+        DoodleResponseDto doodleResponseDto = doodleService.addParticipantToDoodle(doodle1.getId(), user.getId(), "testPassword");
 
-        DoodleResponseDto doodleResponseDto = doodleService.addParticipantToDoodle(doodle1.getId(), user.getId(), doodleRequestDto);
-
-        assertNotNull(doodleResponseDto);
-        assertEquals("Doodle 1", doodleResponseDto.getName());
-        assertEquals(1, doodleResponseDto.getParticipants().size());
-
-        userDoodleDto = doodleResponseDto.getParticipants().get(0);
-        assertEquals(user.getId(), userDoodleDto.getUserId());
-        assertEquals(user.getName(), userDoodleDto.getUserName());
-        assertEquals(UserDoodleStatus.PARTICIPATING, userDoodleDto.getStatus());
+        // Then: 결과 검증
+        assertNotNull(doodleResponseDto);  // DoodleResponseDto가 null이 아니어야 함
+        verify(userDoodleService, times(1)).addParticipantsToUserDoodle(doodle1.getId(), user.getId());
     }
+
 
     @Test
     @DisplayName("deleteParticipant : Doodle 참가자 삭제에 성공한다.")
