@@ -21,7 +21,10 @@ public class Doodle extends BaseEntity {
     private String name;
 
     @Column(nullable = false)
-    private double goalDistance;
+    private double weeklyGoalDistance;
+
+    @Column(nullable = false)
+    private int weeklyGoalCount;
 
     @Column(nullable = false)
     private double goalCadence;
@@ -40,4 +43,16 @@ public class Doodle extends BaseEntity {
 
     @OneToMany(mappedBy = "doodle", cascade = CascadeType.ALL)
     private List<UserDoodle> participants;
+
+    //방 생성 시 참가자 수를 검증
+    public boolean checkCanAddParticipant(int currentParticipants){
+        return currentParticipants < maxParticipant;
+    }
+
+    //참가자 중복 검증
+    public boolean IsDuplicatedParticipant(Doodle doodle, Long userId){
+        return doodle.getParticipants().stream()
+                .anyMatch(participant -> participant.getUser().getId().equals(userId));
+    }
+
 }
