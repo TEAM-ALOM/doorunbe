@@ -3,6 +3,7 @@ package com.alom.dorundorunbe.domain.runningrecord.controller;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
 import com.alom.dorundorunbe.domain.runningrecord.service.RunningRecordService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/records")
+@Tag(name = "러닝 기록 관리 API")
 public class RunningRecordController {
     private final RunningRecordService runningRecordService;
 
