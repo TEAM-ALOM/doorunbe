@@ -10,8 +10,6 @@ import com.alom.dorundorunbe.domain.achievement.dto.query.AchievementDto;
 import com.alom.dorundorunbe.domain.achievement.dto.query.UserAchievementDto;
 import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
-import com.alom.dorundorunbe.domain.achievement.exception.*;
-import com.alom.dorundorunbe.domain.achievement.exception.common.ErrorMessages;
 import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository;
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
