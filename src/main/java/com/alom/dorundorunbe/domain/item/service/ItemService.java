@@ -44,6 +44,7 @@ public class ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow();
 
         itemRepository.delete(item);
+    }
 
     public Item findItemById(Long id){
         return itemRepository.findById(id)
