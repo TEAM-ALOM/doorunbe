@@ -523,6 +523,36 @@ class AchievementServiceTest {
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
     }
 
+    @Test
+    @DisplayName("업적 생성 - background 값 대소문자 무관 성공")
+    void createAchievement_normalizedBackground_success() {
+        CreateAchievementRequestDto requestDto = new CreateAchievementRequestDto(
+                "Test Achievement",
+                RewardType.TIER,
+                null,
+                null,
+                null,
+                null,
+                Tier.PRO,
+                "GoLd" // 대소문자 혼합
+        );
+
+        Achievement mockAchievement = Achievement.builder()
+                .id(1L)
+                .name("Test Achievement")
+                .rewardType(RewardType.TIER)
+                .background("gold") // 기대하는 소문자 변환 결과
+                .build();
+
+        when(achievementRepository.findByName(requestDto.name())).thenReturn(Optional.empty());
+        when(achievementRepository.save(any(Achievement.class))).thenReturn(mockAchievement); // Mock 반환값 설정
+
+        Long achievementId = achievementService.createAchievement(requestDto);
+
+        verify(achievementRepository).save(argThat(achievement ->
+                "gold".equals(achievement.getBackground()))); // 저장된 값은 소문자로 검증
+        assertThat(achievementId).isEqualTo(mockAchievement.getId());
+    }
 
 
 
