@@ -5,6 +5,7 @@ import com.alom.dorundorunbe.domain.doodle.dto.DoodleRequestDto;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleResponseDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
+import com.alom.dorundorunbe.domain.doodle.service.UserDoodleService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,8 @@ public class DoodleController {
 
     @Autowired
     private DoodleService doodleService;
+    @Autowired
+    private UserDoodleService userDoodleService;
 
     @Autowired
     public DoodleController(DoodleService doodleService){
@@ -96,4 +99,10 @@ public class DoodleController {
         return ResponseEntity.ok(doodleService.updateDoodlePassword(doodleId, userId, newPassword));
     }
 
+    //isGoalAchieved 구현
+    @GetMapping("/{doodleId}/participants/{userId}")
+    @Operation(summary = "특정 Doodle의 User 완료 상태 확인")
+    public ResponseEntity<UserDoodleDto> isGoalAchieved(@PathVariable("doodleId") Long doodleId, @PathVariable("userId") Long userId){
+        return ResponseEntity.ok(userDoodleService.isGoalAchieved(doodleId, userId));
+    }
 }
