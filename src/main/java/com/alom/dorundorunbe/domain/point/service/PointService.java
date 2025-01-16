@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -42,5 +44,12 @@ public class PointService {
         // 사용자 포인트 저장
         UserPoint userPoint = UserPoint.create(user, point);
         userPointRepository.save(userPoint);
+    }
+
+    /**
+     * 사용자의 포인트 조회
+     */
+    public List<UserPoint> getUserPoints(User user) {
+        return userPointRepository.findByUser(user);
     }
 }
