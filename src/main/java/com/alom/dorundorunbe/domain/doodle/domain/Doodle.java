@@ -27,10 +27,13 @@ public class Doodle extends BaseEntity {
     private int weeklyGoalCount;
 
     @Column(nullable = false)
-    private double goalCadence;
+    private double weeklyGoalCadence;
 
     @Column(nullable = false)
-    private double goalPace;
+    private double weeklyGoalPace;
+
+    @Column(nullable = false)
+    private int weeklyGoalHeartRateZone;
 
     @Column(nullable = false)
     private int goalParticipationCount;
@@ -40,6 +43,11 @@ public class Doodle extends BaseEntity {
 
     @Column(nullable = false)
     private int maxParticipant;
+
+    @Column(nullable = false)
+    private boolean isRunning;
+
+    //추가할 것 - 목표로 설정한 위치
 
     @OneToMany(mappedBy = "doodle", cascade = CascadeType.ALL)
     private List<UserDoodle> participants;
@@ -54,5 +62,7 @@ public class Doodle extends BaseEntity {
         return doodle.getParticipants().stream()
                 .anyMatch(participant -> participant.getUser().getId().equals(userId));
     }
+
+
 
 }
