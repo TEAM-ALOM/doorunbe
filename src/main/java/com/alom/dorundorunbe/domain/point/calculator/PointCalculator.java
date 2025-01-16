@@ -1,4 +1,4 @@
-package com.alom.dorundorunbe.domain.point;
+package com.alom.dorundorunbe.domain.point.calculator;
 
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 
