@@ -18,8 +18,10 @@ public class DoodleResponseDto {
     private String name;
     private Double weeklyGoalDistance;
     private int weeklyGoalCount;
-    private Double goalCadence;
-    private Double goalPace;
+    private Double weeklyGoalCadence;
+    private Double weeklyGoalPace;
+    private boolean isRunning;
+    private int weeklyGoalHeartRateZone;
     private Integer goalParticipationCount;
     private Integer maxParticipant;
     private List<UserDoodleDto> participants;
@@ -38,8 +40,10 @@ public class DoodleResponseDto {
                 .name(doodle.getName())
                 .weeklyGoalDistance(doodle.getWeeklyGoalDistance())
                 .weeklyGoalCount(doodle.getWeeklyGoalCount())
-                .goalCadence(doodle.getGoalCadence())
-                .goalPace(doodle.getGoalPace())
+                .weeklyGoalCadence(doodle.getWeeklyGoalCadence())
+                .weeklyGoalPace(doodle.getWeeklyGoalPace())
+                .weeklyGoalHeartRateZone(doodle.getWeeklyGoalHeartRateZone())
+                .isRunning(doodle.isRunning())
                 .goalParticipationCount(doodle.getGoalParticipationCount())
                 .maxParticipant(doodle.getMaxParticipant())
                 .participants(userDoodleDtos) // 참가자 리스트 설정
