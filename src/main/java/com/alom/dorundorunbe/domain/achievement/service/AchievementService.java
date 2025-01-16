@@ -16,6 +16,8 @@ import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
+import com.alom.dorundorunbe.global.exception.BusinessException;
+import com.alom.dorundorunbe.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -37,10 +39,10 @@ public class AchievementService {
     public Long createAchievement(CreateAchievementRequestDto requestDto) {
         // 이름 중복 확인
         achievementRepository.findByName(requestDto.name()).ifPresent(existing -> {
-            throw new AchievementAlreadyExistsException(
-                    "already exist");
+            throw new BusinessException(ErrorCode.ACHIEVEMENT_ALREADY_EXISTS);
         });
 
+        String normalizedBackground = makeStringToLowerCase(requestDto.background());
         Achievement achievement = Achievement.builder()
                 .name(requestDto.name())
                 .rewardType(requestDto.rewardType())
@@ -49,7 +51,7 @@ public class AchievementService {
                 .week(requestDto.week())
                 .cash(requestDto.cash())
                 .tier(requestDto.tier())
-                .background(requestDto.background())
+                .background(normalizedBackground)
                 .build();
 
         return achievementRepository.save(achievement).getId();
@@ -58,15 +60,14 @@ public class AchievementService {
     @Transactional
     public void updateAchievement(Long id, UpdateAchievementRequestDto requestDto) {
         Achievement achievement = achievementRepository.findById(id)
-                .orElseThrow(() -> new AchievementNotFoundException(
-                        String.format(ErrorMessages.ACHIEVEMENT_NOT_FOUND, id)));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ACHIEVEMENT_NOT_FOUND));
 
         if (requestDto.name() != null && !requestDto.name().isEmpty()) {
             achievement.updateName(requestDto.name());
         }
 
         if (requestDto.rewardType() != null && requestDto.rewardType() != achievement.getRewardType()) {
-            throw new IllegalArgumentException("Reward type cannot be changed. Ensure correct input.");
+            throw new BusinessException(ErrorCode.INVALID_SEARCH_CRITERIA, "Reward type cannot be changed.");
         }
 
         if (requestDto.rewardType() != null) {
@@ -78,13 +79,14 @@ public class AchievementService {
                 }
             }
             else if(requestDto.rewardType() == RewardType.TIER){
+                String normalizedBackground = makeStringToLowerCase(requestDto.background());
                 if (requestDto.background() != null && !requestDto.background().isEmpty()) {
-                    achievement.updateBackground(requestDto.background());
+                    achievement.updateBackground(normalizedBackground);
                 }
 
             }
             else{
-                throw new IllegalArgumentException("Invalid Reward");
+                throw new BusinessException(ErrorCode.INVALID_SEARCH_CRITERIA, "Invalid RewardType.");
             }
         }
     }
@@ -100,19 +102,18 @@ public class AchievementService {
     @Transactional
     public Long checkAndAssignAchievement(AssignAchievementRequestDto requestDto) {
         User user = userRepository.findById(requestDto.userId()).orElseThrow(() ->
-                new UserNotFoundException(String.format(ErrorMessages.USER_NOT_FOUND, requestDto.userId())));
+                new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
         Achievement achievement = achievementRepository.findById(requestDto.achievementId())
-                .orElseThrow(() -> new AchievementNotFoundException(
-                        String.format(ErrorMessages.ACHIEVEMENT_NOT_FOUND, requestDto.achievementId())));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ACHIEVEMENT_NOT_FOUND));
 
         // 이미 업적이 할당된 경우 예외 발생
         if (userAchievementRepository.existsByUserIdAndAchievementId(user.getId(), achievement.getId())) {
-            throw new UserAchievementAlreadyClaimedException(ErrorMessages.USER_ACHIEVEMENT_ALREADY_CLAIMED);
+            throw new BusinessException(ErrorCode.USER_ACHIEVEMENT_ALREADY_CLAIMED);
         }
         // 조건 평가
         if (!evaluateCondition(user, achievement)) {
-            throw new AchievementConditionNotMetException(ErrorMessages.ACHIEVEMENT_CONDITION_NOT_MET);
+            throw new BusinessException(ErrorCode.ACHIEVEMENT_CONDITION_NOT_MET);
         }
 
         // 업적 할당
@@ -124,11 +125,10 @@ public class AchievementService {
     public Long claimReward(RewardAchievementRequestDto requestDto) {
         UserAchievement userAchievement = userAchievementRepository.findByUserIdAndAchievementId(
                         requestDto.userId(), requestDto.achievementId())
-                .orElseThrow(() -> new UserAchievementNotFoundException(
-                        "해당 사용자 업적을 찾을 수 없습니다"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_ACHIEVEMENT_NOT_FOUND));
 
         if (userAchievement.isRewardClaimed()) {
-            throw new RewardAlreadyClaimedException(ErrorMessages.REWARD_ALREADY_CLAIMED);
+            throw new BusinessException(ErrorCode.REWARD_ALREADY_CLAIMED);
         }
 
         Achievement achievement = userAchievement.getAchievement();
@@ -143,13 +143,13 @@ public class AchievementService {
 
     public Achievement findOneAchievement(Long achievementId){
         return achievementRepository.findById(achievementId).orElseThrow(
-                ()->new AchievementNotFoundException(String.format(ErrorMessages.ACHIEVEMENT_NOT_FOUND, achievementId))
+                () -> new BusinessException(ErrorCode.ACHIEVEMENT_NOT_FOUND)
         );
     }
     //단순 조회용
     public UserAchievement findOneUserAchievement(Long userAchievementId){
         return userAchievementRepository.findById(userAchievementId).orElseThrow(
-                ()->new UserAchievementNotFoundException(String.format(ErrorMessages.USER_ACHIEVEMENT_NOT_FOUND, userAchievementId))//문제
+                () -> new BusinessException(ErrorCode.USER_ACHIEVEMENT_NOT_FOUND)
         );
     }
 
@@ -195,7 +195,7 @@ public class AchievementService {
             user.updateBackground(achievement.getBackground());
         }
         else{
-            throw new IllegalArgumentException("Invalid RewardType");
+            throw new BusinessException(ErrorCode.INVALID_SEARCH_CRITERIA, "Invalid RewardType.");
         }
     }
 
@@ -208,6 +208,14 @@ public class AchievementService {
 
         return userAchievementRepository.save(userAchievement);
     }
+
+    //추가
+    private String makeStringToLowerCase(String bg) {
+        return bg != null
+                ? bg.toLowerCase()
+                : null;
+    }
+    //
 
 
 
