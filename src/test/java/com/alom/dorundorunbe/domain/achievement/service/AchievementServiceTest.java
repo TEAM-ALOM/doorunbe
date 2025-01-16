@@ -1,5 +1,4 @@
 package com.alom.dorundorunbe.domain.achievement.service;
-import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.achievement.domain.Achievement;
 import com.alom.dorundorunbe.domain.achievement.domain.RewardType;
 import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
@@ -10,9 +9,12 @@ import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequ
 import com.alom.dorundorunbe.domain.achievement.exception.*;
 import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository;
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
+import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.global.enums.Tier;
+import com.alom.dorundorunbe.global.exception.BusinessException;
+import com.alom.dorundorunbe.global.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -110,8 +112,9 @@ class AchievementServiceTest {
         when(achievementRepository.findByName(requestDto.name())).thenReturn(Optional.of(sampleAchievement));
 
 
-        assertThatThrownBy(()->achievementService.createAchievement(requestDto))
-                .isInstanceOf(AchievementAlreadyExistsException.class);
+        assertThatThrownBy(() -> achievementService.createAchievement(requestDto))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ACHIEVEMENT_ALREADY_EXISTS);
 
         verify(achievementRepository, never()).save(any(Achievement.class));
     }
@@ -168,7 +171,8 @@ class AchievementServiceTest {
         when(achievementRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> achievementService.updateAchievement(1L, requestDto))
-                .isInstanceOf(AchievementNotFoundException.class);
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ACHIEVEMENT_NOT_FOUND);
     }
 
     @Test
@@ -178,8 +182,10 @@ class AchievementServiceTest {
 
         when(achievementRepository.findById(1L)).thenReturn(Optional.of(sampleAchievement));
 
+        // when, then
         assertThatThrownBy(() -> achievementService.updateAchievement(1L, requestDto))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_SEARCH_CRITERIA);
     }
 
     @Test
@@ -240,9 +246,9 @@ class AchievementServiceTest {
     void findOneAchievement_fail_notFound() {
         when(achievementRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(AchievementNotFoundException.class, () -> {
-            achievementService.findOneAchievement(1L);
-        });
+        assertThatThrownBy(() -> achievementService.findOneAchievement(1L))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ACHIEVEMENT_NOT_FOUND);
     }
 
     @Test
@@ -330,9 +336,9 @@ class AchievementServiceTest {
         when(userAchievementRepository.existsByUserIdAndAchievementId(1L, 1L))
                 .thenReturn(true);
 
-        assertThrows(UserAchievementAlreadyClaimedException.class, () -> {
-            achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 1L));
-        });
+        assertThatThrownBy(() -> achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 1L)))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.USER_ACHIEVEMENT_ALREADY_CLAIMED);
 
 
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
@@ -356,9 +362,9 @@ class AchievementServiceTest {
                 .thenReturn(Optional.of(sampleUser)); //user 의 Tier = BEGINNER
 
 
-        assertThrows(AchievementConditionNotMetException.class, () -> {
-            achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 2L));
-        });
+        assertThatThrownBy(() -> achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 2L)))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ACHIEVEMENT_CONDITION_NOT_MET);
 
 
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
@@ -376,9 +382,9 @@ class AchievementServiceTest {
         when(userAchievementRepository.findByUserIdAndAchievementId(1L, 1L))
                 .thenReturn(Optional.of(userAchievement));
 
-        assertThrows(RewardAlreadyClaimedException.class, () -> {
-            achievementService.claimReward(new RewardAchievementRequestDto(1L, 1L));
-        });
+        assertThatThrownBy(() -> achievementService.claimReward(new RewardAchievementRequestDto(1L, 1L)))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.REWARD_ALREADY_CLAIMED);
     }
 
     @Test
@@ -387,9 +393,9 @@ class AchievementServiceTest {
         when(userAchievementRepository.findByUserIdAndAchievementId(1L, 1L))
                 .thenReturn(Optional.empty());
 
-        assertThrows(UserAchievementNotFoundException.class, () -> {
-            achievementService.claimReward(new RewardAchievementRequestDto(1L, 1L));
-        });
+        assertThatThrownBy(() -> achievementService.claimReward(new RewardAchievementRequestDto(1L, 1L)))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.USER_ACHIEVEMENT_NOT_FOUND);
     }
 
     @Test
@@ -411,9 +417,9 @@ class AchievementServiceTest {
                 .thenReturn(false);
 
 
-        assertThrows(AchievementConditionNotMetException.class, () -> {
-            achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 1L));
-        });
+        assertThatThrownBy(() -> achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 1L)))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ACHIEVEMENT_CONDITION_NOT_MET);
 
 
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
@@ -483,9 +489,9 @@ class AchievementServiceTest {
         when(userAchievementRepository.existsByUserIdAndAchievementId(1L, 3L))
                 .thenReturn(false);
 
-        assertThrows(AchievementConditionNotMetException.class, () -> {
-            achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 3L));
-        });
+        assertThatThrownBy(() -> achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 3L)))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ACHIEVEMENT_CONDITION_NOT_MET);
 
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
     }
@@ -510,9 +516,9 @@ class AchievementServiceTest {
         when(runningRecordRepository.countRecordsByUserIdAndDateRange(eq(1L), any(), any()))
                 .thenReturn(3L); //3회 → 조건 미충족
 
-        assertThrows(AchievementConditionNotMetException.class, () -> {
-            achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 4L));
-        });
+        assertThatThrownBy(() -> achievementService.checkAndAssignAchievement(new AssignAchievementRequestDto(1L, 4L)))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.ACHIEVEMENT_CONDITION_NOT_MET);
 
         verify(userAchievementRepository, never()).save(any(UserAchievement.class));
     }
