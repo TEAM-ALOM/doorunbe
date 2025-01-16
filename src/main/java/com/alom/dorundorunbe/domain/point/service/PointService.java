@@ -52,4 +52,11 @@ public class PointService {
     public List<UserPoint> getUserPoints(User user) {
         return userPointRepository.findByUser(user);
     }
+
+    /**
+     * 사용자의 상위 3개 랭킹 포인트 조회
+     */
+    public List<UserPoint> getTop3RankingRecords(User user) {
+        return userPointRepository.findTop3ByUserOrderByPoint_RankingPointDesc(user);
+    }
 }
