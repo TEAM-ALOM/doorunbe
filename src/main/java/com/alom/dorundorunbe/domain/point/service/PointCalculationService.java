@@ -26,4 +26,16 @@ public class PointCalculationService {
                 .findFirst()
                 .orElse(0.0);
     }
+
+    /**
+     * 개별 포인트 계산 (DoodleRun)
+     */
+    public double calculateDoodlePoints(RunningRecord record) {
+        return calculators.stream()
+                .filter(calculator -> calculator instanceof com.alom.dorundorunbe.domain.point.calculator.DoodleRunCalculator)
+                .filter(calculator -> calculator.supports(record))
+                .mapToDouble(calculator -> calculator.calculatePoints(record))
+                .findFirst()
+                .orElse(0.0);
+    }
 }
