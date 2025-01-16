@@ -39,10 +39,10 @@ public class RunningRecordService {
 
     @Transactional
     public void setEquippedItems(RunningRecord runningRecord){
-        List<EquippedItemResponseDto> equippedItems = itemService.findEquippedItem(runningRecord.getUser().getId());
+        List<EquippedItemResponseDto> equippedItems = itemService.findEquippedItemList(runningRecord.getUser().getId());
         List<RunningRecordItem> runningRecordItems = new ArrayList<>();
         equippedItems.forEach(itemDto -> {
-            Item item = itemService.findItemById(itemDto.itemId());
+            Item item = itemService.findItemById(itemDto.id());
             RunningRecordItem runningRecordItem = RunningRecordItem.builder()
                     .item(item)
                     .runningRecord(runningRecord)

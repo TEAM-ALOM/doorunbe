@@ -71,7 +71,7 @@ public class RunningRecordMapperTest {
         assertThat(responseDto.getEndTime()).isEqualTo("2024-10-30T08:33:58Z");
         assertThat(responseDto.getItems()).hasSize(1);
         EquippedItemResponseDto itemDto = responseDto.getItems().get(0);
-        assertThat(itemDto.itemId()).isEqualTo(1L);
+        assertThat(itemDto.id()).isEqualTo(1L);
         assertThat(itemDto.name()).isEqualTo("Item1");
         assertThat(itemDto.itemCategory()).isEqualTo(ItemCategory.ACCESSORY);
         assertThat(responseDto.getGpsCoordinates()).hasSize(1);
