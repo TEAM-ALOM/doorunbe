@@ -1,6 +1,4 @@
 package com.alom.dorundorunbe.domain.point.calculator;
-
-import com.alom.dorundorunbe.domain.point.calculator.PointCalculator;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import org.springframework.stereotype.Component;
 
