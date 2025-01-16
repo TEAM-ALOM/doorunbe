@@ -77,13 +77,7 @@ public class ItemService {
 
         userItem.updateEquipped(true);
 
-        return userItemRepository.findAllByUserAndEquipped(user, true).stream()
-                .map(equippedUserItem -> EquippedItemResponseDto.of(
-                        equippedUserItem.getItem().getId(),
-                        equippedUserItem.getItem().getName(),
-                        equippedUserItem.getItem().getItemCategory()
-                ))
-                .toList();
+        return findEquippedItemList(user);
     }
 
     public List<EquippedItemResponseDto> unequippedItem(Long itemId, Long userId) {
@@ -100,18 +94,15 @@ public class ItemService {
 
         userItem.updateEquipped(false);
 
-        return userItemRepository.findAllByUserAndEquipped(user, true).stream()
-                .map(equippedUserItem -> EquippedItemResponseDto.of(
-                        equippedUserItem.getItem().getId(),
-                        equippedUserItem.getItem().getName(),
-                        equippedUserItem.getItem().getItemCategory()
-                ))
-                .toList();
+        return findEquippedItemList(user);
     }
 
-    public List<EquippedItemResponseDto> findEquippedItem(Long userId) {
+    public List<EquippedItemResponseDto> findEquippedItemList(Long userId) {
         User user = userService.findById(userId);
+        return findEquippedItemList(user);
+    }
 
+    private List<EquippedItemResponseDto> findEquippedItemList(User user) {
         return userItemRepository.findAllByUserAndEquipped(user, true).stream()
                 .map(equippedUserItem -> EquippedItemResponseDto.of(
                         equippedUserItem.getItem().getId(),
