@@ -9,6 +9,13 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
   // 챌린지
   NO_SUCH_CHALLENGE(HttpStatus.NOT_FOUND, "존재하지 않는 챌린지입니다."),
+  // 업적
+  ACHIEVEMENT_ALREADY_EXISTS(HttpStatus.CONFLICT, "이미 존재하는 업적입니다."),
+  ACHIEVEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "업적을 찾을 수 없습니다."),
+  ACHIEVEMENT_CONDITION_NOT_MET(HttpStatus.BAD_REQUEST, "해당 업적 조건이 충족되지 않았습니다."),
+  USER_ACHIEVEMENT_ALREADY_CLAIMED(HttpStatus.CONFLICT, "이미 해당 업적을 받았습니다."),
+  USER_ACHIEVEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자 업적을 찾을 수 없습니다."),
+  REWARD_ALREADY_CLAIMED(HttpStatus.CONFLICT, "이미 보상을 수령한 업적입니다."),
   // 알려지지 않은 문제
   UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "알려지지 않은 문제가 발생하였습니다."),
   // 입력 값 오류
