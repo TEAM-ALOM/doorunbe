@@ -72,7 +72,7 @@ public class ItemController {
 
     @GetMapping("/equipped")
     @Operation(summary = "착용한 아이템 목록 조회", description = "착용한 아이템 목록을 반환합니다")
-    public ResponseEntity<List<EquippedItemResponseDto>> fetchEquippedItem(@RequestParam("userId") Long userId) {
-        return ResponseEntity.ok(itemService.findEquippedItem(userId));
+    public ResponseEntity<List<EquippedItemResponseDto>> fetchEquippedItemList(@RequestParam("userId") Long userId) {
+        return ResponseEntity.ok(itemService.findEquippedItemList(userId));
     }
 }

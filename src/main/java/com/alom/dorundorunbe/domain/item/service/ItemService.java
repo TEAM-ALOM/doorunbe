@@ -44,6 +44,11 @@ public class ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow();
 
         itemRepository.delete(item);
+
+    public Item findItemById(Long id){
+        return itemRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("아이템을 찾을 수 없습니다."));
+
     }
 
     public List<ItemResponseDto> findItemByCategory(ItemCategory itemCategory, Long userId) {
@@ -95,13 +100,7 @@ public class ItemService {
 
         userItem.updateEquipped(true);
 
-        return userItemRepository.findAllByUserAndEquipped(user, true).stream()
-                .map(equippedUserItem -> EquippedItemResponseDto.of(
-                        equippedUserItem.getItem().getId(),
-                        equippedUserItem.getItem().getName(),
-                        equippedUserItem.getItem().getItemCategory()
-                ))
-                .toList();
+        return findEquippedItemList(user);
     }
 
     public List<EquippedItemResponseDto> unequippedItem(Long itemId, Long userId) {
@@ -118,18 +117,15 @@ public class ItemService {
 
         userItem.updateEquipped(false);
 
-        return userItemRepository.findAllByUserAndEquipped(user, true).stream()
-                .map(equippedUserItem -> EquippedItemResponseDto.of(
-                        equippedUserItem.getItem().getId(),
-                        equippedUserItem.getItem().getName(),
-                        equippedUserItem.getItem().getItemCategory()
-                ))
-                .toList();
+        return findEquippedItemList(user);
     }
 
-    public List<EquippedItemResponseDto> findEquippedItem(Long userId) {
+    public List<EquippedItemResponseDto> findEquippedItemList(Long userId) {
         User user = userService.findById(userId);
+        return findEquippedItemList(user);
+    }
 
+    private List<EquippedItemResponseDto> findEquippedItemList(User user) {
         return userItemRepository.findAllByUserAndEquipped(user, true).stream()
                 .map(equippedUserItem -> EquippedItemResponseDto.of(
                         equippedUserItem.getItem().getId(),

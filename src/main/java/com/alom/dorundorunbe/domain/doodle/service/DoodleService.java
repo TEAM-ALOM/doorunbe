@@ -119,6 +119,7 @@ public class DoodleService {
         return DoodleResponseDto.from(doodle);
     }
 
+
     public DoodleResponseDto deleteParticipant(Long doodleId, Long userId){
         Doodle doodle = doodleRepository.findById(doodleId)
                 .orElseThrow(()->new RuntimeException("NOT FOUND"));
