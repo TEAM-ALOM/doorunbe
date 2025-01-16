@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/achievement")
-public class AchievementController {
+public class AchievementController implements AchievementControllerDocs{
     private final AchievementService achievementService;
 
     /**
