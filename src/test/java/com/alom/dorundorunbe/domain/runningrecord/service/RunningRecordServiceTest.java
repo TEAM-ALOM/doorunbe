@@ -108,14 +108,14 @@ public class RunningRecordServiceTest {
         EquippedItemResponseDto itemDto = new EquippedItemResponseDto(1L, "Item1", ItemCategory.ACCESSORY);
         Item item = new Item();
 
-        when(itemService.findEquippedItem(1L)).thenReturn(List.of(itemDto));
+        when(itemService.findEquippedItemList(1L)).thenReturn(List.of(itemDto));
         when(itemService.findItemById(1L)).thenReturn(item);
 
         // when
         runningRecordService.setEquippedItems(runningRecord);
 
         // then
-        verify(itemService).findEquippedItem(1L);
+        verify(itemService).findEquippedItemList(1L);
         verify(itemService).findItemById(1L);
         verify(runningRecordItemRepository).saveAll(anyList());
     }
@@ -164,7 +164,7 @@ public class RunningRecordServiceTest {
         assertEquals(1,result.getTotalElements());
         assertEquals(responseDto, result.getContent().get(0));
         assertEquals(1, result.getContent().get(0).getItems().size());
-        assertEquals(1L, result.getContent().get(0).getItems().get(0).itemId());
+        assertEquals(1L, result.getContent().get(0).getItems().get(0).id());
     }
 
     @Test
@@ -186,7 +186,7 @@ public class RunningRecordServiceTest {
         verify(runningRecordRepository).findById(id);
         assertEquals(result, responseDto);
         assertEquals(1, result.getItems().size());
-        assertEquals(1L, result.getItems().get(0).itemId());
+        assertEquals(1L, result.getItems().get(0).id());
     }
 
     @Test
