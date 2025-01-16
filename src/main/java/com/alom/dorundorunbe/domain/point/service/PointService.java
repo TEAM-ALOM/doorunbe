@@ -59,4 +59,12 @@ public class PointService {
     public List<UserPoint> getTop3RankingRecords(User user) {
         return userPointRepository.findTop3ByUserOrderByPoint_RankingPointDesc(user);
     }
+
+    /**
+     * 사용자의 포인트 삭제
+     */
+    @Transactional
+    public void deleteUserPoints(User user) {
+        userPointRepository.deleteByUser(user);
+    }
 }
