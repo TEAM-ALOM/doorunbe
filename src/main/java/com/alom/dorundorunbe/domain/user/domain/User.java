@@ -56,6 +56,31 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private double lp;
 
+    @Column(nullable = false)
+    private Long point;
+    private boolean participatingInDoodleRun;  // 두들런 참여 여부
+    private boolean participatingInRankingRun; // 랭킹런 참여 여부
+
+    public void addPoint(Long point){
+        this.point += point;
+    }
+
+    public void joinDoodleRun() {
+        this.participatingInDoodleRun = true;
+    }
+
+    public void leaveDoodleRun() {
+        this.participatingInDoodleRun = false;
+    }
+
+    public void joinRankingRun() {
+        this.participatingInRankingRun = true;
+    }
+
+    public void leaveRankingRun() {
+        this.participatingInRankingRun = false;
+    }
+
     public void updateCash(Long cash) {
         this.cash = cash;
     }
