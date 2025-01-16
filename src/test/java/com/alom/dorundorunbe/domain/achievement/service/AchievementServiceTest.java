@@ -6,7 +6,6 @@ import com.alom.dorundorunbe.domain.achievement.dto.assign.AssignAchievementRequ
 import com.alom.dorundorunbe.domain.achievement.dto.create.CreateAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.reward.RewardAchievementRequestDto;
 import com.alom.dorundorunbe.domain.achievement.dto.update.UpdateAchievementRequestDto;
-import com.alom.dorundorunbe.domain.achievement.exception.*;
 import com.alom.dorundorunbe.domain.achievement.repository.AchievementRepository;
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
 import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
