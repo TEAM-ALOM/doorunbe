@@ -217,7 +217,7 @@ public class DoodleServiceTest {
                 .weeklyGoalDistance(1.0)
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(2.0)
-                .goalPace(3.0)
+                .weeklyGoalPace(3.0)
                 .goalParticipationCount(10)
                 .password("testPassword")
                 .maxParticipant(10)
