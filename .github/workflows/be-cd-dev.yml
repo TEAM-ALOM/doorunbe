@@ -27,6 +27,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'corretto'
+          
+      - name: Grant execute permission for Gradlew
+        run: chmod +x ./gradlew
 
       - name: Build JAR
         run: ./gradlew bootjar
