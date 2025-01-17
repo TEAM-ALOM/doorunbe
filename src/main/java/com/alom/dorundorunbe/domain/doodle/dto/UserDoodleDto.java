@@ -19,6 +19,10 @@ public class UserDoodleDto {
     private UserDoodleRole role;
 
     public static UserDoodleDto from(UserDoodle userDoodle) {
+        if (userDoodle == null) {
+            throw new IllegalArgumentException("UserDoodle cannot be null");
+        }
+
         //userDoodle을 userDoodleDto로 변환
         return UserDoodleDto.builder()
                 .userId(userDoodle.getUser().getId())
