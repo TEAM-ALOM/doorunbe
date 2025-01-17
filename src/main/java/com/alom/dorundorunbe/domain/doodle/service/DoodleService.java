@@ -126,6 +126,7 @@ public class DoodleService {
         UserDoodle userDoodle = userDoodleRepository.findByDoodleAndUser(doodle, user).
                 orElseThrow(() -> new RuntimeException("유저가 해당 Doodle에 존재하지 않습니다."));
 
+
         userDoodleRepository.delete(userDoodle);
         doodle.getParticipants().remove(userDoodle);
         doodleRepository.save(doodle);

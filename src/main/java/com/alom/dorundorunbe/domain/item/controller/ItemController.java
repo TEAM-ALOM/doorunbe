@@ -2,6 +2,7 @@ package com.alom.dorundorunbe.domain.item.controller;
 
 import com.alom.dorundorunbe.domain.item.domain.ItemCategory;
 import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
+import com.alom.dorundorunbe.domain.item.dto.ItemRequestDto;
 import com.alom.dorundorunbe.domain.item.dto.ItemResponseDto;
 import com.alom.dorundorunbe.domain.item.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +18,28 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
+
+    @PostMapping("/")
+    @Operation(summary = "아이템 생성", description = "아이템을 생성합니다")
+    public ResponseEntity<Void> createItem(@RequestBody ItemRequestDto dto) {
+        itemService.createItem(dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{itemId}")
+    @Operation(summary = "아이템 수정", description = "아이템을 수정합니다")
+    public ResponseEntity<Void> updateItem(@PathVariable("itemId") Long itemId,
+                                           @RequestBody ItemRequestDto dto) {
+        itemService.updateItem(itemId, dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{itemId}")
+    @Operation(summary = "아이템 삭제", description = "아이템을 삭제합니다")
+    public ResponseEntity<Void> deleteItem(@PathVariable("itemId") Long itemId) {
+        itemService.deleteItem(itemId);
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping("/{itemCategory}")
     @Operation(summary = "아이템 목록 조회", description = "카테고리별로 아이템 목록을 반환합니다(소유한 아이템 우선 정렬)")

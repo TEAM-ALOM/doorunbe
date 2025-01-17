@@ -4,6 +4,7 @@ import com.alom.dorundorunbe.domain.item.domain.Item;
 import com.alom.dorundorunbe.domain.item.domain.ItemCategory;
 import com.alom.dorundorunbe.domain.item.domain.UserItem;
 import com.alom.dorundorunbe.domain.item.dto.EquippedItemResponseDto;
+import com.alom.dorundorunbe.domain.item.dto.ItemRequestDto;
 import com.alom.dorundorunbe.domain.item.dto.ItemResponseDto;
 import com.alom.dorundorunbe.domain.item.repository.ItemRepository;
 import com.alom.dorundorunbe.domain.item.repository.UserItemRepository;
@@ -23,9 +24,32 @@ public class ItemService {
     private final UserItemRepository userItemRepository;
     private final UserService userService;
 
+    public void createItem(ItemRequestDto dto) {
+        Item item = Item.builder()
+                .name(dto.name())
+                .itemCategory(dto.itemCategory())
+                .cost(dto.cost())
+                .build();
+
+        itemRepository.save(item);
+    }
+
+    public void updateItem(Long itemId, ItemRequestDto dto) {
+        Item item = itemRepository.findById(itemId).orElseThrow();
+
+        item.update(dto.name(), dto.itemCategory(), dto.cost());
+    }
+
+    public void deleteItem(Long itemId) {
+        Item item = itemRepository.findById(itemId).orElseThrow();
+
+        itemRepository.delete(item);
+    }
+
     public Item findItemById(Long id){
         return itemRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("아이템을 찾을 수 없습니다."));
+
     }
 
     public List<ItemResponseDto> findItemByCategory(ItemCategory itemCategory, Long userId) {

@@ -1,4 +1,4 @@
-name: BE CD for Dev
+name: BE CD for Dev 
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - dev
 
 jobs:
-  build-and-test:
+  deploy:
     runs-on: ubuntu-latest
     env:
       MYSQL_DB_URL: ${{ secrets.MYSQL_DB_URL }} 
@@ -27,18 +27,20 @@ jobs:
         with:
           java-version: '17'
           distribution: 'corretto'
+          
+      - name: Grant execute permission for Gradlew
+        run: chmod +x ./gradlew
 
-      - name: Update application.yml
+      - name: Build JAR
+        run: ./gradlew bootjar
+
+      - name: Build Docker Image
         run: |
-          echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.yml
+          docker build -t dorun-app:latest .
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-write-only: true
-
-      - name: Grant Execute Permission For Gradlew
-        run: chmod +x gradlew
+      - name: Save Docker Image as TAR
+        run: |
+          docker save dorun-app:latest > dorun-app.tar
 
       - name: Set up SSH key
         run: |
@@ -50,12 +52,26 @@ jobs:
         run: |
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Set up SSH tunnel to RDS
+      - name: Upload Docker Image to EC2
         run: |
-          ssh -i ~/.ssh/id_rsa -L 3306:${{ secrets.RDS_ENDPOINT }}:3306 -f -N ubuntu@${{ secrets.EC2_HOST }} || exit 1
+          scp -i ~/.ssh/id_rsa dorun-app.tar ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
 
-      - name: Build With Gradle
-        run: ./gradlew bootjar
+      - name: Set up SSH Tunneling to RDS
+        run: |
+          ssh -i ~/.ssh/id_rsa -f -N -L 3306:${{ secrets.RDS_ENDPOINT }}:3306 ubuntu@${{ secrets.EC2_HOST }}
 
-      - name: Run Application
-        run: java -jar build/libs/dorundorun-Be-0.0.1-SNAPSHOT.jar
+      - name: Run Docker Container on EC2
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << EOF
+          docker load < /home/ubuntu/dorun-app.tar
+          docker stop dorun-app || true
+          docker rm dorun-app || true
+          docker run -d --name dorun-app -p 8080:8080 \
+            -e SPRING_PROFILES_ACTIVE=dev \
+            -e MYSQL_DB_URL=127.0.0.1 \
+            -e MYSQL_DB_PORT=3306 \
+            -e MYSQL_DB_NAME=${{ secrets.MYSQL_DB_NAME }} \
+            -e MYSQL_DB_USERNAME=${{ secrets.MYSQL_DB_USERNAME }} \
+            -e MYSQL_DB_PASSWORD=${{ secrets.MYSQL_DB_PASSWORD }} \
+            dorun-app:latest
+          EOF

@@ -27,4 +27,10 @@ public class Item extends BaseEntity {
 
     @Column(nullable = false)
     private Long cost;
+
+    public void update(String name, ItemCategory itemCategory, Long cost) {
+        this.name = name;
+        this.itemCategory = itemCategory;
+        this.cost = cost;
+    }
 }
