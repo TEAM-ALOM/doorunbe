@@ -12,14 +12,14 @@ public class SwaggerConfig {
   @Bean
   public OpenAPI openAPI() {
     return new OpenAPI()
-        .components(new Components())
-        .info(apiInfo());
+            .components(new Components())
+            .info(apiInfo());
   }
 
   private Info apiInfo() {
     return new Info()
-        .title("두런두런 백엔드 API")
-        .description("두런두런과 함께 비대면 러닝을 시작해보세요")
-        .version("1.0.0");
+            .title("두런두런 백엔드 API")
+            .description("두런두런과 함께 비대면 러닝을 시작해보세요")
+            .version("1.0.0");
   }
 }
