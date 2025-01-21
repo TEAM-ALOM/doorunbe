@@ -5,19 +5,15 @@ on:
     branches:
       - dev
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    env:
-      MYSQL_DB_URL: ${{ secrets.MYSQL_DB_URL }} 
-      MYSQL_DB_PORT: ${{ secrets.MYSQL_DB_PORT }}
-      MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
-      MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME }}
-      MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
-      EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}   
-      EC2_HOST: ${{ secrets.EC2_HOST }}  
-      RDS_ENDPOINT: ${{ secrets.RDS_ENDPOINT }} 
+permissions:
+  contents: read
 
+jobs:
+  build-and-docker-operations:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.generate_tag.outputs.tag }}
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,6 +32,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-write-only: true
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
           
       - name: Grant execute permission for Gradlew
         run: chmod +x ./gradlew
@@ -43,13 +42,21 @@ jobs:
       - name: Build JAR
         run: ./gradlew bootjar
 
-      - name: Build Docker Image
-        run: |
-          docker build -t dorun-app:latest .
+      - name: Generate Unique Tag
+        id: generate_tag
+        run: echo "::set-output name=tag::$(echo $GITHUB_SHA | cut -c1-7)"
 
-      - name: Save Docker Image as TAR
-        run: |
-          docker save dorun-app:latest > dorun-app.tar
+      - name: Build image
+        run: docker build -f docker/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:${{ steps.generate_tag.outputs.tag }} .
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
+      - name: Push image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:${{ steps.generate_tag.outputs.tag }}
 
       - name: Set up SSH key
         run: |
@@ -60,10 +67,6 @@ jobs:
       - name: Add EC2 to known hosts
         run: |
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-
-      - name: Upload Docker Image to EC2
-        run: |
-          scp -i ~/.ssh/id_rsa dorun-app.tar ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
 
       - name: Set up SSH Tunneling to RDS
         run: |
@@ -84,3 +87,12 @@ jobs:
             -e MYSQL_DB_PASSWORD=${{ secrets.MYSQL_DB_PASSWORD }} \
             dorun-app:latest
           EOF
+    
+  deploy-to-aws:
+    needs: build-and-docker-operations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      
