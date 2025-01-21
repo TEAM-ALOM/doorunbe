@@ -77,41 +77,41 @@ public class UserDoodleService {
         return userDoodle;
     }
 
-    public boolean checkWeeklyTotalDistance(Doodle doodle, List<RunningRecord> runningRecords) {
+    public double getWeeklyTotalDistance(List<RunningRecord> runningRecords) {
         //주간 목표 거리 달성 여부
         double weeklyTotalDistance = runningRecords.stream()
                 .mapToDouble(RunningRecord::getDistance)
                 .sum();
-        return (weeklyTotalDistance >= doodle.getWeeklyGoalDistance());
+        return weeklyTotalDistance;
     }
 
-    public boolean checkWeeklyGoalCount(Doodle doodle, List<RunningRecord> runningRecords) {
-        return (runningRecords.size() >= doodle.getWeeklyGoalCount());
+    public int getWeeklyGoalCount(List<RunningRecord> runningRecords) {
+        return (runningRecords.size());
     }
 
-    public boolean checkWeeklyAveragePace(Doodle doodle, List<RunningRecord> runningRecords) {
+    public double getWeeklyAveragePace(List<RunningRecord> runningRecords) {
         double averagePace = runningRecords.stream()
                 .mapToDouble(RunningRecord::getPace)
                 .average()
                 .orElse(0.0);
-        return (averagePace >= doodle.getWeeklyGoalPace());
+        return averagePace;
     }
 
-    public boolean checkWeeklyAverageCadence(Doodle doodle, List<RunningRecord> runningRecords) {
+    public double getWeeklyAverageCadence(List<RunningRecord> runningRecords) {
         double averageCadence = runningRecords.stream()
                 .mapToDouble(RunningRecord::getCadence)
                 .average()
                 .orElse(0.0);
-        return (averageCadence >= doodle.getWeeklyGoalCadence());
+        return averageCadence;
     }
 
-    public boolean checkWeeklyAverageHeartRate(Doodle doodle, List<RunningRecord> runningRecords) {
+    public double getWeeklyAverageHeartRate(List<RunningRecord> runningRecords) {
         double averageHeartRate = runningRecords.stream()
                 .mapToDouble(RunningRecord::getHeartRate)
                 .average()
                 .orElse(0.0);
         //runningRecord에서 받아온 heartRate를 heartRateZone으로 변환하는 메서드 필요
-        return (averageHeartRate == doodle.getWeeklyGoalHeartRateZone()); //수정해야 함
+        return averageHeartRate;
     }
 
     //    public boolean checkDoodleRunningLocation(Doodle doodle, GpsCoordinate gpsCoordinate){ //위치 확인
@@ -126,11 +126,11 @@ public class UserDoodleService {
         UserDoodle userDoodle = userDoodleRepository.findByDoodleAndUser(doodle, user).orElseThrow(() -> new RuntimeException("UserDoodle not found"));
         List<RunningRecord> runningRecords = runningRecordRepository.findAllByUser(user);
         boolean isAchieved = ( //심박존, 위치 확인 추가 필요
-                checkWeeklyTotalDistance(doodle, runningRecords) &&
-                        checkWeeklyGoalCount(doodle, runningRecords) &&
-                        checkWeeklyAveragePace(doodle, runningRecords) &&
-                        checkWeeklyAverageCadence(doodle, runningRecords)) &&
-                checkWeeklyAverageHeartRate(doodle, runningRecords);
+                (getWeeklyTotalDistance(runningRecords) >= doodle.getWeeklyGoalDistance()) &&
+                        (getWeeklyGoalCount(runningRecords) >= doodle.getWeeklyGoalCount()) &&
+                        (getWeeklyAveragePace(runningRecords) >= doodle.getWeeklyGoalPace()) &&
+                        (getWeeklyAverageCadence(runningRecords) >= doodle.getWeeklyGoalCadence()));
+//                (getWeeklyAverageHeartRate(runningRecords) == doodle.getWeeklyGoalHeartRateZone()); //이부분 수정필요
         if (isAchieved) {
             userDoodle.setStatus(UserDoodleStatus.COMPLETED);
             userDoodleRepository.save(userDoodle);
