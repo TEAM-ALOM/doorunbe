@@ -105,7 +105,7 @@ jobs:
           username: "ubuntu"
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           port: 22
-          envs: MYSQL_DB_NAME,MYSQL_DB_USERNAME,MYSQL_DB_PASSWORD,IMAGE_TAG,DOCKERHUB_USERNAME,DOCKERHUB_REPOSITORY_NAME
+          envs: MYSQL_DB_NAME,MYSQL_DB_USERNAME,MYSQL_DB_PASSWORD,IMAGE_TAG,DOCKERHUB_USERNAME,DOCKERHUB_REPOSITORY_NAME
           script: |
             cd compose/docker/
             sudo touch .env
