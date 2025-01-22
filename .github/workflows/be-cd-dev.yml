@@ -70,8 +70,8 @@ jobs:
 
       - name: Start SSH Tunnel
         run: |
-          ssh -N -L 3306:${{ secrets.RDS_ENDPOINT }}:3306 ubuntu@${{ secrets.EC2_HOST }} -i ~/.ssh/id_rsa &
-          sleep 5  # 터널링이 설정될 시간을 기다림
+          nohup ssh -N -L 3306:${{ secrets.RDS_ENDPOINT }}:3306 ubuntu@${{ secrets.EC2_HOST }} -i ~/.ssh/id_rsa &
+          sleep 5 
 
   deploy:
     needs: build-and-docker-operations
