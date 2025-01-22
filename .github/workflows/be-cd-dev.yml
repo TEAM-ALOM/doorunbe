@@ -111,6 +111,7 @@ jobs:
             MYSQL_DB_USERNAME=$MYSQL_DB_USERNAME
             MYSQL_DB_PASSWORD=$MYSQL_DB_PASSWORD
             IMAGE_TAG=$IMAGE_TAG
+            RDS_ENDPOINT=$RDS_ENDPOINT
             DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME
             DOCKERHUB_REPOSITORY_NAME=$DOCKERHUB_REPOSITORY_NAME" | sudo tee .env
             sh ./scripts/docker-install.sh
