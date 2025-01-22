@@ -3,7 +3,7 @@ name: BE CD for Dev
 on:
   push:
     branches:
-      - main
+      - dev
 
 permissions:
   contents: read
@@ -94,10 +94,9 @@ jobs:
       - name: SSH remote and Run Docker Compose
         uses: appleboy/ssh-action@master
         env:
-          SPRING_DATABASE_SCHEMA: ${{ secrets.MYSQL_DATABASE_SCHEMA }}
-          SPRING_DATABASE_USERNAME: ${{ secrets.MYSQL_USERNAME }}
-          SPRING_DATABASE_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
-          SPRING_DATABASE_HOST: ${{ secrets.MYSQL_HOST }}
+          MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}       
+          MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME }}  
+          MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }} 
           IMAGE_TAG: ${{ needs.build-and-docker-operations.outputs.image_tag }}
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKERHUB_REPOSITORY_NAME: ${{ secrets.DEV_DOCKERHUB_REPOSITORY_NAME }}
@@ -106,15 +105,14 @@ jobs:
           username: "ubuntu"
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           port: 22
-          envs: SPRING_DATABASE_SCHEMA,SPRING_DATABASE_USERNAME,SPRING_DATABASE_PASSWORD,SPRING_DATABASE_HOST,IMAGE_TAG,DOCKERHUB_USERNAME,DOCKERHUB_REPOSITORY_NAME
+          envs: MYSQL_DB_NAME,MYSQL_DB_USERNAME,MYSQL_DB_PASSWORD,IMAGE_TAG,DOCKERHUB_USERNAME,DOCKERHUB_REPOSITORY_NAME
           script: |
             cd compose/docker/
             sudo touch .env
             sudo echo "
-            SPRING_DATABASE_SCHEMA=$SPRING_DATABASE_SCHEMA
-            SPRING_DATABASE_USERNAME=$SPRING_DATABASE_USERNAME
-            SPRING_DATABASE_PASSWORD=$SPRING_DATABASE_PASSWORD
-            SPRING_DATABASE_HOST=$SPRING_DATABASE_HOST
+            MYSQL_DB_NAME=$MYSQL_DB_NAME
+            MYSQL_DB_USERNAME=$MYSQL_DB_USERNAME
+            MYSQL_DB_PASSWORD=$MYSQL_DB_PASSWORD
             IMAGE_TAG=$IMAGE_TAG
             DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME
             DOCKERHUB_REPOSITORY_NAME=$DOCKERHUB_REPOSITORY_NAME"| sudo tee .env
