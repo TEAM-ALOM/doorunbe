@@ -74,50 +74,48 @@ jobs:
 
 
   deploy:
-    needs: build-and-docker-operations:
+    needs: build-and-docker-operations
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
-      - name: Copy Docker files
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: "ubuntu"
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          port: 22
-          source: "docker/docker-compose.yml,docker/scripts/docker-install.sh,docker/nginx/default.conf,docker/nginx/Dockerfile-nginx"
-          target: 'compose'
-          rm: true
+    - name: Copy Docker files
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: "ubuntu"
+        key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        port: 22
+        source: "docker/docker-compose.yml,docker/scripts/docker-install.sh,docker/nginx/default.conf,docker/nginx/Dockerfile-nginx"
+        target: 'compose'
+        rm: true
 
-      - name: SSH remote and Run Docker Compose
-        uses: appleboy/ssh-action@master
-        env:
-          MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}       
-          MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME }}  
-          MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }} 
-          IMAGE_TAG: ${{ needs.build-and-docker-operations.outputs.image_tag }}
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_REPOSITORY_NAME: ${{ secrets.DEV_DOCKERHUB_REPOSITORY_NAME }}
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: "ubuntu"
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            cd compose/docker/
-            sudo touch .env
-            sudo echo "
-            MYSQL_DB_NAME=$MYSQL_DB_NAME
-            MYSQL_DB_USERNAME=$MYSQL_DB_USERNAME
-            MYSQL_DB_PASSWORD=$MYSQL_DB_PASSWORD
-            IMAGE_TAG=$IMAGE_TAG
-            DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME
-            DOCKERHUB_REPOSITORY_NAME=$DOCKERHUB_REPOSITORY_NAME"| sudo tee .env
-            sh ./scripts/docker-install.sh
-            sudo docker pull $DOCKERHUB_USERNAME/$DOCKERHUB_REPOSITORY_NAME:$IMAGE_TAG
-            sudo docker-compose down
-            sudo docker-compose up -d
-
-      
+    - name: SSH remote and Run Docker Compose
+      uses: appleboy/ssh-action@master
+      env:
+        MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}       
+        MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME }}  
+        MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }} 
+        IMAGE_TAG: ${{ needs.build-and-docker-operations.outputs.image_tag }}
+        DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+        DOCKERHUB_REPOSITORY_NAME: ${{ secrets.DEV_DOCKERHUB_REPOSITORY_NAME }}
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: "ubuntu"
+        key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          cd compose/docker/
+          sudo touch .env
+          sudo echo "
+          MYSQL_DB_NAME=$MYSQL_DB_NAME
+          MYSQL_DB_USERNAME=$MYSQL_DB_USERNAME
+          MYSQL_DB_PASSWORD=$MYSQL_DB_PASSWORD
+          IMAGE_TAG=$IMAGE_TAG
+          DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME
+          DOCKERHUB_REPOSITORY_NAME=$DOCKERHUB_REPOSITORY_NAME" | sudo tee .env
+          sh ./scripts/docker-install.sh
+          sudo docker pull $DOCKERHUB_USERNAME/$DOCKERHUB_REPOSITORY_NAME:$IMAGE_TAG
+          sudo docker-compose down
+          sudo docker-compose up -d
