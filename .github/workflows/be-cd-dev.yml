@@ -103,7 +103,6 @@ jobs:
           port: 22
           envs: MYSQL_DB_NAME,MYSQL_DB_USERNAME,MYSQL_DB_PASSWORD,IMAGE_TAG,DOCKERHUB_USERNAME,DOCKERHUB_REPOSITORY_NAME
           script: |
-            ssh -i ~/.ssh/id_rsa -f -N -L 3306:${{ secrets.RDS_ENDPOINT }}:3306 ubuntu@${{ secrets.EC2_HOST }}
             cd compose/docker/
             sudo touch .env
             sudo echo "
