@@ -99,7 +99,7 @@ jobs:
         MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }} 
         IMAGE_TAG: ${{ needs.build-and-docker-operations.outputs.image_tag }}
         DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-        DOCKERHUB_REPOSITORY_NAME: ${{ secrets.DEV_DOCKERHUB_REPOSITORY_NAME }}
+        DOCKERHUB_REPOSITORY_NAME: ${{ secrets.DOCKERHUB_REPOSITORY_NAME }}
       with:
         host: ${{ secrets.EC2_HOST }}
         username: "ubuntu"
