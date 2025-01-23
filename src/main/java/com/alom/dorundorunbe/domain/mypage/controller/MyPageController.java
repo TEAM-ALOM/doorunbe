@@ -26,20 +26,10 @@ public class MyPageController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         List<AchievementResponse> achievementResponses = myPageService.getAchievements(username);
-        if(achievementResponses.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-
         String rank = myPageService.getUserRank(username);
-        if(rank == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-
         List<RunningRecord> runningRecords = myPageService.getRunningRecords(username);
-        if(runningRecords.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-
         String nickname = myPageService.getUserNickname(username);
-        if(nickname == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+
         MyPageResponse myPageResponse = new MyPageResponse(username, nickname, achievementResponses, rank, runningRecords);
         return new ResponseEntity<>(myPageResponse, HttpStatus.OK);
 
@@ -49,11 +39,7 @@ public class MyPageController {
     @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다")
     public ResponseEntity<String> updateUser(@RequestBody UserUpdateDTO userDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        ResponseEntity<String> response = myPageService.updateByUsername(userDTO, username);
-        if(response == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
-        else return response;
+        return myPageService.updateByUsername(userDTO, username);
     }
 
     @PutMapping("/myPage/user/update/nickname/{userId}")
@@ -67,10 +53,7 @@ public class MyPageController {
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴합니다")
     public ResponseEntity<String> deleteUser(){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(myPageService.deleteUser(username) == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
-        else return myPageService.deleteUser(username);
+        return myPageService.deleteUser(username);
     }
 
     

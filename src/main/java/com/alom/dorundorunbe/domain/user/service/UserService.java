@@ -20,6 +20,18 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow();
     }
 
+    public Boolean existsByNickname(String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
+
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
     public User registerOrLogin(AuthUserDto dto) {
         return userRepository.findByEmail(dto.email())
                 .orElseGet(() -> {
