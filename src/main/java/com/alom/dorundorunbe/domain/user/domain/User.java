@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 소셜 로그인 시 받아올 정보 -> 두런 내에서 사용자 식별에 사용
+    // 소셜 로그인 시 받아올 정보 -> 앱 내에서 사용자 식별에 사용
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -31,28 +31,26 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true, length = 32)
     private String nickname;
 
-    // 필요 없는 필드 같음
-    @Column(nullable = false, length = 32)
-    private String name;
-
-    // 없애야 하는 필드!!
-    private String password;
-
+    // 현재 참가 중인 랭킹
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ranking_id")
     @JsonIgnore
-    private Ranking ranking; // 현재 참가 중인 랭킹
+    private Ranking ranking;
 
+    // 사용자가 소유한 재화
     @Column(nullable = false)
     private Long cash;
 
+    // BACKGROUND 업적일 때 사용 (유저의 티어와 매칭)
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Tier tier; // BACKGROUND 업적일 때 사용 (유저의 티어와 매칭)
+    private Tier tier;
 
+    // BACKGROUND 업적일 때 보상 배경
     @Column(nullable = false, length = 64)
-    private String background; // BACKGROUND 업적일 때 보상 배경
+    private String background;
 
+    // 랭킹 포인트 (잘못된 설명이면 수정해주세요)
     @Column(nullable = false)
     private double lp;
 

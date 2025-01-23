@@ -7,11 +7,11 @@ import lombok.Data;
 public class ParticipantDto {
 
     private Long userId; // 사용자 ID
-    private String username;
+    private String nickname;
 
     public ParticipantDto(User user) {
         this.userId = user.getId();
-        this.username = user.getName();
+        this.nickname = user.getNickname();
     }
 }
 

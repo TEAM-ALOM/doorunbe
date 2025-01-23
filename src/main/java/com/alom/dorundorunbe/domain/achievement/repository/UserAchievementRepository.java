@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserAchievementRepository extends JpaRepository<UserAchievement, Long> {
-    List<UserAchievement> findAllByUserName(String name); //my page 에서 사용
+    List<UserAchievement> findAllByUserEmail(String email); //my page 에서 사용
     boolean existsByUserIdAndAchievementId(Long userId, Long achievementId);
     Optional<UserAchievement> findByUserIdAndAchievementId(Long userId, Long achievementId);
 
