@@ -34,25 +34,15 @@ public class PrincipalUserDetailsService extends DefaultOAuth2UserService implem
         AuthUserDto authUserDto = oAuth2AttributeProvider
                 .convertUserAttribute(userRequest.getClientRegistration().getRegistrationId(), oAuth2User);
 
-        User user = userService.findByEmail(authUserDto.email()).orElse(registerUser(authUserDto));
+        User user = userService.registerOrLogin(authUserDto);
 
         return new PrincipalUserDetails(user);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByEmail(username)
-                .orElseThrow();
+        User user = userService.findByEmail(username);
 
         return new PrincipalUserDetails(user);
-    }
-
-    private User registerUser(AuthUserDto authUserDto) {
-        return User.builder()
-                .email(authUserDto.email())
-                .oAuth2Provider(authUserDto.provider())
-                .nickname(authUserDto.email())
-                .cash(0L)
-                .build();
     }
 }
