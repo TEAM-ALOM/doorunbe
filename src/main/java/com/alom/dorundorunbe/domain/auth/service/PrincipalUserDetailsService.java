@@ -48,10 +48,10 @@ public class PrincipalUserDetailsService extends DefaultOAuth2UserService implem
     }
 
     private User registerUser(AuthUserDto authUserDto) {
-        // age과 gender의 경우 oauth 로그인으로 바로 가져오려면 사업자 정보 등록이 필요해서 이 부분은 논의 필요
-
         return User.builder()
                 .email(authUserDto.email())
+                .oAuth2Provider(authUserDto.provider())
+                .nickname(authUserDto.email())
                 .cash(0L)
                 .build();
     }

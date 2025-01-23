@@ -8,6 +8,7 @@ import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.domain.mypage.dto.AchievementResponse;
 import com.alom.dorundorunbe.domain.mypage.dto.UserUpdateDTO;
+import com.alom.dorundorunbe.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MyPageService {
     private final UserRepository userRepository;
+
+    private final UserService userService;
 
     private final RunningRecordRepository runningRecordRepository;
 
@@ -86,6 +89,11 @@ public class MyPageService {
         }
         else return null;
 
+    }
+
+    public void updateNickname(Long userId, String nickname) {
+        User user = userService.findById(userId);
+        user.updateNickname(nickname);
     }
 
     public ResponseEntity<String> deleteUser(String username) {

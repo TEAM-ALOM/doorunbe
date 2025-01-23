@@ -27,6 +27,10 @@ public class User extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OAuth2Provider oAuth2Provider;
+
     // 앱 내에서 사용할 닉네임 (ㅇㅇ두)
     @Column(nullable = false, unique = true, length = 32)
     private String nickname;
@@ -43,16 +47,18 @@ public class User extends BaseEntity {
 
     // BACKGROUND 업적일 때 사용 (유저의 티어와 매칭)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private Tier tier;
 
     // BACKGROUND 업적일 때 보상 배경
-    @Column(nullable = false, length = 64)
+    @Column(length = 64)
     private String background;
 
-    // 랭킹 포인트 (잘못된 설명이면 수정해주세요)
-    @Column(nullable = false)
+    // 랭킹 포인트
     private double lp;
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
     public void updateCash(Long cash) {
         this.cash = cash;

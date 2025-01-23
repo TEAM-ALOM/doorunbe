@@ -1,6 +1,7 @@
 package com.alom.dorundorunbe.domain.auth.provider;
 
 import com.alom.dorundorunbe.domain.auth.dto.AuthUserDto;
+import com.alom.dorundorunbe.domain.user.domain.OAuth2Provider;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,6 @@ public class OAuth2AttributeProvider {
         Map<String, Object> kakaoAccount = (Map<String, Object>) attribute.get("kakao_account");
         // Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
 
-        return AuthUserDto.of(kakaoAccount.get("email").toString());
+        return AuthUserDto.of(kakaoAccount.get("email").toString(), OAuth2Provider.KAKAO);
     }
 }

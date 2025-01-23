@@ -56,6 +56,13 @@ public class MyPageController {
         else return response;
     }
 
+    @PutMapping("/myPage/user/update/nickname/{userId}")
+    @Operation(summary = "닉네임 수정", description = "닉네임을 수정합니다")
+    public ResponseEntity<Void> updateNickname(@PathVariable Long userId, String nickname) {
+        myPageService.updateNickname(userId, nickname);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/myPage/deleteUser")
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴합니다")
     public ResponseEntity<String> deleteUser(){
