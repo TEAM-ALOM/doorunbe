@@ -25,6 +25,9 @@ public class DoodleResponseDto {
     private Integer goalParticipationCount;
     private Integer maxParticipant;
     private List<UserDoodleDto> participants;
+    private boolean isPublic;
+    private double doodlePoint;
+    private boolean isGoalActive;
 
     public static DoodleResponseDto from(Doodle doodle) {
         // Doodle 엔티티의 participants 리스트를 UserDoodleDto 리스트로 변환
@@ -47,6 +50,9 @@ public class DoodleResponseDto {
                 .goalParticipationCount(doodle.getGoalParticipationCount())
                 .maxParticipant(doodle.getMaxParticipant())
                 .participants(userDoodleDtos) // 참가자 리스트 설정
+                .isPublic(doodle.isPublic())
+                .doodlePoint(doodle.getDoodlePoint())
+                .isGoalActive(doodle.isGoalActive())
                 .build();
     }
 }
