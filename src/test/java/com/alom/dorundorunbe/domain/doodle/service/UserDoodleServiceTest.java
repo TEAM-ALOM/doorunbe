@@ -67,7 +67,7 @@ public class UserDoodleServiceTest {
                 .weeklyGoalDistance(3.0)
                 .weeklyGoalCount(1)
                 .weeklyGoalPace(12.0)
-                .weeklyGoalCadence(3)
+                .weeklyGoalCadence(3.0)
                 .participants(new ArrayList<>())
                 .build();
 
