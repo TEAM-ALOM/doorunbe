@@ -8,6 +8,7 @@ import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
 import com.alom.dorundorunbe.domain.doodle.repository.UserDoodleRepository;
 import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
+import com.alom.dorundorunbe.domain.doodle.service.UserDoodleService;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.global.enums.Tier;
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,10 +46,13 @@ public class DoodleControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private static DoodleService doodleService;
+    private DoodleService doodleService;
 
     @MockBean
-    private static UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @MockBean
+    private UserDoodleService userDoodleService;
 
     static private Doodle doodle;
 
@@ -75,6 +80,7 @@ public class DoodleControllerTest {
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(2.0)
                 .weeklyGoalPace(3.0)
+                .weeklyGoalHeartRateZone(3)
                 .password("testPassword")
                 .goalParticipationCount(10)
                 .maxParticipant(20)
@@ -87,6 +93,7 @@ public class DoodleControllerTest {
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(2.0)
                 .weeklyGoalPace(3.0)
+                .weeklyGoalHeartRateZone(3)
                 .goalParticipationCount(10)
                 .maxParticipant(20)
                 .password("testPassword")
@@ -100,6 +107,7 @@ public class DoodleControllerTest {
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(2.0)
                 .weeklyGoalPace(3.0)
+                .weeklyGoalHeartRateZone(3)
                 .goalParticipationCount(10)
                 .maxParticipant(20)
                 .build();
@@ -135,8 +143,8 @@ public class DoodleControllerTest {
                 .andExpect(jsonPath("$.name").value("testDoodle"))
                 .andExpect(jsonPath("$.weeklyGoalDistance").value(1.0))
                 .andExpect(jsonPath("$.weeklyGoalCount").value(1))
-                .andExpect(jsonPath("$.goalCadence").value(2.0))
-                .andExpect(jsonPath("$.goalPace").value(3.0))
+                .andExpect(jsonPath("$.weeklyGoalCadence").value(2.0))
+                .andExpect(jsonPath("$.weeklyGoalPace").value(3.0))
                 .andExpect(jsonPath("$.goalParticipationCount").value(10))
                 .andExpect(jsonPath("$.maxParticipant").value(20)
         );
@@ -236,8 +244,8 @@ public class DoodleControllerTest {
                 .andExpect(jsonPath("$.name").value("Updated Doodle Name")) // name 값 확인
                 .andExpect(jsonPath("$.weeklyGoalDistance").value(2.0)) // goalDistance 값 확인
                 .andExpect(jsonPath("$.weeklyGoalCount").value(1))
-                .andExpect(jsonPath("$.goalCadence").value(3.0)) // goalCadence 값 확인
-                .andExpect(jsonPath("$.goalPace").value(4.0)) // goalPace 값 확인
+                .andExpect(jsonPath("$.weeklyGoalCadence").value(3.0)) // goalCadence 값 확인
+                .andExpect(jsonPath("$.weeklyGoalPace").value(4.0)) // goalPace 값 확인
                 .andExpect(jsonPath("$.goalParticipationCount").value(15)) // goalParticipationCount 값 확인
                 .andExpect(jsonPath("$.maxParticipant").value(25)); // maxParticipant 값 확인
 
