@@ -6,7 +6,6 @@ import com.alom.dorundorunbe.domain.doodle.dto.DoodleResponseDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
 import com.alom.dorundorunbe.domain.doodle.repository.UserDoodleRepository;
-import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.domain.doodle.domain.UserDoodle;
@@ -14,6 +13,8 @@ import com.alom.dorundorunbe.domain.doodle.domain.Doodle;
 import com.alom.dorundorunbe.domain.doodle.repository.DoodleRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,17 +38,31 @@ public class DoodleService {
         //Doodle 생성
         Doodle doodle = Doodle.builder()
                 .name(doodleRequestDto.getName())
-                .weeklyGoalDistance(doodleRequestDto.getWeeklyGoalDistance())
-                .weeklyGoalCount(doodleRequestDto.getWeeklyGoalCount())
-                .weeklyGoalCadence(doodleRequestDto.getWeeklyGoalCadence())
-                .weeklyGoalPace(doodleRequestDto.getWeeklyGoalPace())
-                .weeklyGoalHeartRateZone(doodleRequestDto.getWeeklyGoalHeartRateZone())
-                .goalParticipationCount(doodleRequestDto.getGoalParticipationCount())
                 .password(doodleRequestDto.getPassword())
                 .maxParticipant(doodleRequestDto.getMaxParticipant())
                 .participants(new ArrayList<>())
                 .isRunning(doodleRequestDto.isRunning())
+                .isPublic(doodleRequestDto.isPublic())
+                .isGoalActive(doodleRequestDto.isGoalActive())
+                .doodlePoint(0)
                 .build();
+
+        if (doodle.isGoalActive()){ //주간 목표 활성화
+          doodle.setWeeklyGoalDistance(doodleRequestDto.getWeeklyGoalDistance());
+          doodle.setWeeklyGoalCount(doodleRequestDto.getWeeklyGoalCount());
+          doodle.setWeeklyGoalCadence(doodleRequestDto.getWeeklyGoalCadence());
+          doodle.setWeeklyGoalPace(doodleRequestDto.getWeeklyGoalPace());
+          doodle.setWeeklyGoalHeartRateZone(doodleRequestDto.getWeeklyGoalHeartRateZone());
+          doodle.setGoalParticipationCount(doodleRequestDto.getGoalParticipationCount());
+        }
+        else{ //주간 목표 비활성화
+            doodle.setWeeklyGoalDistance(null);
+            doodle.setWeeklyGoalCount(null);
+            doodle.setWeeklyGoalCadence(null);
+            doodle.setWeeklyGoalPace(null);
+            doodle.setWeeklyGoalHeartRateZone(null);
+            doodle.setGoalParticipationCount(null);
+        }
 
         Doodle savedDoodle = doodleRepository.save(doodle);
         UserDoodle userDoodle = userDoodleService.createUserDoodle(savedDoodle.getId(), doodleRequestDto.getUserId());
@@ -57,6 +72,7 @@ public class DoodleService {
         return DoodleResponseDto.from(savedDoodle);
     }
 
+    @Transactional
     public List<DoodleResponseDto> getAllDoodles() { //doodle 전체 조회
         List<Doodle> doodles = doodleRepository.findAll();
         return doodles.stream()
@@ -78,24 +94,39 @@ public class DoodleService {
         doodleRepository.delete(doodle);
     }
 
+    @Transactional
     public DoodleResponseDto updateDoodle(Long doodleId, DoodleRequestDto doodleRequestDto) {
         Doodle doodle = doodleRepository.findById(doodleId)
                 .orElseThrow(() -> new IllegalArgumentException("NOT FOUND"));
         doodle.setName(doodleRequestDto.getName());
-        doodle.setWeeklyGoalDistance(doodleRequestDto.getWeeklyGoalDistance());
-        doodle.setWeeklyGoalCount(doodleRequestDto.getWeeklyGoalCount());
-        doodle.setWeeklyGoalCadence(doodleRequestDto.getWeeklyGoalCadence());
         doodle.setMaxParticipant(doodleRequestDto.getMaxParticipant());
-        doodle.setWeeklyGoalPace(doodleRequestDto.getWeeklyGoalPace());
-        doodle.setWeeklyGoalHeartRateZone(doodleRequestDto.getWeeklyGoalHeartRateZone());
         doodle.setPassword(doodleRequestDto.getPassword());
-        doodle.setGoalParticipationCount(doodleRequestDto.getGoalParticipationCount());
         doodle.setRunning(doodleRequestDto.isRunning());
+        doodle.setPublic(doodleRequestDto.isPublic());
+        doodle.setGoalActive(doodleRequestDto.isGoalActive());
+
+        if (doodle.isGoalActive()) {
+            doodle.setWeeklyGoalDistance(doodleRequestDto.getWeeklyGoalDistance());
+            doodle.setWeeklyGoalCount(doodleRequestDto.getWeeklyGoalCount());
+            doodle.setWeeklyGoalCadence(doodleRequestDto.getWeeklyGoalCadence());
+            doodle.setWeeklyGoalPace(doodleRequestDto.getWeeklyGoalPace());
+            doodle.setWeeklyGoalHeartRateZone(doodleRequestDto.getWeeklyGoalHeartRateZone());
+            doodle.setGoalParticipationCount(doodleRequestDto.getGoalParticipationCount());
+        }
+        else{
+            doodle.setWeeklyGoalDistance(null);
+            doodle.setWeeklyGoalCount(null);
+            doodle.setWeeklyGoalCadence(null);
+            doodle.setWeeklyGoalPace(null);
+            doodle.setWeeklyGoalHeartRateZone(null);
+            doodle.setGoalParticipationCount(null);
+        }
 
         Doodle updatedDoodle = doodleRepository.save(doodle);
         return DoodleResponseDto.from(updatedDoodle);
     }
 
+    @Transactional
     public DoodleResponseDto addParticipantToDoodle(Long doodleId, Long userId, String password) { //참가자 추가
         Doodle doodle = doodleRepository.findById(doodleId).orElseThrow(() -> new RuntimeException("Doodle not found"));
         //비밀번호 검증
@@ -117,7 +148,7 @@ public class DoodleService {
         return DoodleResponseDto.from(doodle);
     }
 
-
+    @Transactional
     public DoodleResponseDto deleteParticipant(Long doodleId, Long userId) {
         Doodle doodle = doodleRepository.findById(doodleId).
                 orElseThrow(() -> new RuntimeException("NOT FOUND"));
@@ -143,6 +174,7 @@ public class DoodleService {
     }
 
     //참가자 doodle 완료 상태 업데이트 로직 구현
+    @Transactional
     public UserDoodleDto updateParticipantStatus(Long doodleId, Long userId, UserDoodleStatus status) {
         Doodle doodle = doodleRepository.findById(doodleId).
                 orElseThrow(() -> new RuntimeException("NOT FOUND"));
@@ -156,6 +188,7 @@ public class DoodleService {
     }
 
     //doodle 비밀번호 변경
+    @Transactional
     public DoodleResponseDto updateDoodlePassword(Long doodleId, Long userId, String newPassword) {
         Doodle doodle = doodleRepository.findById(doodleId).orElseThrow(() -> new RuntimeException(("Doodle not found")));
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
@@ -168,4 +201,26 @@ public class DoodleService {
         Doodle updatedDoodle = doodleRepository.save(doodle);
         return DoodleResponseDto.from(updatedDoodle);
     }
+
+    //doodle 방에 포인트 지급
+    @Transactional
+    public void addPointsToDoodle(Long doodleId, Long userId, double doodlePoints){
+        Doodle doodle = doodleRepository.findById(doodleId).orElseThrow(()->new RuntimeException("Doodle not found"));
+        User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
+        doodle.setDoodlePoint(doodlePoints);
+        doodleRepository.save(doodle);
+    }
+
+    //Doodle 포인트 상위 10개 방의 포인트 반환
+    public List<Double> getTop10PointsForUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Pageable pageable = PageRequest.of(0, 10);
+        List<Doodle> topDoodles = userDoodleRepository.findTop10ByUserOrderByDoodlePointDesc(user, pageable);
+
+        return topDoodles.stream()
+                .map(Doodle::getDoodlePoint)
+                .collect(Collectors.toList());
+    }
+
+
 }
