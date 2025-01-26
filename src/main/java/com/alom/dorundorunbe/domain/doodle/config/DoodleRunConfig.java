@@ -1,8 +1,6 @@
 package com.alom.dorundorunbe.domain.doodle.config;
 
 import com.alom.dorundorunbe.domain.doodle.domain.Doodle;
-import com.alom.dorundorunbe.domain.doodle.domain.UserDoodle;
-import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
 import com.alom.dorundorunbe.domain.doodle.service.UserDoodleService;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import org.springframework.context.annotation.Configuration;
