@@ -89,6 +89,7 @@ public class DoodleServiceTest {
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(50.0)
                 .weeklyGoalPace(5.0)
+                .weeklyGoalHeartRateZone(3)
                 .goalParticipationCount(10)
                 .password("password1")
                 .maxParticipant(5)
@@ -102,6 +103,7 @@ public class DoodleServiceTest {
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(60.0)
                 .weeklyGoalPace(6.0)
+                .weeklyGoalHeartRateZone(3)
                 .goalParticipationCount(20)
                 .password("password2")
                 .maxParticipant(10)
@@ -132,6 +134,7 @@ public class DoodleServiceTest {
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(2.0)
                 .weeklyGoalPace(3.0)
+                .weeklyGoalHeartRateZone(3)
                 .goalParticipationCount(10)
                 .password("testPassword")
                 .maxParticipant(10)
@@ -152,6 +155,9 @@ public class DoodleServiceTest {
                 .weeklyGoalCadence(2.0)
                 .weeklyGoalPace(3.0)
                 .goalParticipationCount(10)
+                .weeklyGoalHeartRateZone(3)
+                .isPublic(true)
+                .isGoalActive(true)
                 .password("testPassword")
                 .maxParticipant(10)
                 .participants(new ArrayList<>())
@@ -244,10 +250,12 @@ public class DoodleServiceTest {
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(2.0)
                 .weeklyGoalPace(3.0)
+                .weeklyGoalHeartRateZone(3)
                 .goalParticipationCount(10)
                 .password("testPassword")
                 .maxParticipant(10)
                 .participants(new ArrayList<>())
+                .isGoalActive(true)
                 .build();
 
         DoodleRequestDto updatedDoodleRequestDto = DoodleRequestDto.builder()
@@ -256,8 +264,10 @@ public class DoodleServiceTest {
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(3.0)
                 .weeklyGoalPace(4.0)
+                .weeklyGoalHeartRateZone(3)
                 .goalParticipationCount(20)
                 .maxParticipant(20)
+                .isGoalActive(true)
                 .build();
 
         when(doodleRepository.findById(1L)).thenReturn(Optional.of(oldDoodle));
@@ -279,9 +289,6 @@ public class DoodleServiceTest {
         // When: Mockito Mock 설정
         when(doodleRepository.findById(anyLong())).thenReturn(Optional.of(doodle1)); // doodleRepository Mock 설정
         when(passwordEncoder.matches(eq("testPassword"), eq(doodle1.getPassword()))).thenReturn(true); // 비밀번호 체크 Mock 설정
-
-        // UserDoodleService의 addParticipantsToUserDoodle 호출 Mock 설정
-        doNothing().when(userDoodleService).addParticipantsToUserDoodle(anyLong(), anyLong()); // addParticipantsToUserDoodle 호출이 잘 되도록 설정
 
         // Service 호출: 참가자 추가
         DoodleResponseDto doodleResponseDto = doodleService.addParticipantToDoodle(doodle1.getId(), user.getId(), "testPassword");
