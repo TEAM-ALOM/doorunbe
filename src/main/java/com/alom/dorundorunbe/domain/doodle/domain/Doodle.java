@@ -20,23 +20,23 @@ public class Doodle extends BaseEntity {
     @Column(nullable = false, length = 32)
     private String name;
 
-    @Column(nullable = false)
-    private double weeklyGoalDistance;
+    @Column(nullable = false) //주간 목표
+    private Double weeklyGoalDistance;
 
     @Column(nullable = false)
-    private int weeklyGoalCount;
+    private Integer weeklyGoalCount;
 
     @Column(nullable = false)
-    private double weeklyGoalCadence;
+    private Double weeklyGoalCadence;
 
     @Column(nullable = false)
-    private double weeklyGoalPace;
+    private Double weeklyGoalPace;
 
     @Column(nullable = false)
-    private int weeklyGoalHeartRateZone;
+    private Integer weeklyGoalHeartRateZone;
 
     @Column(nullable = false)
-    private int goalParticipationCount;
+    private Integer goalParticipationCount;
 
     @Column(nullable = false)
     private String password;
@@ -46,6 +46,15 @@ public class Doodle extends BaseEntity {
 
     @Column(nullable = false)
     private boolean isRunning;
+
+    @Column(nullable = false)
+    private boolean isPublic;
+
+    @Column(nullable = false)
+    private double doodlePoint;
+
+    @Column(nullable = false)
+    private boolean isGoalActive;
 
     //추가할 것 - 목표로 설정한 위치
 
@@ -62,7 +71,5 @@ public class Doodle extends BaseEntity {
         return doodle.getParticipants().stream()
                 .anyMatch(participant -> participant.getUser().getId().equals(userId));
     }
-
-
 
 }
