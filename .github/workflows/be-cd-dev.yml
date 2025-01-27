@@ -5,19 +5,15 @@ on:
     branches:
       - dev
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    env:
-      MYSQL_DB_URL: ${{ secrets.MYSQL_DB_URL }} 
-      MYSQL_DB_PORT: ${{ secrets.MYSQL_DB_PORT }}
-      MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}
-      MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME }}
-      MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }}
-      EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}   
-      EC2_HOST: ${{ secrets.EC2_HOST }}  
-      RDS_ENDPOINT: ${{ secrets.RDS_ENDPOINT }} 
+permissions:
+  contents: read
 
+jobs:
+  build-and-docker-operations:
+    runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.generate_tag.outputs.tag }}
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,6 +32,9 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           cache-write-only: true
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
           
       - name: Grant execute permission for Gradlew
         run: chmod +x ./gradlew
@@ -43,13 +42,21 @@ jobs:
       - name: Build JAR
         run: ./gradlew bootjar
 
-      - name: Build Docker Image
-        run: |
-          docker build -t dorun-app:latest .
+      - name: Generate Unique Tag
+        id: generate_tag
+        run: echo "::set-output name=tag::$(echo $GITHUB_SHA | cut -c1-7)"
 
-      - name: Save Docker Image as TAR
-        run: |
-          docker save dorun-app:latest > dorun-app.tar
+      - name: Build image
+        run: docker build -f docker/Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:${{ steps.generate_tag.outputs.tag }} .
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
+      - name: Push image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY_NAME }}:${{ steps.generate_tag.outputs.tag }}
 
       - name: Set up SSH key
         run: |
@@ -61,26 +68,57 @@ jobs:
         run: |
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Upload Docker Image to EC2
+      - name: Start SSH Tunnel
         run: |
-          scp -i ~/.ssh/id_rsa dorun-app.tar ubuntu@${{ secrets.EC2_HOST }}:/home/ubuntu/
+          nohup ssh -N -L 3306:${{ secrets.RDS_ENDPOINT }}:3306 ubuntu@${{ secrets.EC2_HOST }} -i ~/.ssh/id_rsa &
+          sleep 5 
 
-      - name: Set up SSH Tunneling to RDS
-        run: |
-          ssh -i ~/.ssh/id_rsa -f -N -L 3306:${{ secrets.RDS_ENDPOINT }}:3306 ubuntu@${{ secrets.EC2_HOST }}
+  deploy:
+    needs: build-and-docker-operations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Run Docker Container on EC2
-        run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_HOST }} << EOF
-          docker load < /home/ubuntu/dorun-app.tar
-          docker stop dorun-app || true
-          docker rm dorun-app || true
-          docker run -d --name dorun-app -p 8080:8080 \
-            -e SPRING_PROFILES_ACTIVE=dev \
-            -e MYSQL_DB_URL=127.0.0.1 \
-            -e MYSQL_DB_PORT=3306 \
-            -e MYSQL_DB_NAME=${{ secrets.MYSQL_DB_NAME }} \
-            -e MYSQL_DB_USERNAME=${{ secrets.MYSQL_DB_USERNAME }} \
-            -e MYSQL_DB_PASSWORD=${{ secrets.MYSQL_DB_PASSWORD }} \
-            dorun-app:latest
-          EOF
+      - name: Copy Docker files
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: "ubuntu"
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          port: 22
+          source: "docker/docker-compose.yml,docker/scripts/docker-install.sh,docker/nginx/default.conf,docker/nginx/Dockerfile-nginx"
+          target: 'compose'
+          rm: true
+
+      - name: SSH remote and Run Docker Compose
+        uses: appleboy/ssh-action@master
+        env:
+          MYSQL_DB_NAME: ${{ secrets.MYSQL_DB_NAME }}       
+          MYSQL_DB_USERNAME: ${{ secrets.MYSQL_DB_USERNAME }}  
+          MYSQL_DB_PASSWORD: ${{ secrets.MYSQL_DB_PASSWORD }} 
+          IMAGE_TAG: ${{ needs.build-and-docker-operations.outputs.image_tag }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_REPOSITORY_NAME: ${{ secrets.DOCKERHUB_REPOSITORY_NAME }}
+          RDS_ENDPOINT: ${{ secrets.RDS_ENDPOINT }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: "ubuntu"
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          port: 22
+          envs: MYSQL_DB_NAME,MYSQL_DB_USERNAME,MYSQL_DB_PASSWORD,IMAGE_TAG,DOCKERHUB_USERNAME,DOCKERHUB_REPOSITORY_NAME,RDS_ENDPOINT
+          script: |
+            cd compose/docker/
+            sudo touch .env
+            sudo echo "
+            MYSQL_DB_NAME=$MYSQL_DB_NAME
+            MYSQL_DB_USERNAME=$MYSQL_DB_USERNAME
+            MYSQL_DB_PASSWORD=$MYSQL_DB_PASSWORD
+            IMAGE_TAG=$IMAGE_TAG
+            RDS_ENDPOINT=$RDS_ENDPOINT
+            DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME
+            DOCKERHUB_REPOSITORY_NAME=$DOCKERHUB_REPOSITORY_NAME" | sudo tee .env
+            sh ./scripts/docker-install.sh
+            sudo docker pull $DOCKERHUB_USERNAME/$DOCKERHUB_REPOSITORY_NAME:$IMAGE_TAG
+            sudo docker-compose down
+            sudo docker-compose up -d

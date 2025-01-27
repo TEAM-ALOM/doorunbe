@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  app:
+    container_name: app
+    image: ${DOCKERHUB_USERNAME}/${DOCKERHUB_REPOSITORY_NAME}:${IMAGE_TAG}
+    expose:
+      - "8080"
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    deploy:
+      resources:
+        limits:
+          memory: 800M
+
+  nginx:
+    depends_on:
+      - app
+    container_name: nginx
+    restart: always
+    build:
+      dockerfile: Dockerfile-nginx
+      context: ./nginx
+    ports:
+      - "80:80"
