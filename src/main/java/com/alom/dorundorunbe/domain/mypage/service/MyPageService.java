@@ -1,6 +1,7 @@
 package com.alom.dorundorunbe.domain.mypage.service;
 
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
+import com.alom.dorundorunbe.domain.auth.service.OAuthService;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
@@ -20,6 +21,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MyPageService {
     private final UserService userService;
+
+    private final OAuthService oAuthService;
 
     private final RunningRecordRepository runningRecordRepository;
 
@@ -74,8 +77,10 @@ public class MyPageService {
 
     public ResponseEntity<String> deleteUser(String username) {
         User user = userService.findByEmail(username);
-        // oauth2 주체와 연결 끊는 로직 필요
+
+        oAuthService.unlink(user);
         userService.delete(user);
+
         return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");
     }
 }
