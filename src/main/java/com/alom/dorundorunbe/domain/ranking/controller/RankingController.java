@@ -37,6 +37,18 @@ public class RankingController implements RankingControllerDocs{
         return ResponseEntity.ok(ranking);
     }
 
+    /**
+     * 특정 Ranking에 User 추가
+     */
+    @PostMapping("/{rankingId}/users/{userId}")
+    public ResponseEntity<Void> addUserToRanking(
+            @PathVariable Long rankingId,
+            @PathVariable Long userId
+    ) {
+        rankingService.handleRankingParticipation(userId, rankingId);
+        return ResponseEntity.ok().build();
+    }
+
 
 
 
