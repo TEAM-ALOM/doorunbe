@@ -1,12 +1,9 @@
 package com.alom.dorundorunbe.domain.ranking.controller;
 
 import com.alom.dorundorunbe.domain.ranking.dto.*;
-import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingRequestDto;
-import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingResponseDto;
-import com.alom.dorundorunbe.domain.ranking.dto.create.CreateRankingResponseDto;
-import com.alom.dorundorunbe.domain.ranking.dto.delete.DeleteRankingResponseDto;
-import com.alom.dorundorunbe.domain.ranking.dto.query.RankingResponseDto;
+
 import com.alom.dorundorunbe.domain.ranking.service.RankingService;
+import com.alom.dorundorunbe.domain.ranking.service.UserRankingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -17,43 +14,21 @@ import java.util.List;
 @RestController
 @RequestMapping("/ranking")
 @RequiredArgsConstructor
-public class RankingController {
+public class RankingController implements RankingControllerDocs{
     private final RankingService rankingService;
-    private final RankingQueueService rankingQueueService;
+    private final UserRankingService userRankingService;
 
-    @PostMapping("/join/{id}")
-    public ResponseEntity<CreateRankingResponseDto> joinQueue(@PathVariable("id") Long userId) {
-        CreateRankingResponseDto response = rankingQueueService.joinQueue(userId);
-        return ResponseEntity.ok(response);
-    }
 
-    @DeleteMapping("/cancel/{id}")
-    public ResponseEntity<DeleteRankingResponseDto> cancelQueue(@PathVariable("id") Long userId) {
-        DeleteRankingResponseDto response = rankingQueueService.cancelQueue(userId);
-        return ResponseEntity.ok(response);
-    }
-    @PostMapping("/claim")
-    public ResponseEntity<ClaimRankingResponseDto> claimReward(ClaimRankingRequestDto dto) {
-        ClaimRankingResponseDto responseDto = rankingService.claimReward(dto.userId(), dto.rankingId());
-        return ResponseEntity.ok(responseDto);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<List<RankingUserStatusDto>> fetchRankingStatus(@PathVariable("id") Long rankingId) {
-        List<RankingUserStatusDto> rankingStatus = rankingService.findRankingStatus(rankingId);
-        return ResponseEntity.ok(rankingStatus);
-    }
-
-    @GetMapping("/results/{id}")
-    public ResponseEntity<List<RankingResultDto>> fetchRankingResults(@PathVariable("id") Long rankingId) {
-        List<RankingResultDto> results = rankingService.findRankingResults(rankingId);
-        return ResponseEntity.ok(results);
-    }
-
+    /**
+     * 모든 Ranking 방 조회
+     */
     @GetMapping
-    public ResponseEntity<List<RankingResponseDto>> fetchAllRankings(Pageable pageable) {
-        return ResponseEntity.ok(rankingService.findAllRankings(pageable).getContent());
+    public ResponseEntity<List<RankingResponseDto>> fetchAllRankings() {
+        List<RankingResponseDto> rankings = rankingService.findAllRankings();
+        return ResponseEntity.ok(rankings);
     }
+
+
 
 
 
