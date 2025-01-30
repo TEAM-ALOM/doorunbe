@@ -124,6 +124,20 @@ public class RankingService {
             deleteRankingRecords(ranking.getId());
         }
     }
+
+    //랭킹 기록 모두 삭제
+    public void deleteRankingRecords(Long rankingId) {
+        if (!rankingRepository.existsById(rankingId)) {
+            throw new BusinessException(ErrorCode.RANKING_NOT_FOUND);
+        }
+
+        // 벌크 삭제 쿼리 실행
+        userRankingRepository.deleteByRankingId(rankingId);
+
+
+
+    }
+
 }
 
 
