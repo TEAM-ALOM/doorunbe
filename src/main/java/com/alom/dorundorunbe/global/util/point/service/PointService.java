@@ -21,7 +21,7 @@ public class PointService {
     private final PointCalculationService pointCalculationService;
     private final UserRepository userRepository;
     private final UserRankingRepository userRankingRepository;
-    /private final UserRankingService userRankingService;
+    private final UserRankingService userRankingService;
 
 
 
