@@ -5,8 +5,11 @@ import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.dto.RankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.repository.RankingRepository;
 import com.alom.dorundorunbe.domain.ranking.repository.UserRankingRepository;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
+import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
+import com.alom.dorundorunbe.global.enums.Tier;
 import com.alom.dorundorunbe.global.exception.BusinessException;
 import com.alom.dorundorunbe.global.exception.ErrorCode;
 import com.alom.dorundorunbe.global.util.point.service.PointService;
@@ -42,6 +45,64 @@ public class RankingService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.RANKING_NOT_FOUND));
 
 
+    }
+
+
+    public void handleRankingParticipation(Long userId, Long rankingId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
+        Ranking ranking = rankingRepository.findById(rankingId).orElseThrow(() -> new BusinessException(ErrorCode.RANKING_NOT_FOUND));
+
+        if (user.getTier() == null) {
+            if (user.getRankingParticipationDate() == null) {
+                user.startRankingParticipation();
+            }
+            participateFirstThreeRuns(user);
+        } else {
+            validateUserParticipation(user, ranking);
+
+        }
+        user.setParticipateRanking();
+        userRankingService.createUserRanking(user, ranking);
+
+
+    }
+
+    public void participateFirstThreeRuns(User user) {
+        double averageTime = getAverageTimeFromRunningRecord(user);
+        Tier assignedTier = Tier.determineTier(averageTime);
+        user.setTier(assignedTier);
+
+    }
+    private void validateUserParticipation(User user, Ranking ranking) {
+        if (!user.getTier().equals(ranking.getTier())) {
+            throw new BusinessException(ErrorCode.RANKING_TIER_MISMATCH);
+        }
+        if (user.isRankingParticipated()) {
+            throw new BusinessException(ErrorCode.RANKING_ALREADY_PARTICIPATED);
+        }
+    }
+
+    private double getAverageTimeFromRunningRecord(User user) {
+        // 랭킹 참가 이후 5km 기록 중 상위 3개 가져오기
+        List<RunningRecord> records = runningRecordRepository
+                .findByUserAndDistanceAndCreatedAtAfter(user, 5.0, user.getRankingParticipationDate());
+
+        if (records.size() < 3) {
+            throw new BusinessException(ErrorCode.RANKING_MINIMUM_RECORDS_NOT_MET);
+        }
+
+
+        //티어 결정
+        List<Integer> top3Times = records.stream()
+                .map(RunningRecord::getElapsedTime)
+                .limit(3)
+                .toList();
+
+        return top3Times.stream()
+                .mapToInt(Integer::intValue)
+                .average()
+                .orElseThrow(() -> new BusinessException(ErrorCode.FAIL_PROCEED));
     }
 }
 
