@@ -1,6 +1,5 @@
 package com.alom.dorundorunbe.domain.ranking.repository;
 
-import com.alom.dorundorunbe.domain.ranking.domain.RankingQueue;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
