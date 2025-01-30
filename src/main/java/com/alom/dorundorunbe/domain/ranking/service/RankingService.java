@@ -14,6 +14,7 @@ import com.alom.dorundorunbe.global.exception.BusinessException;
 import com.alom.dorundorunbe.global.exception.ErrorCode;
 import com.alom.dorundorunbe.global.util.point.service.PointService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -103,6 +104,25 @@ public class RankingService {
                 .mapToInt(Integer::intValue)
                 .average()
                 .orElseThrow(() -> new BusinessException(ErrorCode.FAIL_PROCEED));
+    }
+
+    //랭킹 보상 지급(일주일 단위로 지급되어야하고(스케줄러 이용) 사용자에게 lp와 cash 지급하고 deleteRankingRecords 호출
+    @Scheduled(cron = "0 0 0 * * MON") // 매주 월요일 00:00 실행
+    public void distributeWeeklyRewardsAndClearRankings() {
+
+
+        List<Ranking> rankings = rankingRepository.findAll();
+
+        for (Ranking ranking : rankings) {
+
+
+            pointService.giveRankingRewardToUsersByRanking(ranking.getId());
+
+
+
+            // 랭킹 데이터 삭제
+            deleteRankingRecords(ranking.getId());
+        }
     }
 }
 
