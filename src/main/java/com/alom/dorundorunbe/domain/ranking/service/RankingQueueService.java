@@ -4,7 +4,6 @@ import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordReposi
 import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.dto.create.CreateRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.dto.delete.DeleteRankingResponseDto;
-import com.alom.dorundorunbe.domain.ranking.repository.RankingQueueRepository;
 import com.alom.dorundorunbe.domain.ranking.repository.RankingRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
