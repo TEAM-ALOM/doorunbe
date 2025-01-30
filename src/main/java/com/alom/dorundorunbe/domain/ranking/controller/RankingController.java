@@ -28,6 +28,15 @@ public class RankingController implements RankingControllerDocs{
         return ResponseEntity.ok(rankings);
     }
 
+    /**
+     * 특정 Ranking 방 조회
+     */
+    @GetMapping("/{rankingId}")
+    public ResponseEntity<RankingResponseDto> fetchRanking(@PathVariable Long rankingId) {
+        RankingResponseDto ranking = rankingService.findRanking(rankingId);
+        return ResponseEntity.ok(ranking);
+    }
+
 
 
 
