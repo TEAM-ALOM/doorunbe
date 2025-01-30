@@ -6,7 +6,6 @@ import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.dto.create.CreateRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.dto.delete.DeleteRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.dto.query.RankingResponseDto;
-import com.alom.dorundorunbe.domain.ranking.service.RankingQueueService;
 import com.alom.dorundorunbe.domain.ranking.service.RankingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
