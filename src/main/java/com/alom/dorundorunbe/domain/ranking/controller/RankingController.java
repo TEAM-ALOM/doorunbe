@@ -49,6 +49,15 @@ public class RankingController implements RankingControllerDocs{
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 특정 User의 랭킹 정보 조회
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<UserRankingDto> getUserRanking(@PathVariable Long userId) {
+        UserRankingDto userRanking = userRankingService.findUserRanking(userId);
+        return ResponseEntity.ok(userRanking);
+    }
+
 
 
 
