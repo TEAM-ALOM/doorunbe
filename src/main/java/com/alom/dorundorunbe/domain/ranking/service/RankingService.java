@@ -5,8 +5,6 @@ import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
-import com.alom.dorundorunbe.domain.ranking.dto.RankingResultDto;
-import com.alom.dorundorunbe.domain.ranking.dto.RankingUserStatusDto;
 import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.dto.query.RankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.repository.RankingRepository;
