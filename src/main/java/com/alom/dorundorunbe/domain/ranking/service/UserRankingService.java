@@ -2,6 +2,7 @@ package com.alom.dorundorunbe.domain.ranking.service;
 
 import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
+import com.alom.dorundorunbe.domain.ranking.dto.UserRankingDto;
 import com.alom.dorundorunbe.domain.ranking.repository.UserRankingRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.exception.BusinessException;
@@ -16,11 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class UserRankingService {
     private final UserRankingRepository userRankingRepository;
-    private final SimpMessagingTemplate messagingTemplate;;
+    private final SimpMessagingTemplate messagingTemplate;
+    ;
 
 
-
-    public void createUserRanking(User user, Ranking ranking){
+    public void createUserRanking(User user, Ranking ranking) {
 
         boolean alreadyParticipated = userRankingRepository.existsByUserAndRanking(user, ranking);
         if (alreadyParticipated) {
@@ -33,5 +34,15 @@ public class UserRankingService {
         userRankingRepository.save(userRanking);
 
 
+    }
+
+    @Transactional(readOnly = true)
+    public UserRankingDto findUserRanking(Long userId) {
+        UserRanking userRanking = userRankingRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_RANKING_NOT_FOUND));
+
+        return UserRankingDto.of(userRanking);
+
 
     }
+}
