@@ -2,6 +2,7 @@ package com.alom.dorundorunbe.global.util.point.service;
 
 import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
 import com.alom.dorundorunbe.domain.ranking.repository.UserRankingRepository;
+import com.alom.dorundorunbe.domain.ranking.service.UserRankingService;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
@@ -20,7 +21,7 @@ public class PointService {
     private final PointCalculationService pointCalculationService;
     private final UserRepository userRepository;
     private final UserRankingRepository userRankingRepository;
-    /**private final UserRankingService userRankingService;*/
+    /private final UserRankingService userRankingService;
 
 
 
@@ -32,12 +33,12 @@ public class PointService {
         //doodleService.updateUserRankingPointAndNotify(user.getId(), doodlePoints);
 
         //}
-        /**
+
         if (user.isRankingParticipated()) {
             double rankingPoints = pointCalculationService.calculatePoints("rankingRunCalculator", record);
             userRankingService.updateUserRankingPointAndNotify(user.getId(), rankingPoints);
         }
-         */
+
     }
 
 //    public void giveDoodleRewardToUser(Long userId, Long point){
@@ -47,7 +48,7 @@ public class PointService {
 
     @Transactional//벌크성 처리
     public void giveRankingRewardToUsersByRanking(Long rankingId) {
-        /**
+
         List<UserRanking> userRankings = userRankingRepository.findByRankingId(rankingId);
 
 
@@ -67,7 +68,7 @@ public class PointService {
 
 
         userRepository.saveAll(usersToUpdate);
-         */
+
     }
 
 
