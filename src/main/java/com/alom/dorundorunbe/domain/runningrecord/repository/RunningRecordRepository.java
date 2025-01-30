@@ -26,17 +26,7 @@ public interface RunningRecordRepository extends JpaRepository<RunningRecord, Lo
     @Query("SELECT COUNT(r) FROM RunningRecord r WHERE r.user.id = :userId AND r.date >= :startDate AND r.date <= :endDate")
     Long countRecordsByUserIdAndDateRange(@Param("userId") Long userId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query("SELECT r FROM RunningRecord r WHERE r.user = :user AND r.date BETWEEN :startDate AND :endDate ORDER BY r.elapsedTime ASC")
-    List<RunningRecord> findTop3ByUserAndDateRangeOrderByElapsedTimeAsc(
-            @Param("user") User user,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate
-    );
-
-    @Query("SELECT AVG(r.elapsedTime) FROM RunningRecord r WHERE r.user = :user AND r.date >= :startDate")
-    Optional<Double> findMonthlyAverageElapsedTime(@Param("user") User user, @Param("startDate") LocalDateTime startDate);
-
-    @Query("SELECT COUNT(r) FROM RunningRecord r WHERE r.user = :user AND r.date BETWEEN :startTime AND :endTime")
-    int countRunsBetween(@Param("user") User user, @Param("startTime") LocalDateTime startTime, @Param("endTime") LocalDateTime endTime);
+    List<RunningRecord> findByUserAndDistanceAndCreatedAtAfter(
+            User user, Double distance, LocalDateTime rankingParticipationDate);
 
 }

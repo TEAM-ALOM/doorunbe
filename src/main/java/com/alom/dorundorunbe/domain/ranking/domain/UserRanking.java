@@ -3,16 +3,17 @@ package com.alom.dorundorunbe.domain.ranking.domain;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Entity
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_ranking")
 public class UserRanking extends BaseEntity {
 
@@ -24,23 +25,51 @@ public class UserRanking extends BaseEntity {
     @JoinColumn(name = "ranking_id", nullable = false)
     private Ranking ranking;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private int grade; // 사용자 순위
+    private Long grade; // 사용자 순위
 
-    @Column
-    private Double averageElapsedTime; // 사용자 기록 평균 (충족 못하면 null)
 
-    @Column(nullable = false)
-    private double lpAwarded; // 지급될 LP
+    private Double averagePoint;
 
-    @Column(nullable = false)
-    private boolean isClaimed; // 보상 수령 여부
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_ranking_id")
+    @Builder.Default
+    private List<RankingPoint> points = new ArrayList<>();
 
-    public void markClaimed() {
-        this.isClaimed = true;
+    public static UserRanking create(User user, Ranking ranking) {
+
+        return UserRanking.builder()
+                .user(user)
+                .grade(null)
+                .averagePoint(null)
+                .build();
+    }
+
+    public void confirmRanking(Ranking ranking){
+        this.ranking = ranking;
+        ranking.addParticipant(this);
+    }
+
+    public void addPoint(double point){
+        points.add(RankingPoint.of(point));
+        points.sort(Comparator.comparingDouble(RankingPoint::getPoint).reversed());
+        while (points.size() > 3) {
+            points.remove(points.size() - 1);
+        }
+
+
+    }
+    public void updateAveragePoint() {
+        this.averagePoint = points.stream()
+                .mapToDouble(RankingPoint::getPoint)
+                .average()
+                .orElse(0.0);
+    }
+
+    public void updateGrade(Long grade){
+        this.grade = grade;
     }
 }

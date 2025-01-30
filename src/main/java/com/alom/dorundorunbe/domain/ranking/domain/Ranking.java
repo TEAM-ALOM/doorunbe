@@ -2,6 +2,7 @@ package com.alom.dorundorunbe.domain.ranking.domain;
 
 import com.alom.dorundorunbe.domain.user.domain.User;
 
+import com.alom.dorundorunbe.global.enums.Tier;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,36 +28,23 @@ public class Ranking extends BaseEntity {
     private Long id;
 
     @OneToMany(mappedBy = "ranking", cascade = CascadeType.ALL)
-    @BatchSize(size = 10)
+    @BatchSize(size = 100)
     @Builder.Default
-    private List<User> participants = new ArrayList<>(); // 랭킹 참가자 목록
+    private List<UserRanking> participants = new ArrayList<>(); // 랭킹 참가자 목록
+
+    @Enumerated(EnumType.STRING)
+    private Tier tier;
 
 
 
-    @Column(nullable = false)
-    private boolean isFinished;
-
-    public void finish(){
-        isFinished =true;
+    public void addParticipant(UserRanking userRanking){
+        participants.add(userRanking);
     }
 
-    public void addParticipant(User user) {
-        if (!participants.contains(user)) { // 중복 방지
-            participants.add(user);
-            user.joinRanking(this); // 양방향 관계 설정
-        }
-    }
-
-    public void removeAllParticipants() {
-
-        new ArrayList<>(this.participants).forEach(this::removeParticipant);
-    }
-
-    public void removeParticipant(User user) {
-        if (participants.contains(user)) {
-            participants.remove(user); // 랭킹에서 사용자 제거
-            user.leaveRanking(); // 사용자의 랭킹 관계 제거
-        }
+    public static Ranking create(Tier tier) {
+        return Ranking.builder()
+                .tier(tier)
+                .build();
     }
 
 
