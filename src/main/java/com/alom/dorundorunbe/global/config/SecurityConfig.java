@@ -31,6 +31,10 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
         .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
+        .formLogin(AbstractHttpConfigurer::disable)
+        .httpBasic(AbstractHttpConfigurer::disable)
+
+
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(
                 "/v3/api-docs/**",
@@ -45,11 +49,13 @@ public class SecurityConfig {
             .anyRequest().authenticated()) // 나머지 요청은 인증 필요
         .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
         .oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                         .userService(principalUserDetailsService))
                 .successHandler(oAuthSuccessHandler)
                 .failureHandler(oAuthFailureHandler)) // oauth2
+
         .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, principalUserDetailsService), UsernamePasswordAuthenticationFilter.class);
 
     http.cors(AbstractHttpConfigurer::disable); // 테스트를 위해 CORS 비활성화

@@ -1,5 +1,7 @@
 package com.alom.dorundorunbe.global.config;
 
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -27,7 +29,8 @@ public class SwaggerConfig {
     return new OpenAPI()
             .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
             .addSecurityItem(securityRequirement)
-            .info(apiInfo());
+            .info(apiInfo())
+            .path("/actuator/health", new PathItem().get(new Operation().operationId("healthCheck")));
   }
 
   private Info apiInfo() {
