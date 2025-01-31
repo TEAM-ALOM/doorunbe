@@ -1,7 +1,6 @@
 package com.alom.dorundorunbe.domain.mypage.service;
 
 import com.alom.dorundorunbe.domain.achievement.repository.UserAchievementRepository;
-import com.alom.dorundorunbe.domain.auth.service.OAuthService;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.achievement.domain.UserAchievement;
@@ -21,8 +20,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MyPageService {
     private final UserService userService;
-
-    private final OAuthService oAuthService;
 
     private final RunningRecordRepository runningRecordRepository;
 
@@ -70,15 +67,14 @@ public class MyPageService {
         return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
     }
 
-    public void updateNickname(Long userId, String nickname) {
-        User user = userService.findById(userId);
+    public void updateNickname(String username, String nickname) {
+        User user = userService.findByEmail(username);
         user.updateNickname(nickname);
     }
 
+    // soft delete -> refresh 토큰 삭제 로직 추가 필요
     public ResponseEntity<String> deleteUser(String username) {
         User user = userService.findByEmail(username);
-
-        oAuthService.unlink(user);
         userService.delete(user);
 
         return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");

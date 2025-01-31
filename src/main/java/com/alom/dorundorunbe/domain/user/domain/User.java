@@ -28,8 +28,7 @@ public class User extends BaseEntity {
     private String email;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private OAuth2Provider oAuth2Provider;
+    private Boolean isDeleted;
 
     // 앱 내에서 사용할 닉네임 (ㅇㅇ두)
     @Column(nullable = false, unique = true, length = 32)
@@ -55,6 +54,10 @@ public class User extends BaseEntity {
 
     // 랭킹 포인트
     private double lp;
+
+    public void updateIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;

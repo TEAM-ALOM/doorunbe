@@ -6,6 +6,7 @@ import com.alom.dorundorunbe.domain.auth.provider.OAuth2AttributeProvider;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,6 +31,11 @@ public class PrincipalUserDetailsService extends DefaultOAuth2UserService implem
 
         // 사용자 정보 (registrationId + attribute + etc)
         OAuth2User oAuth2User = super.loadUser(userRequest);
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (userService.findByEmail(email).getIsDeleted()) {
+            throw new IllegalArgumentException("탈퇴한 사용자입니다");
+        }
 
         AuthUserDto authUserDto = oAuth2AttributeProvider
                 .convertUserAttribute(userRequest.getClientRegistration().getRegistrationId(), oAuth2User);

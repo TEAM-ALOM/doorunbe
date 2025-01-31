@@ -29,7 +29,7 @@ public class UserService {
     }
 
     public void delete(User user) {
-        userRepository.delete(user);
+        user.updateIsDeleted(true);
     }
 
     public User registerOrLogin(AuthUserDto dto) {
@@ -37,7 +37,7 @@ public class UserService {
                 .orElseGet(() -> {
                     User user = User.builder()
                             .email(dto.email())
-                            .oAuth2Provider(dto.provider())
+                            .isDeleted(false)
                             .nickname(dto.email())
                             .cash(0L)
                             .build();
