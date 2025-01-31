@@ -7,6 +7,7 @@ import com.alom.dorundorunbe.domain.doodle.dto.DoodleResponseDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
 import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
+import com.alom.dorundorunbe.domain.doodle.service.UserDoodleService;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.global.enums.Tier;
@@ -43,10 +44,13 @@ public class DoodleControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private static DoodleService doodleService;
+    private DoodleService doodleService;
 
     @MockBean
-    private static UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @MockBean
+    private UserDoodleService userDoodleService;
 
     static private Doodle doodle;
 

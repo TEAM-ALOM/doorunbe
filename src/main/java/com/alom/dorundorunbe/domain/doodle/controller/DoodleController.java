@@ -7,28 +7,21 @@ import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
 import com.alom.dorundorunbe.domain.doodle.service.UserDoodleService;
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/doodle")
 public class DoodleController {
 
-    @Autowired
-    private DoodleService doodleService;
-    @Autowired
-    private UserDoodleService userDoodleService;
-
-    @Autowired
-    public DoodleController(DoodleService doodleService){
-        this.doodleService = doodleService;
-    }
+    private final DoodleService doodleService;
+    private final UserDoodleService userDoodleService;
 
     @PostMapping("/create/{userId}")
     @Operation(summary = "새로운 Doodle 생성")
