@@ -6,7 +6,6 @@ import com.alom.dorundorunbe.domain.doodle.dto.DoodleRequestDto;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleResponseDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
-import com.alom.dorundorunbe.domain.doodle.repository.UserDoodleRepository;
 import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
@@ -62,7 +61,6 @@ public class DoodleControllerTest {
         user = User.builder()
                 .id(1L)
                 .nickname("runner123")
-                .name("testUser")
                 .email("example@example.com")
                 .cash(1000L)
                 .tier(Tier.AMATEUR)

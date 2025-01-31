@@ -69,7 +69,7 @@ class MyPageControllerTest {
     void updateUserUpdateSuccess() throws Exception {
         String username = "testUser@test.com";
 
-        Mockito.when(myPageService.updateByUsername(any(UserUpdateDTO.class), eq(username)))
+        Mockito.when(myPageService.updateByEmail(any(UserUpdateDTO.class), eq(username)))
                 .thenReturn(ResponseEntity.ok("User Update Success"));
 
         mockMvc.perform(put("/myPage/updateUser")
@@ -88,7 +88,7 @@ class MyPageControllerTest {
     @WithMockUser(username = "testUser@test.com")
     void updateUserReturnBadRequestWhenInvalidData() throws Exception {
 
-        Mockito.when(myPageService.updateByUsername(any(UserUpdateDTO.class), eq("testUser@test.com")))
+        Mockito.when(myPageService.updateByEmail(any(UserUpdateDTO.class), eq("testUser@test.com")))
                 .thenReturn(ResponseEntity.badRequest().body("Age must be greater than zero"));
 
         mockMvc.perform(put("/myPage/updateUser")

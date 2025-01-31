@@ -25,15 +25,15 @@ public class MyPageService {
 
     private final UserAchievementRepository userAchievementRepository;
 
-    public List<RunningRecord> getRunningRecords(String username) {
-        User user = userService.findByEmail(username);
+    public List<RunningRecord> getRunningRecords(String email) {
+        User user = userService.findByEmail(email);
         List<RunningRecord> runningRecords = runningRecordRepository.findAllByUser(user);
         runningRecords.sort(Comparator.comparing(RunningRecord::getDate).reversed());
         return runningRecords;
     }
 
-    public List<AchievementResponse> getAchievements(String username) {
-        User user = userService.findByEmail(username);
+    public List<AchievementResponse> getAchievements(String email) {
+        User user = userService.findByEmail(email);
         List<UserAchievement> userAchievements = userAchievementRepository.findAllByUser(user);
         return userAchievements.stream()
                 .map(ua->new AchievementResponse(
@@ -43,12 +43,12 @@ public class MyPageService {
                 .collect(Collectors.toList());
     }
 
-    public String getUserRank(String username) {
-        User user = userService.findByEmail(username);
+    public String getUserRank(String email) {
+        User user = userService.findByEmail(email);
         return user.getRanking().toString();
     }
-    public String getUserNickname(String username) {
-        User user = userService.findByEmail(username);
+    public String getUserNickname(String email) {
+        User user = userService.findByEmail(email);
         return user.getNickname();
     }
 
@@ -56,8 +56,8 @@ public class MyPageService {
         return userService.existsByNickname(nickName);
     }
 
-    public ResponseEntity<String> updateByUsername(UserUpdateDTO userDTO, String username) {
-        User user = userService.findByEmail(username);
+    public ResponseEntity<String> updateByEmail(UserUpdateDTO userDTO, String email) {
+        User user = userService.findByEmail(email);
         if(userDTO.getNickname() == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nickname is required");
         if(checkNickNameDuplicate(userDTO.getNickname()))
@@ -67,14 +67,14 @@ public class MyPageService {
         return ResponseEntity.status(HttpStatus.OK).body("User updated successfully");
     }
 
-    public void updateNickname(String username, String nickname) {
-        User user = userService.findByEmail(username);
+    public void updateNickname(String email, String nickname) {
+        User user = userService.findByEmail(email);
         user.updateNickname(nickname);
     }
 
     // soft delete -> refresh 토큰 삭제 로직 추가 필요
-    public ResponseEntity<String> deleteUser(String username) {
-        User user = userService.findByEmail(username);
+    public ResponseEntity<String> deleteUser(String email) {
+        User user = userService.findByEmail(email);
         userService.delete(user);
 
         return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully");

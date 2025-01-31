@@ -40,7 +40,7 @@ public class MyPageController {
     @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다")
     public ResponseEntity<String> updateUser(@RequestBody UserUpdateDTO userDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return myPageService.updateByUsername(userDTO, username);
+        return myPageService.updateByEmail(userDTO, username);
     }
 
     @PutMapping("/update/nickname")
