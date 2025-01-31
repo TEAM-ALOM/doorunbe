@@ -33,7 +33,6 @@ public class MyPageController {
 
         MyPageResponse myPageResponse = new MyPageResponse(username, nickname, achievementResponses, rank, runningRecords);
         return new ResponseEntity<>(myPageResponse, HttpStatus.OK);
-
     }
 
     @PutMapping("/update")
@@ -51,7 +50,7 @@ public class MyPageController {
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/myPage/delete")
+    @DeleteMapping("/delete")
     @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴합니다")
     public ResponseEntity<String> deleteUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

@@ -49,9 +49,6 @@ public class DoodleControllerTest {
     @MockBean
     private UserRepository userRepository;
 
-    @MockBean
-    private UserDoodleService userDoodleService;
-
     static private Doodle doodle;
 
     static private User user;
@@ -137,8 +134,8 @@ public class DoodleControllerTest {
                 .andExpect(jsonPath("$.name").value("testDoodle"))
                 .andExpect(jsonPath("$.weeklyGoalDistance").value(1.0))
                 .andExpect(jsonPath("$.weeklyGoalCount").value(1))
-                .andExpect(jsonPath("$.goalCadence").value(2.0))
-                .andExpect(jsonPath("$.goalPace").value(3.0))
+                .andExpect(jsonPath("$.weeklyGoalCadence").value(2.0))
+                .andExpect(jsonPath("$.weeklyGoalPace").value(3.0))
                 .andExpect(jsonPath("$.goalParticipationCount").value(10))
                 .andExpect(jsonPath("$.maxParticipant").value(20)
         );
@@ -238,8 +235,8 @@ public class DoodleControllerTest {
                 .andExpect(jsonPath("$.name").value("Updated Doodle Name")) // name 값 확인
                 .andExpect(jsonPath("$.weeklyGoalDistance").value(2.0)) // goalDistance 값 확인
                 .andExpect(jsonPath("$.weeklyGoalCount").value(1))
-                .andExpect(jsonPath("$.goalCadence").value(3.0)) // goalCadence 값 확인
-                .andExpect(jsonPath("$.goalPace").value(4.0)) // goalPace 값 확인
+                .andExpect(jsonPath("$.weeklyGoalCadence").value(3.0)) // goalCadence 값 확인
+                .andExpect(jsonPath("$.weeklyGoalPace").value(4.0)) // goalPace 값 확인
                 .andExpect(jsonPath("$.goalParticipationCount").value(15)) // goalParticipationCount 값 확인
                 .andExpect(jsonPath("$.maxParticipant").value(25)); // maxParticipant 값 확인
 
