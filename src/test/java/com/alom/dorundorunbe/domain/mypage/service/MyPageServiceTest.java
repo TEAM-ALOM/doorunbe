@@ -1,7 +1,7 @@
 package com.alom.dorundorunbe.domain.mypage.service;
 
-import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
-import com.alom.dorundorunbe.domain.RunningRecord.repository.RunningRecordRepository;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
+import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.mypage.dto.UserUpdateDTO;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ class MyPageServiceTest {
 
         User existingUser = new User();
         existingUser.setName(username);
-        existingUser.setAge(20);
+       // existingUser.setAge(20);
         existingUser.setNickname("oldNickName");
 
         Mockito.when(userRepository.findByName(username)).thenReturn(Optional.of(existingUser));
@@ -69,7 +70,7 @@ class MyPageServiceTest {
 
         User existingUser = new User();
         existingUser.setName(username);
-        existingUser.setAge(20);
+       // existingUser.setAge(20);
         existingUser.setNickname("existingNickName");
 
         Mockito.when(userRepository.findByName(username)).thenReturn(Optional.of(existingUser));
@@ -90,7 +91,7 @@ class MyPageServiceTest {
         userUpdateDTO.setName("newName");
 
         User existingUser = new User();
-        existingUser.setAge(20);
+      //  existingUser.setAge(20);
         existingUser.setNickname("oldNickName");
         existingUser.setName(username);
         Mockito.when(userRepository.findByName(username)).thenReturn(java.util.Optional.of(existingUser));
@@ -109,10 +110,10 @@ class MyPageServiceTest {
         existingUser.setName(username);
 
         RunningRecord record1 = new RunningRecord();
-        record1.setDate(LocalDateTime.of(2025, 1, 10, 0, 0));
+        record1.setDate(LocalDate.from(LocalDateTime.of(2025, 1, 10, 0, 0)));
 
         RunningRecord record2 = new RunningRecord();
-        record2.setDate(LocalDateTime.of(2025, 1, 11, 0, 0));
+        record2.setDate(LocalDate.from(LocalDateTime.of(2025, 1, 11, 0, 0)));
 
         // 수정 가능한 리스트로 변경
         List<RunningRecord> runningRecords = new ArrayList<>(List.of(record1, record2));
@@ -126,8 +127,8 @@ class MyPageServiceTest {
 
         // Then: 결과 검증
         assertEquals(2, result.size());
-        assertEquals(LocalDateTime.of(2025, 1, 10, 0, 0), result.get(1).getDate());
-        assertEquals(LocalDateTime.of(2025, 1, 11, 0, 0), result.get(0).getDate());
+        assertEquals(LocalDateTime.of(2025, 1, 10, 0, 0), result.get(1).getDate().atStartOfDay());
+        assertEquals(LocalDateTime.of(2025, 1, 11, 0, 0), result.get(0).getDate().atStartOfDay());
 
         // Mock 호출 검증
         Mockito.verify(userRepository, Mockito.times(1)).findByName(username);

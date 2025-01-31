@@ -16,6 +16,9 @@ public enum ErrorCode {
   USER_ACHIEVEMENT_ALREADY_CLAIMED(HttpStatus.CONFLICT, "이미 해당 업적을 받았습니다."),
   USER_ACHIEVEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자 업적을 찾을 수 없습니다."),
   REWARD_ALREADY_CLAIMED(HttpStatus.CONFLICT, "이미 보상을 수령한 업적입니다."),
+  //Doodle 오류
+  DOODLE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 방입니다."),
+  USER_NOT_FOUND(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
   // 알려지지 않은 문제
   UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "알려지지 않은 문제가 발생하였습니다."),
   // 입력 값 오류

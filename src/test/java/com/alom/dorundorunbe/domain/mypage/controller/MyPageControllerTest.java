@@ -1,6 +1,6 @@
 package com.alom.dorundorunbe.domain.mypage.controller;
 
-import com.alom.dorundorunbe.domain.RunningRecord.domain.RunningRecord;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.mypage.dto.AchievementResponse;
 import com.alom.dorundorunbe.domain.mypage.dto.UserDeleteDTO;
 import com.alom.dorundorunbe.domain.mypage.dto.UserUpdateDTO;
