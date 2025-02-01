@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public record ClaimRankingResponseDto(
         Long userId,
         Long rankingId,
-        String name,
+        String nickname,
         int grade,
         double lpAwarded,
         boolean rewardClaimed,
@@ -18,7 +18,7 @@ public record ClaimRankingResponseDto(
         return new ClaimRankingResponseDto(
                 userRanking.getUser().getId(),
                 userRanking.getRanking().getId(),
-                userRanking.getUser().getName(),
+                userRanking.getUser().getNickname(),
                 userRanking.getGrade(),
                 userRanking.getLpAwarded(),
                 userRanking.isClaimed(),

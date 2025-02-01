@@ -169,7 +169,7 @@ public class RankingService {
                     double averageElapsedTime = calculateTop3AverageElapsedTime(user, startTime, now);
                     int runningCount = runningRecordRepository.countRunsBetween(user, startTime, now);
                     return RankingUserStatusDto.of(
-                            user.getName(),
+                            user.getNickname(),
                             startTime,
                             runningCount,
                             averageElapsedTime,
@@ -184,7 +184,7 @@ public class RankingService {
         for (int i = 0; i < sortedParticipants.size(); i++) {
             RankingUserStatusDto participant = sortedParticipants.get(i);
             updatedParticipants.add(RankingUserStatusDto.of(
-                    participant.userName(),
+                    participant.nickname(),
                     participant.rankingStartTime(),
                     participant.runningCount(),
                     participant.averageElapsedTime(),

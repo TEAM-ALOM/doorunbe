@@ -4,14 +4,13 @@ import java.time.LocalDateTime;
 
 public record DeleteRankingResponseDto(
         Long id,
-        String userName,
+        String nickname,
         LocalDateTime createdAt,
         LocalDateTime modifiedAt
 ) {
     public static DeleteRankingResponseDto of (
-            Long id, String userName, LocalDateTime createdAt, LocalDateTime
-    modifiedAt){
-        return new DeleteRankingResponseDto(id, userName, createdAt, modifiedAt);
+            Long id, String nickname, LocalDateTime createdAt, LocalDateTime modifiedAt){
+        return new DeleteRankingResponseDto(id, nickname, createdAt, modifiedAt);
     }
 
 }

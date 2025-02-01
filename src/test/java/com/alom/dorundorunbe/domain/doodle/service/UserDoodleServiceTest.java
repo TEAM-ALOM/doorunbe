@@ -2,7 +2,6 @@ package com.alom.dorundorunbe.domain.doodle.service;
 
 import com.alom.dorundorunbe.domain.doodle.domain.Doodle;
 import com.alom.dorundorunbe.domain.doodle.domain.UserDoodle;
-import com.alom.dorundorunbe.domain.doodle.domain.UserDoodleStatus;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
 import com.alom.dorundorunbe.domain.doodle.repository.DoodleRepository;
 import com.alom.dorundorunbe.domain.doodle.repository.UserDoodleRepository;
@@ -21,7 +20,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,7 +45,6 @@ public class UserDoodleServiceTest {
 
         User user = User.builder()
                 .id(1L)
-                .name("testUser")
                 .build();
 
         Doodle doodle = Doodle.builder()
@@ -77,7 +74,6 @@ public class UserDoodleServiceTest {
 
         User user = User.builder()
                 .id(1L)
-                .name("testUser")
                 .build();
 
         Doodle doodle = Doodle.builder()

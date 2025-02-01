@@ -67,7 +67,6 @@ public class DoodleServiceTest {
         user = User.builder()
                 .id(1L)
                 .nickname("runner123")
-                .name("testUser")
                 .email("example@example.com")
                 .cash(1000L)
                 .tier(Tier.AMATEUR)
@@ -76,7 +75,6 @@ public class DoodleServiceTest {
         user2 = User.builder()
                 .id(2L)
                 .nickname("runner456")
-                .name("testUser2")
                 .email("example2@example.com")
                 .cash(1000L)
                 .tier(Tier.AMATEUR)
@@ -281,7 +279,8 @@ public class DoodleServiceTest {
         when(passwordEncoder.matches(eq("testPassword"), eq(doodle1.getPassword()))).thenReturn(true); // 비밀번호 체크 Mock 설정
 
         // UserDoodleService의 addParticipantsToUserDoodle 호출 Mock 설정
-        doNothing().when(userDoodleService).addParticipantsToUserDoodle(anyLong(), anyLong()); // addParticipantsToUserDoodle 호출이 잘 되도록 설정
+        // doNothing().when(userDoodleService).addParticipantsToUserDoodle(anyLong(), anyLong()); // addParticipantsToUserDoodle 호출이 잘 되도록 설정
+        when(userDoodleService.addParticipantsToUserDoodle(anyLong(), anyLong())).thenReturn(null);
 
         // Service 호출: 참가자 추가
         DoodleResponseDto doodleResponseDto = doodleService.addParticipantToDoodle(doodle1.getId(), user.getId(), "testPassword");
