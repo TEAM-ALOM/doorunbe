@@ -69,6 +69,13 @@ public class UserDoodleServiceTest {
                 .weeklyGoalPace(12.0)
                 .weeklyGoalCadence(3.0)
                 .participants(new ArrayList<>())
+                .isGoalActive(true)
+                .doodlePoint(0)
+                .isRunning(true)
+                .weeklyGoalHeartRateZone(3)
+                .isPublic(true)
+                .maxParticipant(10)
+                .password("password1")
                 .build();
 
         runningRecord = RunningRecord.builder()
