@@ -94,6 +94,9 @@ public class DoodleServiceTest {
                 .password("password1")
                 .maxParticipant(5)
                 .participants(new ArrayList<>())  // 리스트 비워놓음
+                .isGoalActive(true)
+                .isRunning(true)
+                .doodlePoint(0)
                 .build();
 
         doodle2 = Doodle.builder()
@@ -108,6 +111,9 @@ public class DoodleServiceTest {
                 .password("password2")
                 .maxParticipant(10)
                 .participants(new ArrayList<>())  // 리스트 비워놓음
+                .isGoalActive(true)
+                .isRunning(true)
+                .doodlePoint(0)
                 .build();
 
         userDoodle = UserDoodle.builder()
@@ -139,6 +145,9 @@ public class DoodleServiceTest {
                 .password("testPassword")
                 .maxParticipant(10)
                 .userId(1L)
+                .isGoalActive(true)
+                .isPublic(true)
+                .isRunning(true)
                 .build();
 
     }
@@ -161,6 +170,7 @@ public class DoodleServiceTest {
                 .password("testPassword")
                 .maxParticipant(10)
                 .participants(new ArrayList<>())
+                .isRunning(true)
                 .build();
         when(doodleRepository.save(any(Doodle.class))).thenReturn(savedDoodle);
 
@@ -268,6 +278,7 @@ public class DoodleServiceTest {
                 .goalParticipationCount(20)
                 .maxParticipant(20)
                 .isGoalActive(true)
+                .isRunning(true)
                 .build();
 
         when(doodleRepository.findById(1L)).thenReturn(Optional.of(oldDoodle));
