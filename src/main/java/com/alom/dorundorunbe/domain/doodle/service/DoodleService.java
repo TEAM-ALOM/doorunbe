@@ -47,14 +47,25 @@ public class DoodleService {
                 .doodlePoint(0)
                 .build();
 
-        if (doodle.isGoalActive()){ //주간 목표 활성화
+        if (doodle.isGoalActive() && doodle.isRunning()){ //주간 목표 활성화, 활성화 모드가 달리기일 경우
           doodle.setWeeklyGoalDistance(doodleRequestDto.getWeeklyGoalDistance());
           doodle.setWeeklyGoalCount(doodleRequestDto.getWeeklyGoalCount());
           doodle.setWeeklyGoalCadence(doodleRequestDto.getWeeklyGoalCadence());
           doodle.setWeeklyGoalPace(doodleRequestDto.getWeeklyGoalPace());
           doodle.setWeeklyGoalHeartRateZone(doodleRequestDto.getWeeklyGoalHeartRateZone());
           doodle.setGoalParticipationCount(doodleRequestDto.getGoalParticipationCount());
+          //위치 추가 필요
         }
+        else if (doodle.isGoalActive() && !doodle.isRunning()){ //주간 목표 활성화, 활성화 모드가 걷기일 경우
+            doodle.setWeeklyGoalDistance(doodleRequestDto.getWeeklyGoalDistance());
+            doodle.setWeeklyGoalCount(doodleRequestDto.getWeeklyGoalCount());
+            //위치 추가 필요
+            doodle.setWeeklyGoalCadence(null);
+            doodle.setWeeklyGoalPace(null);
+            doodle.setWeeklyGoalHeartRateZone(null);
+            doodle.setGoalParticipationCount(null);
+        }
+
         else{ //주간 목표 비활성화
             doodle.setWeeklyGoalDistance(null);
             doodle.setWeeklyGoalCount(null);
@@ -105,13 +116,23 @@ public class DoodleService {
         doodle.setPublic(doodleRequestDto.isPublic());
         doodle.setGoalActive(doodleRequestDto.isGoalActive());
 
-        if (doodle.isGoalActive()) {
+        if (doodle.isGoalActive() && doodle.isRunning()) {
             doodle.setWeeklyGoalDistance(doodleRequestDto.getWeeklyGoalDistance());
             doodle.setWeeklyGoalCount(doodleRequestDto.getWeeklyGoalCount());
             doodle.setWeeklyGoalCadence(doodleRequestDto.getWeeklyGoalCadence());
             doodle.setWeeklyGoalPace(doodleRequestDto.getWeeklyGoalPace());
             doodle.setWeeklyGoalHeartRateZone(doodleRequestDto.getWeeklyGoalHeartRateZone());
             doodle.setGoalParticipationCount(doodleRequestDto.getGoalParticipationCount());
+            //위치 추가 필요
+        }
+        else if (doodle.isGoalActive() && !doodle.isRunning()){
+            doodle.setWeeklyGoalDistance(doodleRequestDto.getWeeklyGoalDistance());
+            doodle.setWeeklyGoalCount(doodleRequestDto.getWeeklyGoalCount());
+            //위치 추가 필요
+            doodle.setWeeklyGoalCadence(null);
+            doodle.setWeeklyGoalPace(null);
+            doodle.setWeeklyGoalHeartRateZone(null);
+            doodle.setGoalParticipationCount(null);
         }
         else{
             doodle.setWeeklyGoalDistance(null);
@@ -221,6 +242,7 @@ public class DoodleService {
                 .map(Doodle::getDoodlePoint)
                 .collect(Collectors.toList());
     }
+
 
 
 }
