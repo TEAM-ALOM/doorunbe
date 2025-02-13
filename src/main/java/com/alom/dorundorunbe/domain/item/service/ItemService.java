@@ -16,6 +16,7 @@ import com.alom.dorundorunbe.global.exception.BusinessException;
 import com.alom.dorundorunbe.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -29,6 +30,7 @@ public class ItemService {
     private final UserService userService;
     private final ImageService imageService;
 
+    @Transactional
     public void createItem(ItemRequestDto dto) {
         Image image = imageService.findById(dto.imageId());
 
@@ -42,6 +44,7 @@ public class ItemService {
         itemRepository.save(item);
     }
 
+    @Transactional
     public void updateItemImage(Long itemId, ItemRequestDto dto) {
         Item item = findItemById(itemId);
         Image image = imageService.findById(dto.imageId());
@@ -49,6 +52,7 @@ public class ItemService {
         item.update(dto.name(), dto.itemCategory(), image, dto.cost());
     }
 
+    @Transactional
     public void deleteItem(Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow();
 
@@ -63,9 +67,8 @@ public class ItemService {
     public List<ItemResponseDto> findItemByCategory(ItemCategory itemCategory, Long userId) {
 
         User user = userService.findById(userId);
-        List<Item> itemList = itemRepository.findAllByItemCategory(itemCategory);
 
-        return itemList.stream()
+        return itemRepository.findAllByItemCategory(itemCategory).stream()
                 .map(item -> ItemResponseDto.of(
                         item.getId(),
                         item.getName(),
@@ -77,6 +80,7 @@ public class ItemService {
                 .toList();
     }
 
+    @Transactional
     public void purchaseItem(Long itemId, Long userId) {
         User user = userService.findById(userId);
         Item item = findItemById(itemId);
@@ -84,7 +88,7 @@ public class ItemService {
         if (userItemRepository.existsByUserAndItem(user, item)) {
             throw new BusinessException(ErrorCode.ITEM_ALREADY_OWNED);
         }
-        if (user.getCash()<item.getCost()) {
+        if (user.getCash() < item.getCost()) {
             throw new BusinessException(ErrorCode.REJECT_ITEM_PAYMENT);
         }
 
@@ -96,6 +100,7 @@ public class ItemService {
         userItemRepository.save(userItem);
     }
 
+    @Transactional
     public List<EquippedItemResponseDto> equippedItem(Long itemId, Long userId) {
         User user = userService.findById(userId);
         Item item = findItemById(itemId);
@@ -109,10 +114,10 @@ public class ItemService {
         }
 
         userItem.updateEquipped(true);
-
         return findEquippedItemList(user);
     }
 
+    @Transactional
     public List<EquippedItemResponseDto> unequippedItem(Long itemId, Long userId) {
         User user = userService.findById(userId);
         Item item = itemRepository.findById(itemId).orElseThrow();
@@ -126,7 +131,6 @@ public class ItemService {
         }
 
         userItem.updateEquipped(false);
-
         return findEquippedItemList(user);
     }
 
@@ -137,12 +141,7 @@ public class ItemService {
 
     private List<EquippedItemResponseDto> findEquippedItemList(User user) {
         return userItemRepository.findAllByUserAndEquipped(user, true).stream()
-                .map(equippedUserItem -> EquippedItemResponseDto.of(
-                        equippedUserItem.getItem().getId(),
-                        equippedUserItem.getItem().getName(),
-                        equippedUserItem.getItem().getItemCategory(),
-                        equippedUserItem.getItem().getImage().getId()
-                ))
+                .map(EquippedItemResponseDto::from)
                 .toList();
     }
 }

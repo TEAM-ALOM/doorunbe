@@ -8,10 +8,6 @@ public record ImageResponseDto(
         String url,
         ImageCategory category
 ) {
-    public static ImageResponseDto of(Long imageId, String url, ImageCategory category) {
-        return new ImageResponseDto(imageId, url, category);
-    }
-
     public static ImageResponseDto from(Image image) {
         return new ImageResponseDto(image.getId(), image.getUrl(), image.getCategory());
     }

@@ -8,7 +8,4 @@ public record ItemRequestDto(
         Long imageId,
         Long cost
 ) {
-    public static ItemRequestDto of(String name, ItemCategory itemCategory, Long imageId, Long cost) {
-        return new ItemRequestDto(name, itemCategory, imageId, cost);
-    }
 }

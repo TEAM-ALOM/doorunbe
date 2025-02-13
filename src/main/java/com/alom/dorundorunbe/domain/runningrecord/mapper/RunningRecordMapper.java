@@ -60,12 +60,8 @@ public interface RunningRecordMapper {
 
     default List<EquippedItemResponseDto> mapItems(List<RunningRecordItem> runningRecordItems){
         return runningRecordItems == null ? List.of() : runningRecordItems.stream()
-                .map(item -> EquippedItemResponseDto.of(
-                        item.getItem().getId(),
-                        item.getItem().getName(),
-                        item.getItem().getItemCategory(),
-                        item.getItem().getImage().getId()
-                )).toList();
+                .map(EquippedItemResponseDto::from)
+                .toList();
     }
 
     default List<GpsCoordinateDto> mapGpsCoordinates(List<GpsCoordinate> gpsCoordinates) {

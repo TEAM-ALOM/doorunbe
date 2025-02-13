@@ -9,6 +9,7 @@ import com.alom.dorundorunbe.global.exception.BusinessException;
 import com.alom.dorundorunbe.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class ImageService {
     private final AwsS3Credentials awsS3Credentials;
     private final S3ImageService s3ImageService;
 
+    @Transactional
     public ImageResponseDto save(MultipartFile file, String category) {
 
         String bucket = awsS3Credentials.getBucket();

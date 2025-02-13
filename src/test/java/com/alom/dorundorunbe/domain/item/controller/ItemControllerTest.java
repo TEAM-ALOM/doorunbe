@@ -39,8 +39,8 @@ class ItemControllerTest {
     @DisplayName("카테고리별 아이템 목록 조회")
     void fetchItemByCategory() throws Exception {
         List<ItemResponseDto> mockItemList = List.of(
-                ItemResponseDto.of(1L, "CLOTHES", 100L, true),
-                ItemResponseDto.of(2L, "CLOTHES", 200L, false)
+                ItemResponseDto.of(1L, "cloth1", 1L, 100L, true),
+                ItemResponseDto.of(2L, "cloth2", 2L, 200L, false)
         );
 
         when(itemService.findItemByCategory(eq(ItemCategory.CLOTHES), eq(1L)))
@@ -66,7 +66,7 @@ class ItemControllerTest {
     @Test
     void equippedItem() throws Exception {
         List<EquippedItemResponseDto> equippedItemList = List.of(
-                EquippedItemResponseDto.of(1L, "티셔츠", ItemCategory.CLOTHES)
+                EquippedItemResponseDto.of(1L, "티셔츠", ItemCategory.CLOTHES, 1L)
         );
 
         when(itemService.equippedItem(1L, 1L)).thenReturn(equippedItemList);
@@ -81,7 +81,7 @@ class ItemControllerTest {
     @Test
     void unequippedItem() throws Exception {
         List<EquippedItemResponseDto> equippedItemList = List.of(
-                EquippedItemResponseDto.of(2L, "모자", ItemCategory.HAIR)
+                EquippedItemResponseDto.of(2L, "모자", ItemCategory.HAIR, 1L)
         );
 
         when(itemService.unequippedItem(1L, 1L)).thenReturn(equippedItemList);
@@ -96,8 +96,8 @@ class ItemControllerTest {
     @Test
     void fetchEquippedItemList() throws Exception {
         List<EquippedItemResponseDto> equippedItemList = List.of(
-                EquippedItemResponseDto.of(1L, "티셔츠", ItemCategory.CLOTHES),
-                EquippedItemResponseDto.of(2L, "모자", ItemCategory.HAIR)
+                EquippedItemResponseDto.of(1L, "티셔츠", ItemCategory.CLOTHES, 1L),
+                EquippedItemResponseDto.of(2L, "모자", ItemCategory.HAIR, 2L)
         );
 
         when(itemService.findEquippedItemList(1L)).thenReturn(equippedItemList);
