@@ -6,7 +6,6 @@ import com.alom.dorundorunbe.domain.doodle.dto.DoodleRequestDto;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleResponseDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
-import com.alom.dorundorunbe.domain.doodle.repository.UserDoodleRepository;
 import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
 import com.alom.dorundorunbe.domain.doodle.service.UserDoodleService;
 import com.alom.dorundorunbe.domain.user.domain.User;
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -41,9 +39,6 @@ public class DoodleControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @MockBean
     private DoodleService doodleService;
@@ -181,8 +176,7 @@ public class DoodleControllerTest {
        when(doodleService.getAllDoodles()).thenReturn(doodleResponseDtos);
 
        mockMvc.perform(get("/doodle")
-               .contentType(MediaType.APPLICATION_JSON)
-               .with(csrf()))
+               .contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$[0].name").value("testDoodle1"))
                .andExpect(jsonPath("$[1].name").value("testDoodle2"));
@@ -208,6 +202,7 @@ public class DoodleControllerTest {
     @DisplayName("Put /doodle/{doodleId} : 특정 Doodle을 수정한다.")
     @WithMockUser(username = "runner123", roles = {"ADMIN"})
     public void updatedDoodle() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
 
         DoodleRequestDto updateRequest = DoodleRequestDto.builder()
                 .name("Updated Doodle Name")
@@ -258,6 +253,7 @@ public class DoodleControllerTest {
     @DisplayName("Post /{doodleId}/User/{userId} : 특정 Doodle에 User를 추가한다.")
     @WithMockUser(username = "runner123", roles = {"USER"})
     public void addParticipantToDoodle() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
         when(doodleService.addParticipantToDoodle(eq(1L), eq(1L), eq("testPassword")))
                 .thenReturn(doodleResponseDto);
 
@@ -327,8 +323,7 @@ public class DoodleControllerTest {
         when(doodleService.getParticipants(eq(1L))).thenReturn(participants);
 
         mockMvc.perform(get("/doodle/{doodleId}/participants", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
                 .andExpect(jsonPath("$[0].userId").value(1L))
