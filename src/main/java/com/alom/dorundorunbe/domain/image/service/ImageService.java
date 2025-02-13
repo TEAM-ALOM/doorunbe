@@ -5,6 +5,8 @@ import com.alom.dorundorunbe.domain.image.domain.ImageCategory;
 import com.alom.dorundorunbe.domain.image.dto.ImageResponseDto;
 import com.alom.dorundorunbe.domain.image.repository.ImageRepository;
 import com.alom.dorundorunbe.global.config.AwsS3Credentials;
+import com.alom.dorundorunbe.global.exception.BusinessException;
+import com.alom.dorundorunbe.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +47,7 @@ public class ImageService {
     }
 
     public Image findById(Long id) {
-        return imageRepository.findById(id).orElseThrow();
+        return imageRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(ErrorCode.IMAGE_NOT_FOUND));
     }
 }

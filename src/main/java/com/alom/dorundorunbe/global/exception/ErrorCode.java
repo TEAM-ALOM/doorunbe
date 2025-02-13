@@ -16,6 +16,19 @@ public enum ErrorCode {
   USER_ACHIEVEMENT_ALREADY_CLAIMED(HttpStatus.CONFLICT, "이미 해당 업적을 받았습니다."),
   USER_ACHIEVEMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자 업적을 찾을 수 없습니다."),
   REWARD_ALREADY_CLAIMED(HttpStatus.CONFLICT, "이미 보상을 수령한 업적입니다."),
+  // 아이템
+  ITEM_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 아이템입니다."),
+  ITEM_ALREADY_OWNED(HttpStatus.BAD_REQUEST, "이미 소유한 아이템입니다."),
+  REJECT_ITEM_PAYMENT(HttpStatus.BAD_REQUEST, "잔액이 부족합니다."),
+  PAYMENT_REQUIRED(HttpStatus.PAYMENT_REQUIRED, "결제가 필요합니다."),
+  ITEM_ALREADY_EQUIPPED(HttpStatus.BAD_REQUEST, "이미 착용된 아이템입니다."),
+  ITEM_ALREADY_UNEQUIPPED(HttpStatus.BAD_REQUEST, "이미 착용 해제된 아이템입니다."),
+  // 이미지
+  IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 이미지입니다."),
+  IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다."),
+  // 마이페이지
+  NICKNAME_REQUIRED(HttpStatus.BAD_REQUEST, "닉네임을 입력해주세요."),
+  NICKNAME_DUPLICATED(HttpStatus.CONFLICT, "중복된 닉네임입니다."),
   // 알려지지 않은 문제
   UNKNOWN(HttpStatus.INTERNAL_SERVER_ERROR, "알려지지 않은 문제가 발생하였습니다."),
   // 입력 값 오류

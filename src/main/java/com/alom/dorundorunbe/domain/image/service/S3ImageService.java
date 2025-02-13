@@ -1,5 +1,7 @@
 package com.alom.dorundorunbe.domain.image.service;
 
+import com.alom.dorundorunbe.global.exception.BusinessException;
+import com.alom.dorundorunbe.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +40,7 @@ public class S3ImageService {
         try {
             return file.getBytes();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new BusinessException(ErrorCode.IMAGE_UPLOAD_FAILED);
         }
     }
 }

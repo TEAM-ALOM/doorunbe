@@ -12,6 +12,8 @@ import com.alom.dorundorunbe.domain.item.repository.ItemRepository;
 import com.alom.dorundorunbe.domain.item.repository.UserItemRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.service.UserService;
+import com.alom.dorundorunbe.global.exception.BusinessException;
+import com.alom.dorundorunbe.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +43,7 @@ public class ItemService {
     }
 
     public void updateItemImage(Long itemId, ItemRequestDto dto) {
-        Item item = itemRepository.findById(itemId).orElseThrow();
+        Item item = findItemById(itemId);
         Image image = imageService.findById(dto.imageId());
 
         item.update(dto.name(), dto.itemCategory(), image, dto.cost());
@@ -55,7 +57,7 @@ public class ItemService {
 
     public Item findItemById(Long id){
         return itemRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("아이템을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ITEM_NOT_FOUND));
     }
 
     public List<ItemResponseDto> findItemByCategory(ItemCategory itemCategory, Long userId) {
@@ -77,13 +79,13 @@ public class ItemService {
 
     public void purchaseItem(Long itemId, Long userId) {
         User user = userService.findById(userId);
-        Item item = itemRepository.findById(itemId).orElseThrow();
+        Item item = findItemById(itemId);
 
         if (userItemRepository.existsByUserAndItem(user, item)) {
-            throw new IllegalArgumentException("이미 소유한 아이템입니다");
+            throw new BusinessException(ErrorCode.ITEM_ALREADY_OWNED);
         }
         if (user.getCash()<item.getCost()) {
-            throw new IllegalArgumentException("잔액이 부족합니다");
+            throw new BusinessException(ErrorCode.REJECT_ITEM_PAYMENT);
         }
 
         user.updateCash(user.getCash()-item.getCost());
@@ -96,14 +98,14 @@ public class ItemService {
 
     public List<EquippedItemResponseDto> equippedItem(Long itemId, Long userId) {
         User user = userService.findById(userId);
-        Item item = itemRepository.findById(itemId).orElseThrow();
+        Item item = findItemById(itemId);
         UserItem userItem = userItemRepository.findByUserAndItem(user, item);
 
         if (userItem == null) {
-            throw new IllegalArgumentException("구매가 필요합니다");
+            throw new BusinessException(ErrorCode.PAYMENT_REQUIRED);
         }
         if (userItem.getEquipped()) {
-            throw new IllegalArgumentException("이미 착용된 아이템입니다");
+            throw new BusinessException(ErrorCode.ITEM_ALREADY_EQUIPPED);
         }
 
         userItem.updateEquipped(true);
@@ -117,10 +119,10 @@ public class ItemService {
         UserItem userItem = userItemRepository.findByUserAndItem(user, item);
 
         if (userItem == null) {
-            throw new IllegalArgumentException("구매가 필요합니다");
+            throw new BusinessException(ErrorCode.PAYMENT_REQUIRED);
         }
         if (!userItem.getEquipped()) {
-            throw new IllegalArgumentException("이미 미착용된 아이템입니다");
+            throw new BusinessException(ErrorCode.ITEM_ALREADY_UNEQUIPPED);
         }
 
         userItem.updateEquipped(false);
