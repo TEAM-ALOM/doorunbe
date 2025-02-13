@@ -63,7 +63,7 @@ public class RankingQueueService {
         RankingQueue savedQueue = rankingQueueRepository.save(queue);
         return CreateRankingResponseDto.of(
                 savedQueue.getId(),
-                user.getName(),
+                user.getNickname(),
                 savedQueue.getCreatedAt()
         );
     }
@@ -98,7 +98,7 @@ public class RankingQueueService {
         log.info("랭킹 대기열에서 사용자 제거: 사용자 ID={}", userId);
         return DeleteRankingResponseDto.of(
                 queue.getId(),
-                user.getName(),
+                user.getNickname(),
                 queue.getCreatedAt(),
                 LocalDateTime.now()
         );

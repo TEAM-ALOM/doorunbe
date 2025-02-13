@@ -7,6 +7,4 @@ import lombok.Setter;
 @Setter
 public class UserUpdateDTO {
     private String nickname;
-    private String name;
-    private Integer age;
 }

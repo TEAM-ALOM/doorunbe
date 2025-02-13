@@ -26,7 +26,6 @@ public class UserDoodleDto {
         //userDoodle을 userDoodleDto로 변환
         return UserDoodleDto.builder()
                 .userId(userDoodle.getUser().getId())
-                .userName(userDoodle.getUser().getName())
                 .doodleId(userDoodle.getDoodle().getId())
                 .status(userDoodle.getStatus())
                 .joinDate(userDoodle.getJoinDate())

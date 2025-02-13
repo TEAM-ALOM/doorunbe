@@ -34,25 +34,19 @@ public class PrincipalUserDetailsService extends DefaultOAuth2UserService implem
         AuthUserDto authUserDto = oAuth2AttributeProvider
                 .convertUserAttribute(userRequest.getClientRegistration().getRegistrationId(), oAuth2User);
 
-        User user = userService.findByEmail(authUserDto.email()).orElse(registerUser(authUserDto));
+        User user = userService.registerOrLogin(authUserDto);
+
+        if (user.getIsDeleted()) {
+            throw new IllegalArgumentException("탈퇴한 사용자입니다.");
+        }
 
         return new PrincipalUserDetails(user);
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userService.findByEmail(username)
-                .orElseThrow();
+        User user = userService.findByEmail(username);
 
         return new PrincipalUserDetails(user);
-    }
-
-    private User registerUser(AuthUserDto authUserDto) {
-        // age과 gender의 경우 oauth 로그인으로 바로 가져오려면 사업자 정보 등록이 필요해서 이 부분은 논의 필요
-
-        return User.builder()
-                .email(authUserDto.email())
-                .cash(0L)
-                .build();
     }
 }

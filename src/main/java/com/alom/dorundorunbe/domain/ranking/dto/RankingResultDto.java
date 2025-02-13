@@ -3,7 +3,7 @@ package com.alom.dorundorunbe.domain.ranking.dto;
 import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
 
 public record RankingResultDto(
-        String userName,
+        String nickname,
         int grade,
         double lpAwarded,
         Double averageElapsedTime,
@@ -11,7 +11,8 @@ public record RankingResultDto(
 ) {
 
     public static RankingResultDto of(UserRanking userRanking){
-        return new RankingResultDto( userRanking.getUser().getName(),
+        return new RankingResultDto(
+                userRanking.getUser().getNickname(),
                 userRanking.getGrade(),
                 userRanking.getLpAwarded(),
                 userRanking.getAverageElapsedTime(),
