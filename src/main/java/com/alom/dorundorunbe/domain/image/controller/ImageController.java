@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/images")
@@ -25,13 +27,13 @@ public class ImageController {
 
     @GetMapping("/")
     @Operation(summary = "전체 이미지 조회", description = "저장된 모든 이미지 URL을 반환합니다")
-    public ResponseEntity<ImageResponseDto> getAllImages() {
-        return null;
+    public ResponseEntity<List<ImageResponseDto>> getAllImages() {
+        return ResponseEntity.ok(imageService.getAllImages());
     }
 
     @GetMapping("/{imageCategory}")
     @Operation(summary = "카테고리별 이미지 조회", description = "아이템, 업적 등 특정 카테고리의 모든 이미지 URL을 반환합니다")
-    public ResponseEntity<ImageResponseDto> getAllImagesByCategory(@PathVariable("imageCategory") ImageCategory imageCategory) {
-        return null;
+    public ResponseEntity<List<ImageResponseDto>> getAllImagesByCategory(@PathVariable("imageCategory") ImageCategory category) {
+        return ResponseEntity.ok(imageService.getAllImagesByCategory(category));
     }
 }

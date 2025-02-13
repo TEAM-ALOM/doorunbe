@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ImageService {
@@ -29,5 +31,16 @@ public class ImageService {
 
         return ImageResponseDto.from(imageRepository.save(image));
     }
-    
+
+    public List<ImageResponseDto> getAllImages() {
+        return imageRepository.findAll().stream()
+                .map(ImageResponseDto::from)
+                .toList();
+    }
+
+    public List<ImageResponseDto> getAllImagesByCategory(ImageCategory category) {
+        return imageRepository.findAllByCategory(category).stream()
+                .map(ImageResponseDto::from)
+                .toList();
+    }
 }
