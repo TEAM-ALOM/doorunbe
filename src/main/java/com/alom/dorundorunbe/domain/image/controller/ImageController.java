@@ -2,21 +2,26 @@ package com.alom.dorundorunbe.domain.image.controller;
 
 import com.alom.dorundorunbe.domain.image.domain.ImageCategory;
 import com.alom.dorundorunbe.domain.image.dto.ImageResponseDto;
-import com.alom.dorundorunbe.domain.image.service.S3ImageService;
+import com.alom.dorundorunbe.domain.image.service.ImageService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/images")
-public class S3ImageController {
+public class ImageController {
 
-    private final S3ImageService s3ImageService;
+    private final ImageService imageService;
+
+    @PostMapping
+    @Operation(summary = "이미지 업로드", description = "이미지를 저장합니다")
+    public ResponseEntity<ImageResponseDto> upload(@RequestParam("file") MultipartFile file,
+                                                   @RequestParam("category") String category) {
+        return ResponseEntity.ok(imageService.save(file, category));
+    }
 
     @GetMapping("/")
     @Operation(summary = "전체 이미지 조회", description = "저장된 모든 이미지 URL을 반환합니다")

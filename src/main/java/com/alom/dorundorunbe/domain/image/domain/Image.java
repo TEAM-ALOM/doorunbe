@@ -18,7 +18,6 @@ public class Image extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String fileName;
     private String url;
 
     @Enumerated(EnumType.STRING)

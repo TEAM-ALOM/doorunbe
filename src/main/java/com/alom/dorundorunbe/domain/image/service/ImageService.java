@@ -1,0 +1,33 @@
+package com.alom.dorundorunbe.domain.image.service;
+
+import com.alom.dorundorunbe.domain.image.domain.Image;
+import com.alom.dorundorunbe.domain.image.domain.ImageCategory;
+import com.alom.dorundorunbe.domain.image.dto.ImageResponseDto;
+import com.alom.dorundorunbe.domain.image.repository.ImageRepository;
+import com.alom.dorundorunbe.global.config.AwsS3Credentials;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+@Service
+@RequiredArgsConstructor
+public class ImageService {
+
+    private final ImageRepository imageRepository;
+    private final AwsS3Credentials awsS3Credentials;
+    private final S3ImageService s3ImageService;
+
+    public ImageResponseDto save(MultipartFile file, String category) {
+
+        String bucket = awsS3Credentials.getBucket();
+        String route = s3ImageService.upload(file, bucket, category);
+
+        Image image = Image.builder()
+                .url(awsS3Credentials.getImageUrl() + "/" + route + ".png")
+                .category(ImageCategory.valueOf(category))
+                .build();
+
+        return ImageResponseDto.from(imageRepository.save(image));
+    }
+    
+}
