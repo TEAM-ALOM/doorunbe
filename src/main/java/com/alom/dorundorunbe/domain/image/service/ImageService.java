@@ -25,7 +25,7 @@ public class ImageService {
         String route = s3ImageService.upload(file, bucket, category);
 
         Image image = Image.builder()
-                .url(awsS3Credentials.getImageUrl() + "/" + route + ".png")
+                .url(awsS3Credentials.getImageUrl() + route + ".png")
                 .category(ImageCategory.valueOf(category))
                 .build();
 
@@ -42,5 +42,9 @@ public class ImageService {
         return imageRepository.findAllByCategory(category).stream()
                 .map(ImageResponseDto::from)
                 .toList();
+    }
+
+    public Image findById(Long id) {
+        return imageRepository.findById(id).orElseThrow();
     }
 }

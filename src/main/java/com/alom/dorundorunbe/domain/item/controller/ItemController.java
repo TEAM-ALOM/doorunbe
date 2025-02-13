@@ -28,9 +28,9 @@ public class ItemController {
 
     @PutMapping("/{itemId}")
     @Operation(summary = "아이템 수정", description = "아이템을 수정합니다")
-    public ResponseEntity<Void> updateItem(@PathVariable("itemId") Long itemId,
+    public ResponseEntity<Void> updateItemImage(@PathVariable("itemId") Long itemId,
                                            @RequestBody ItemRequestDto dto) {
-        itemService.updateItem(itemId, dto);
+        itemService.updateItemImage(itemId, dto);
         return ResponseEntity.ok().build();
     }
 

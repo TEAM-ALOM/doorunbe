@@ -1,5 +1,7 @@
 package com.alom.dorundorunbe.domain.item.service;
 
+import com.alom.dorundorunbe.domain.image.domain.Image;
+import com.alom.dorundorunbe.domain.image.service.ImageService;
 import com.alom.dorundorunbe.domain.item.domain.Item;
 import com.alom.dorundorunbe.domain.item.domain.ItemCategory;
 import com.alom.dorundorunbe.domain.item.domain.UserItem;
@@ -23,21 +25,26 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final UserItemRepository userItemRepository;
     private final UserService userService;
+    private final ImageService imageService;
 
     public void createItem(ItemRequestDto dto) {
+        Image image = imageService.findById(dto.imageId());
+
         Item item = Item.builder()
                 .name(dto.name())
                 .itemCategory(dto.itemCategory())
+                .image(image)
                 .cost(dto.cost())
                 .build();
 
         itemRepository.save(item);
     }
 
-    public void updateItem(Long itemId, ItemRequestDto dto) {
+    public void updateItemImage(Long itemId, ItemRequestDto dto) {
         Item item = itemRepository.findById(itemId).orElseThrow();
+        Image image = imageService.findById(dto.imageId());
 
-        item.update(dto.name(), dto.itemCategory(), dto.cost());
+        item.update(dto.name(), dto.itemCategory(), image, dto.cost());
     }
 
     public void deleteItem(Long itemId) {
@@ -49,7 +56,6 @@ public class ItemService {
     public Item findItemById(Long id){
         return itemRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("아이템을 찾을 수 없습니다."));
-
     }
 
     public List<ItemResponseDto> findItemByCategory(ItemCategory itemCategory, Long userId) {
@@ -61,6 +67,7 @@ public class ItemService {
                 .map(item -> ItemResponseDto.of(
                         item.getId(),
                         item.getName(),
+                        item.getImage().getId(),
                         item.getCost(),
                         userItemRepository.existsByUserAndItem(user, item)
                 ))
@@ -131,7 +138,8 @@ public class ItemService {
                 .map(equippedUserItem -> EquippedItemResponseDto.of(
                         equippedUserItem.getItem().getId(),
                         equippedUserItem.getItem().getName(),
-                        equippedUserItem.getItem().getItemCategory()
+                        equippedUserItem.getItem().getItemCategory(),
+                        equippedUserItem.getItem().getImage().getId()
                 ))
                 .toList();
     }

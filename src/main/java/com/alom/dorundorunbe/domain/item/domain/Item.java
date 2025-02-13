@@ -1,5 +1,6 @@
 package com.alom.dorundorunbe.domain.item.domain;
 
+import com.alom.dorundorunbe.domain.image.domain.Image;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,14 +24,17 @@ public class Item extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ItemCategory itemCategory;
 
-    // 어떤 형태로 저장할지 추후 추가
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     @Column(nullable = false)
     private Long cost;
 
-    public void update(String name, ItemCategory itemCategory, Long cost) {
+    public void update(String name, ItemCategory itemCategory, Image image, Long cost) {
         this.name = name;
         this.itemCategory = itemCategory;
+        this.image = image;
         this.cost = cost;
     }
 }

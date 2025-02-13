@@ -9,7 +9,6 @@ import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordRequestDto;
 import com.alom.dorundorunbe.domain.runningrecord.dto.RunningRecordResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -64,7 +63,8 @@ public interface RunningRecordMapper {
                 .map(item -> EquippedItemResponseDto.of(
                         item.getItem().getId(),
                         item.getItem().getName(),
-                        item.getItem().getItemCategory()
+                        item.getItem().getItemCategory(),
+                        item.getItem().getImage().getId()
                 )).toList();
     }
 
