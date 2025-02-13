@@ -49,6 +49,13 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5'
+
+    // AWS
+    // implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    // https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3
+    // implementation 'com.amazonaws:aws-java-sdk-s3:1.12.780'
+    implementation 'software.amazon.awssdk:s3:2.20.121'
+    implementation 'software.amazon.awssdk:url-connection-client:2.20.121'
 }
 
 tasks.named('test') {
