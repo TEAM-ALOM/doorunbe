@@ -54,6 +54,7 @@ public class DoodleService {
           doodle.setWeeklyGoalPace(doodleRequestDto.getWeeklyGoalPace());
           doodle.setWeeklyGoalHeartRateZone(doodleRequestDto.getWeeklyGoalHeartRateZone());
           doodle.setGoalParticipationCount(doodleRequestDto.getGoalParticipationCount());
+          doodle.setRequiredTier(doodleRequestDto.getRequiredTier());
           //위치 추가 필요
         }
         else if (doodle.isGoalActive() && !doodle.isRunning()){ //주간 목표 활성화, 활성화 모드가 걷기일 경우
@@ -64,6 +65,7 @@ public class DoodleService {
             doodle.setWeeklyGoalPace(null);
             doodle.setWeeklyGoalHeartRateZone(null);
             doodle.setGoalParticipationCount(null);
+            doodle.setRequiredTier(null);
         }
 
         else{ //주간 목표 비활성화
@@ -73,6 +75,7 @@ public class DoodleService {
             doodle.setWeeklyGoalPace(null);
             doodle.setWeeklyGoalHeartRateZone(null);
             doodle.setGoalParticipationCount(null);
+            doodle.setRequiredTier(null);
         }
 
         Doodle savedDoodle = doodleRepository.save(doodle);
@@ -123,6 +126,7 @@ public class DoodleService {
             doodle.setWeeklyGoalPace(doodleRequestDto.getWeeklyGoalPace());
             doodle.setWeeklyGoalHeartRateZone(doodleRequestDto.getWeeklyGoalHeartRateZone());
             doodle.setGoalParticipationCount(doodleRequestDto.getGoalParticipationCount());
+            doodle.setRequiredTier(doodleRequestDto.getRequiredTier());
             //위치 추가 필요
         }
         else if (doodle.isGoalActive() && !doodle.isRunning()){
@@ -133,6 +137,7 @@ public class DoodleService {
             doodle.setWeeklyGoalPace(null);
             doodle.setWeeklyGoalHeartRateZone(null);
             doodle.setGoalParticipationCount(null);
+            doodle.setRequiredTier(null);
         }
         else{
             doodle.setWeeklyGoalDistance(null);
@@ -141,6 +146,7 @@ public class DoodleService {
             doodle.setWeeklyGoalPace(null);
             doodle.setWeeklyGoalHeartRateZone(null);
             doodle.setGoalParticipationCount(null);
+            doodle.setRequiredTier(null);
         }
 
         Doodle updatedDoodle = doodleRepository.save(doodle);
