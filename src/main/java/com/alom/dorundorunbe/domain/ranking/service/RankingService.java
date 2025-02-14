@@ -1,207 +1,147 @@
 package com.alom.dorundorunbe.domain.ranking.service;
 
 
-import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
-import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
-import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
-import com.alom.dorundorunbe.domain.ranking.dto.RankingResultDto;
-import com.alom.dorundorunbe.domain.ranking.dto.RankingUserStatusDto;
-import com.alom.dorundorunbe.domain.ranking.dto.claim.ClaimRankingResponseDto;
-import com.alom.dorundorunbe.domain.ranking.dto.query.RankingResponseDto;
+import com.alom.dorundorunbe.domain.ranking.dto.RankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.repository.RankingRepository;
 import com.alom.dorundorunbe.domain.ranking.repository.UserRankingRepository;
+import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
+import com.alom.dorundorunbe.domain.runningrecord.repository.RunningRecordRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
+import com.alom.dorundorunbe.global.enums.Tier;
+import com.alom.dorundorunbe.global.exception.BusinessException;
+import com.alom.dorundorunbe.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
-@Slf4j
-public class RankingService {
-
+@RequiredArgsConstructor 
+public class RankingService { //랭킹 참가, 랭킹 스케줄 로직
     private final RankingRepository rankingRepository;
     private final UserRankingRepository userRankingRepository;
     private final UserRepository userRepository;
+    private final UserRankingService userRankingService;
     private final RunningRecordRepository runningRecordRepository;
+    private final RankingRewardService rankingRewardService;
 
 
-    @Transactional
-    @Scheduled(cron = "0 0 0 ? * MON") // 매주 월요일 00:00:00에 실행
-    public void finalizeRankings() {
-        List<Ranking> activeRankings = rankingRepository.findAllActiveRankings();
-        activeRankings.forEach(this::finalizeRanking);
-    }
-    private void finalizeRanking(Ranking ranking) {
-
-        // 보상 지급 로직에서 결과 반환
-        distributeRewards(ranking);
-
-        // 랭킹 종료 처리
-        ranking.finish();
-
-        ranking.removeAllParticipants();
-
-        // 랭킹 삭제
-        rankingRepository.delete(ranking);
-    }
-    private void distributeRewards(Ranking ranking) {
-        List<User> participants = ranking.getParticipants();
-
-        // 상위 3개의 기록 평균 계산
-        Map<User, Double> userAverageTimes = participants.stream()
-                .collect(Collectors.toMap(
-                        user -> user,
-                        user->calculateTop3AverageElapsedTime(user,getStartOfRanking(),getEndOfRanking())
-                ));
-
-        // 기록이 3개 미만인 사용자 필터링
-        List<User> sortedUsers = userAverageTimes.entrySet().stream()
-                .filter(entry -> entry.getValue() != Double.MAX_VALUE)
-                .sorted(Map.Entry.comparingByValue())
-                .map(Map.Entry::getKey)
-                .toList();
-
-
-
-
-        makeResult(ranking, sortedUsers, userAverageTimes);
-    }
-    private Double calculateTop3AverageElapsedTime(User user, LocalDateTime startTime, LocalDateTime endTime) {
-
-        List<RunningRecord> records = runningRecordRepository.findTop3ByUserAndDateRangeOrderByElapsedTimeAsc(
-                user, startTime, endTime
-        );
-        if (records.size() < 3) {
-            return Double.MAX_VALUE;
-        }
-        return records.stream().mapToLong(RunningRecord::getElapsedTime).average().orElse(Double.MAX_VALUE);
+    @Transactional(readOnly = true)
+    public List<RankingResponseDto> findAllRankings() {
+        List<Ranking> rankings = rankingRepository.findAll();
+        return rankings.stream().map(RankingResponseDto::new).toList();
     }
 
-    private void makeResult(Ranking ranking, List<User> sortedUsers, Map<User, Double> userAverageTimes) {
-        List<UserRanking> results = new ArrayList<>();
-        int[] baseLp = {50, 30, 10};
-        for (int i = 0; i < sortedUsers.size(); i++) {
-            User user = sortedUsers.get(i);
-            double averageElapsedTime = userAverageTimes.getOrDefault(user, Double.MAX_VALUE);
-            double lpAwarded = (i < baseLp.length ? baseLp[i] : 0) * user.getTier().getLpMultiplier();
+    @Transactional(readOnly = true)
+    public RankingResponseDto findRanking(Long rankingId){
+        Optional<Ranking> ranking = rankingRepository.findById(rankingId);
+        return ranking.map(RankingResponseDto::new)
+                .orElseThrow(() -> new BusinessException(ErrorCode.RANKING_NOT_FOUND));
 
-            results.add(UserRanking.builder()
-                    .ranking(ranking)
-                    .user(user)
-                    .grade(i + 1)
-                    .averageElapsedTime(averageElapsedTime == Double.MAX_VALUE ? null : averageElapsedTime)
-                    .lpAwarded(lpAwarded)
-                    .isClaimed(false) // 수령 여부 초기값
-                    .build());
-        }
 
-        userRankingRepository.saveAll(results);
-    }
-    private LocalDateTime getStartOfRanking() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.with(java.time.DayOfWeek.MONDAY)
-                .withHour(17).withMinute(0).withSecond(0).withNano(0);
-    }
-
-    private LocalDateTime getEndOfRanking() {
-        return getStartOfRanking()
-                .plusWeeks(1)
-                .withHour(0).withMinute(0).withSecond(0).withNano(0);
     }
 
     @Transactional
-    public ClaimRankingResponseDto claimReward(Long userId, Long rankingId) {
+    public void handleRankingParticipation(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        Ranking ranking = rankingRepository.findById(rankingId)
-                .orElseThrow(() -> new IllegalArgumentException("랭킹 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
-        UserRanking result = userRankingRepository.findByUserAndRanking(user, ranking)
-                .orElseThrow(() -> new IllegalArgumentException("보상 정보를 찾을 수 없습니다."));
-
-        if (result.isClaimed()) {
-            throw new IllegalStateException("이미 보상을 수령했습니다.");
+        if (userRankingRepository.existsByUser(user)) {
+            throw new BusinessException(ErrorCode.RANKING_ALREADY_PARTICIPATED);
         }
 
-        // LP 지급
-        user.addLp(result.getLpAwarded());
-        result.markClaimed(); // 보상 수령 상태 업데이트
-        UserRanking userRanking = userRankingRepository.save(result);
+       if(user.getTier() == null){
+           checkPlacementTest(user);
+           return;
+       }
 
-        return ClaimRankingResponseDto.of(userRanking);
+        joinRanking(user);
+
+
+
     }
 
-    public List<RankingResultDto> findRankingResults(Long rankingId) {
-        Ranking ranking = rankingRepository.findById(rankingId)
-                .orElseThrow(() -> new IllegalArgumentException("랭킹 정보를 찾을 수 없습니다."));
+    /**
+     * ✅ 배치고사 진행 여부 확인 및 처리
+     */
+    private void checkPlacementTest(User user) {
 
-        return userRankingRepository.findByRanking(ranking).stream()
-                .map(RankingResultDto::of)
-                .collect(Collectors.toList());
-    }
 
-    public List<RankingUserStatusDto> findRankingStatus(Long rankingId) {
-        Ranking ranking = rankingRepository.findById(rankingId)
-                .orElseThrow(() -> new IllegalArgumentException("랭킹 정보를 찾을 수 없습니다."));
+        if (user.getRankingParticipationDate() == null) {
+            user.startRankingParticipation(); // 배치고사 시작
+            return;
 
-        LocalDateTime startTime = getStartOfRanking();
-        LocalDateTime now = LocalDateTime.now();
-
-        // 참가자의 평균 시간과 뛴 횟수를 계산하여 정렬
-        List<RankingUserStatusDto> sortedParticipants = ranking.getParticipants().stream()
-                .map(user -> {
-                    double averageElapsedTime = calculateTop3AverageElapsedTime(user, startTime, now);
-                    int runningCount = runningRecordRepository.countRunsBetween(user, startTime, now);
-                    return RankingUserStatusDto.of(
-                            user.getNickname(),
-                            startTime,
-                            runningCount,
-                            averageElapsedTime,
-                            0 // 초기 grade 값
-                    );
-                })
-                .sorted(Comparator.comparingDouble(RankingUserStatusDto::averageElapsedTime)) // 평균 시간 기준 정렬
-                .toList();
-
-        // 순위 설정
-        List<RankingUserStatusDto> updatedParticipants = new ArrayList<>();
-        for (int i = 0; i < sortedParticipants.size(); i++) {
-            RankingUserStatusDto participant = sortedParticipants.get(i);
-            updatedParticipants.add(RankingUserStatusDto.of(
-                    participant.nickname(),
-                    participant.rankingStartTime(),
-                    participant.runningCount(),
-                    participant.averageElapsedTime(),
-                    i + 1 // 1등부터 시작
-            ));
         }
 
-        // 상위 10명만 반환
-        return updatedParticipants.stream().limit(10).toList();
+
+        long recordCount = runningRecordRepository.countByUserAndDistanceAndCreatedAtAfter(
+                user, 5.0, user.getRankingParticipationDate());
+
+
+        if (recordCount < 3) {
+
+            throw new BusinessException(ErrorCode.RANKING_MINIMUM_RECORDS_NOT_MET);
+
+        }
+
+
+        assignTierAfterPlacementTest(user);
+        joinRanking(user);
     }
 
-    public Page<RankingResponseDto> findAllRankings(Pageable pageable){
-        Page<Ranking> rankings = rankingRepository.findRankings(pageable);
-        return rankings.map(RankingResponseDto::new);
 
+    private void assignTierAfterPlacementTest(User user) {
+        double averageTime = getAverageTimeFromRunningRecord(user);
+        Tier assignedTier = Tier.determineTier(averageTime);
+        user.setTier(assignedTier);
+    }
+
+    /**
+     * ✅ 랭킹 참가 처리
+     */
+    private void joinRanking(User user) {
+        Ranking ranking = rankingRepository.findByTier(user.getTier())
+                .orElseThrow(() -> new BusinessException(ErrorCode.RANKING_NOT_FOUND));
+
+        userRankingService.createUserRanking(user, ranking);
     }
 
 
+
+
+
+    private double getAverageTimeFromRunningRecord(User user) {
+        // 랭킹 참가 이후 5km 기록 중 상위 3개 가져오기
+        List<RunningRecord> records = runningRecordRepository
+                .findTop3FastestRecordsAfterParticipation(user, 5.0, user.getRankingParticipationDate(), PageRequest.of(0, 3));
+
+        if (records.size() < 3) {
+            throw new BusinessException(ErrorCode.RANKING_MINIMUM_RECORDS_NOT_MET);
+        }
+
+        return records.stream()
+                .mapToInt(RunningRecord::getElapsedTime)
+                .average()
+                .orElseThrow(() -> new BusinessException(ErrorCode.FAIL_PROCEED));
+    }
+
+    //랭킹 보상 지급(일주일 단위로 지급되어야하고(스케줄러 이용) 사용자에게 lp와 cash 지급하고 deleteRankingRecords 호출
+    @Scheduled(cron = "0 0 0 * * MON") // 매주 월요일 00:00 실행
+    public void distributeWeeklyRewardsAndClearRankings() {
+        rankingRewardService.processWeeklyRewards();
+    }
+    
 
 }
+
+
+
+
+
+

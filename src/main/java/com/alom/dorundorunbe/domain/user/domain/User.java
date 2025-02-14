@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.Getter;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
+
 @Entity @Getter
 @Setter
 @Builder
@@ -55,12 +57,25 @@ public class User extends BaseEntity {
     // 랭킹 포인트
     private double lp;
 
+
+    @Column(nullable = false)
+    private boolean isRankingParticipated;
+
+    @Column
+    private LocalDateTime rankingParticipationDate; // 랭킹 참가 시작 날짜
+
+    public void startRankingParticipation() {
+        this.rankingParticipationDate = LocalDateTime.now();
+    }
+
+
     public void updateIsDeleted(Boolean isDeleted) {
         this.isDeleted = isDeleted;
     }
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+
     }
 
     public void updateCash(Long cash) {
@@ -79,17 +94,5 @@ public class User extends BaseEntity {
         this.lp += lpPoints;
     }
 
-    public void joinRanking(Ranking ranking){
-        if (this.ranking != ranking) { // 중복 설정 방지
-            this.ranking = ranking;
-            ranking.addParticipant(this); // 양방향 관계 설정
-        }
-    }
 
-    public void leaveRanking(){
-        if (this.ranking != null) {
-            this.ranking.getParticipants().remove(this); // 랭킹의 참가자 목록에서 제거
-            this.ranking = null; // 사용자와 랭킹 관계 해제
-        }
-    }
 }
