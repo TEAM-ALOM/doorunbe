@@ -45,7 +45,7 @@ public class RankingController implements RankingControllerDocs{
             @PathVariable Long rankingId,
             @PathVariable Long userId
     ) {
-        rankingService.handleRankingParticipation(userId, rankingId);
+        rankingService.handleRankingParticipation(userId);
         return ResponseEntity.ok().build();
     }
 

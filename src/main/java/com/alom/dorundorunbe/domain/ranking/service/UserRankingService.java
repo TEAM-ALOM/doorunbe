@@ -4,6 +4,7 @@ import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
 import com.alom.dorundorunbe.domain.ranking.dto.RankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.dto.UserRankingDto;
+import com.alom.dorundorunbe.domain.ranking.repository.RankingRepository;
 import com.alom.dorundorunbe.domain.ranking.repository.UserRankingRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.exception.BusinessException;
@@ -18,13 +19,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class UserRankingService {
     private final UserRankingRepository userRankingRepository;
     private final SimpMessagingTemplate messagingTemplate;
-    ;
+    private final RankingRepository rankingRepository;
 
-
+    @Transactional
     public void createUserRanking(User user, Ranking ranking) {
 
         boolean alreadyParticipated = userRankingRepository.existsByUserAndRanking(user, ranking);
@@ -50,28 +50,30 @@ public class UserRankingService {
 
     }
 
-    //랭킹 참가자 기록 업데이트->소켓
+    @Transactional//랭킹 참가자 기록 업데이트->소켓
     public void updateUserRankingPointAndNotify(Long userId, double point) {
         UserRanking userRanking = userRankingRepository.findByUserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RANKING_NOT_FOUND));
 
-        Ranking ranking = userRanking.getRanking();
         // 추가 포인트 등록
         userRanking.addPoint(point);
         if(userRanking.getPoints().size()>=3){
             userRanking.updateAveragePoint();
         }
+        Long rankingId = userRanking.getRanking().getId();
 
-        List<UserRanking> participants = userRankingRepository.findAllByRanking(userRanking.getRanking());
 
-        // 방 참가자의 순위를 계산하고 업데이트
-        updateGrades(participants);
-
+        updateGrades(rankingId);
         //추후 redis 캐쉬 적용 필요해보임
-        messagingTemplate.convertAndSend("/sub/ranking/" + ranking.getId(), new RankingResponseDto(ranking));
+        RankingResponseDto rankingDto = new RankingResponseDto(userRanking.getRanking());
+
+        messagingTemplate.convertAndSend("/sub/ranking/" + rankingId, rankingDto);
     }
 
-    public void updateGrades(List<UserRanking> participants) {
+    public void updateGrades(Long rankingId) {
+
+        List<UserRanking> participants = userRankingRepository.findByRankingId(rankingId);
+
         List<UserRanking> validParticipants = participants.stream()
                 .filter(userRanking -> userRanking.getAveragePoint() != null)
                 .sorted(Comparator.comparingDouble(UserRanking::getAveragePoint).reversed())
@@ -87,7 +89,9 @@ public class UserRankingService {
                 rank = i + 1;
             }
 
-            userRanking.updateGrade(rank);
+            if (!userRanking.getGrade().equals(rank)) {
+                userRanking.updateGrade(rank);
+            }
             previousPoint = userRanking.getAveragePoint();
         }
     }

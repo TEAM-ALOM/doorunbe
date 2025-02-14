@@ -22,7 +22,7 @@ public class UserRanking extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ranking_id", nullable = false)
+    @JoinColumn(name = "ranking_id")
     private Ranking ranking;
 
     @OneToOne(fetch = FetchType.LAZY)

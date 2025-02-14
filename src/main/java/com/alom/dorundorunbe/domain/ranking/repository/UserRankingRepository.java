@@ -13,10 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRankingRepository extends JpaRepository<UserRanking, Long> {
-    @EntityGraph(attributePaths = {"user"})
-    List<UserRanking>findAllByRanking(Ranking ranking);
+
 
     boolean existsByUserAndRanking(User user, Ranking ranking);
+
+    boolean existsByUser(User user);
 
     Optional<UserRanking> findByUserId(Long userId);
 
@@ -25,6 +26,9 @@ public interface UserRankingRepository extends JpaRepository<UserRanking, Long> 
     void deleteByRankingId(@Param("rankingId") Long rankingId);
 
 
-    @EntityGraph(attributePaths = {"user"})
+
     List<UserRanking> findByRankingId(Long rankingId);
+
+    @EntityGraph(attributePaths = {"user"})
+    List<UserRanking> findWithUserByRankingId(Long rankingId);
 }

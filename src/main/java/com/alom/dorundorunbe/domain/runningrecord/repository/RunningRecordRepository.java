@@ -25,8 +25,10 @@ public interface RunningRecordRepository extends JpaRepository<RunningRecord, Lo
 
     @Query("SELECT COUNT(r) FROM RunningRecord r WHERE r.user.id = :userId AND r.date >= :startDate AND r.date <= :endDate")
     Long countRecordsByUserIdAndDateRange(@Param("userId") Long userId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+    @Query("SELECT r FROM RunningRecord r WHERE r.user = :user AND r.distance = :distance AND r.createdAt >= :createdAt ORDER BY r.elapsedTime ASC")
+    List<RunningRecord> findTop3FastestRecordsAfterParticipation(
+            @Param("user") User user, @Param("distance") double distance, @Param("createdAt") LocalDateTime createdAt, Pageable pageable);
 
-    List<RunningRecord> findByUserAndDistanceAndCreatedAtAfter(
-            User user, Double distance, LocalDateTime rankingParticipationDate);
+    long countByUserAndDistanceAndCreatedAtAfter(User user, double distance, LocalDateTime createdAt);
 
 }
