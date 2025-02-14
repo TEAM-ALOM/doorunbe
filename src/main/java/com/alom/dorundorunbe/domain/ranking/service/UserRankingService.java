@@ -4,7 +4,6 @@ import com.alom.dorundorunbe.domain.ranking.domain.Ranking;
 import com.alom.dorundorunbe.domain.ranking.domain.UserRanking;
 import com.alom.dorundorunbe.domain.ranking.dto.RankingResponseDto;
 import com.alom.dorundorunbe.domain.ranking.dto.UserRankingDto;
-import com.alom.dorundorunbe.domain.ranking.repository.RankingRepository;
 import com.alom.dorundorunbe.domain.ranking.repository.UserRankingRepository;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.global.exception.BusinessException;
@@ -22,7 +21,7 @@ import java.util.List;
 public class UserRankingService {
     private final UserRankingRepository userRankingRepository;
     private final SimpMessagingTemplate messagingTemplate;
-    private final RankingRepository rankingRepository;
+
 
     @Transactional
     public void createUserRanking(User user, Ranking ranking) {

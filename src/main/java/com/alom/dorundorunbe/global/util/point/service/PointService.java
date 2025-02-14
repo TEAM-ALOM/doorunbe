@@ -62,7 +62,7 @@ public class PointService {
 
             user.addCash(rankCash);
             user.addLp(rankLp);
-            user.resetParticipateRanking();
+
 
         }
 
