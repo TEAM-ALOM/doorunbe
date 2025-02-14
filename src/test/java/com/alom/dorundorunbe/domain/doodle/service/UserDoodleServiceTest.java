@@ -58,7 +58,7 @@ public class UserDoodleServiceTest {
     public void setUp(){
         user = User.builder()
                 .id(1L)
-                .name("testUser")
+                .nickname("testUser")
                 .build();
 
         doodle = Doodle.builder()
