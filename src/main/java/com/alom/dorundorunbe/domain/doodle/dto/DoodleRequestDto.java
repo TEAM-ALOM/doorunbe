@@ -1,5 +1,6 @@
 package com.alom.dorundorunbe.domain.doodle.dto;
 
+import com.alom.dorundorunbe.global.enums.Tier;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -46,6 +47,8 @@ public class DoodleRequestDto {
 
     @NotNull(message = "주간 목표 활성화 여부를 선택해주세요.(활성화 또는 비활성화)")
     private boolean isGoalActive;
+
+    private Tier requiredTier;
 
     private Long userId;
 
