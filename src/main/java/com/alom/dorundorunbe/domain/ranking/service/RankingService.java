@@ -12,7 +12,6 @@ import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.global.enums.Tier;
 import com.alom.dorundorunbe.global.exception.BusinessException;
 import com.alom.dorundorunbe.global.exception.ErrorCode;
-import com.alom.dorundorunbe.global.util.point.service.PointService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -73,9 +72,11 @@ public class RankingService { //랭킹 참가, 랭킹 스케줄 로직
      */
     private void checkPlacementTest(User user) {
 
+
         if (user.getRankingParticipationDate() == null) {
             user.startRankingParticipation(); // 배치고사 시작
             return;
+
         }
 
 

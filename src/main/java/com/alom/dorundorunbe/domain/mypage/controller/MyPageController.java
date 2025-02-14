@@ -4,75 +4,56 @@ package com.alom.dorundorunbe.domain.mypage.controller;
 import com.alom.dorundorunbe.domain.runningrecord.domain.RunningRecord;
 import com.alom.dorundorunbe.domain.mypage.dto.*;
 import com.alom.dorundorunbe.domain.mypage.service.MyPageService;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/mypage")
 public class MyPageController {
 
-    @Autowired
-    private MyPageService myPageService;
+    private final MyPageService myPageService;
 
-    @GetMapping("/myPage")
+    @GetMapping("/")
+    @Operation(summary = "마이페이지 조회", description = "마이페이지를 조회합니다")
     public ResponseEntity<?> myPage(){
+        // 사용자 식별 - email 반환
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         List<AchievementResponse> achievementResponses = myPageService.getAchievements(username);
-        if(achievementResponses.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-
         String rank = myPageService.getUserRank(username);
-        if(rank == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-
         List<RunningRecord> runningRecords = myPageService.getRunningRecords(username);
-        if(runningRecords.isEmpty())
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        String nickname = myPageService.getUserNickname(username);
 
-        String userEmail = myPageService.getUserEmail(username);
-        if(userEmail == null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        MyPageResponse myPageResponse = new MyPageResponse(username, userEmail, achievementResponses, rank, runningRecords);
+        MyPageResponse myPageResponse = new MyPageResponse(username, nickname, achievementResponses, rank, runningRecords);
         return new ResponseEntity<>(myPageResponse, HttpStatus.OK);
-
     }
 
-    @PutMapping("/myPage/updateUser")
+    @PutMapping("/update")
+    @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다")
     public ResponseEntity<String> updateUser(@RequestBody UserUpdateDTO userDTO){
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        ResponseEntity<String> response = myPageService.updateByName(userDTO, username);
-        if(response == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
-        else return response;
+        return myPageService.updateByEmail(userDTO, username);
     }
 
-    @PutMapping("/myPage/changePassword")
-    public ResponseEntity<String> changePassword(@RequestBody UserPasswordChangeDTO userPasswordChangeDTO){
+    @PutMapping("/update/nickname")
+    @Operation(summary = "닉네임 수정", description = "닉네임을 수정합니다")
+    public ResponseEntity<Void> updateNickname(String nickname) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(myPageService.updatePassword(userPasswordChangeDTO, username) == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
-        else return myPageService.updatePassword(userPasswordChangeDTO, username);
+        myPageService.updateNickname(username, nickname);
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/myPage/deleteUser")
-    public ResponseEntity<String> deleteUser(@RequestBody UserDeleteDTO userDeleteDTO){
+    @DeleteMapping("/delete")
+    @Operation(summary = "회원 탈퇴", description = "회원을 탈퇴합니다")
+    public ResponseEntity<String> deleteUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(myPageService.deleteUser(userDeleteDTO, username) == null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-        }
-        else return myPageService.deleteUser(userDeleteDTO, username);
+        return myPageService.deleteUser(username);
     }
-
-    
 }

@@ -10,16 +10,16 @@ import java.util.List;
 @Setter
 public class MyPageResponse {
 
-    private String name;
     private String email;
+    private String nickname;
     private List<AchievementResponse> achievements;
     private String rank;
     private List<RunningRecord> runningRecords;
 
-    public MyPageResponse(String name, String email, List<AchievementResponse> achievements, String rank,
+    public MyPageResponse(String email, String nickname, List<AchievementResponse> achievements, String rank,
                           List<RunningRecord> runningRecords) {
-        this.name = name;
         this.email = email;
+        this.nickname = nickname;
         this.achievements = achievements;
         this.rank = rank;
         this.runningRecords = runningRecords;

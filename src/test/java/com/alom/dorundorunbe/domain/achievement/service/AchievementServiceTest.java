@@ -65,7 +65,6 @@ class AchievementServiceTest {
 
         sampleUser = User.builder()
                 .id(1L)
-                .name("Test User")
                 .cash(0L)
                 .tier(Tier.BEGINNER)
                 .build();

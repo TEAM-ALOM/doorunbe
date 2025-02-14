@@ -6,8 +6,8 @@ import com.alom.dorundorunbe.domain.doodle.dto.DoodleRequestDto;
 import com.alom.dorundorunbe.domain.doodle.dto.DoodleResponseDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleDto;
 import com.alom.dorundorunbe.domain.doodle.dto.UserDoodleRole;
-import com.alom.dorundorunbe.domain.doodle.repository.UserDoodleRepository;
 import com.alom.dorundorunbe.domain.doodle.service.DoodleService;
+import com.alom.dorundorunbe.domain.doodle.service.UserDoodleService;
 import com.alom.dorundorunbe.domain.user.domain.User;
 import com.alom.dorundorunbe.domain.user.repository.UserRepository;
 import com.alom.dorundorunbe.global.enums.Tier;
@@ -40,14 +40,14 @@ public class DoodleControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @MockBean
+    private DoodleService doodleService;
 
     @MockBean
-    private static DoodleService doodleService;
+    private UserRepository userRepository;
 
     @MockBean
-    private static UserRepository userRepository;
+    private UserDoodleService userDoodleService;
 
     static private Doodle doodle;
 
@@ -62,7 +62,6 @@ public class DoodleControllerTest {
         user = User.builder()
                 .id(1L)
                 .nickname("runner123")
-                .name("testUser")
                 .email("example@example.com")
                 .cash(1000L)
                 .tier(Tier.AMATEUR)
@@ -75,6 +74,7 @@ public class DoodleControllerTest {
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(2.0)
                 .weeklyGoalPace(3.0)
+                .weeklyGoalHeartRateZone(3)
                 .password("testPassword")
                 .goalParticipationCount(10)
                 .maxParticipant(20)
@@ -87,6 +87,7 @@ public class DoodleControllerTest {
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(2.0)
                 .weeklyGoalPace(3.0)
+                .weeklyGoalHeartRateZone(3)
                 .goalParticipationCount(10)
                 .maxParticipant(20)
                 .password("testPassword")
@@ -100,6 +101,7 @@ public class DoodleControllerTest {
                 .weeklyGoalCount(1)
                 .weeklyGoalCadence(2.0)
                 .weeklyGoalPace(3.0)
+                .weeklyGoalHeartRateZone(3)
                 .goalParticipationCount(10)
                 .maxParticipant(20)
                 .build();
@@ -132,11 +134,10 @@ public class DoodleControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("testDoodle"))
                 .andExpect(jsonPath("$.weeklyGoalDistance").value(1.0))
                 .andExpect(jsonPath("$.weeklyGoalCount").value(1))
-                .andExpect(jsonPath("$.goalCadence").value(2.0))
-                .andExpect(jsonPath("$.goalPace").value(3.0))
+                .andExpect(jsonPath("$.weeklyGoalCadence").value(2.0))
+                .andExpect(jsonPath("$.weeklyGoalPace").value(3.0))
                 .andExpect(jsonPath("$.goalParticipationCount").value(10))
                 .andExpect(jsonPath("$.maxParticipant").value(20)
         );
@@ -173,8 +174,7 @@ public class DoodleControllerTest {
        when(doodleService.getAllDoodles()).thenReturn(doodleResponseDtos);
 
        mockMvc.perform(get("/doodle")
-               .contentType(MediaType.APPLICATION_JSON)
-               .with(csrf()))
+               .contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isOk())
                .andExpect(jsonPath("$[0].name").value("testDoodle1"))
                .andExpect(jsonPath("$[1].name").value("testDoodle2"));
@@ -200,6 +200,7 @@ public class DoodleControllerTest {
     @DisplayName("Put /doodle/{doodleId} : 특정 Doodle을 수정한다.")
     @WithMockUser(username = "runner123", roles = {"ADMIN"})
     public void updatedDoodle() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
 
         DoodleRequestDto updateRequest = DoodleRequestDto.builder()
                 .name("Updated Doodle Name")
@@ -236,8 +237,8 @@ public class DoodleControllerTest {
                 .andExpect(jsonPath("$.name").value("Updated Doodle Name")) // name 값 확인
                 .andExpect(jsonPath("$.weeklyGoalDistance").value(2.0)) // goalDistance 값 확인
                 .andExpect(jsonPath("$.weeklyGoalCount").value(1))
-                .andExpect(jsonPath("$.goalCadence").value(3.0)) // goalCadence 값 확인
-                .andExpect(jsonPath("$.goalPace").value(4.0)) // goalPace 값 확인
+                .andExpect(jsonPath("$.weeklyGoalCadence").value(3.0)) // goalCadence 값 확인
+                .andExpect(jsonPath("$.weeklyGoalPace").value(4.0)) // goalPace 값 확인
                 .andExpect(jsonPath("$.goalParticipationCount").value(15)) // goalParticipationCount 값 확인
                 .andExpect(jsonPath("$.maxParticipant").value(25)); // maxParticipant 값 확인
 
@@ -250,6 +251,7 @@ public class DoodleControllerTest {
     @DisplayName("Post /{doodleId}/User/{userId} : 특정 Doodle에 User를 추가한다.")
     @WithMockUser(username = "runner123", roles = {"USER"})
     public void addParticipantToDoodle() throws Exception {
+        ObjectMapper objectMapper = new ObjectMapper();
         when(doodleService.addParticipantToDoodle(eq(1L), eq(1L), eq("testPassword")))
                 .thenReturn(doodleResponseDto);
 
@@ -319,8 +321,7 @@ public class DoodleControllerTest {
         when(doodleService.getParticipants(eq(1L))).thenReturn(participants);
 
         mockMvc.perform(get("/doodle/{doodleId}/participants", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf()))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(2))
                 .andExpect(jsonPath("$[0].userId").value(1L))
