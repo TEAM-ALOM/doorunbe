@@ -1,6 +1,7 @@
 package com.alom.dorundorunbe.domain.doodle.dto;
 
 import com.alom.dorundorunbe.domain.doodle.domain.Doodle;
+import com.alom.dorundorunbe.global.enums.Tier;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,7 @@ public class DoodleResponseDto {
     private boolean isPublic;
     private double doodlePoint;
     private boolean isGoalActive;
+    private Tier requiredTier;
 
     public static DoodleResponseDto from(Doodle doodle) {
         // Doodle 엔티티의 participants 리스트를 UserDoodleDto 리스트로 변환
@@ -53,6 +55,7 @@ public class DoodleResponseDto {
                 .isPublic(doodle.isPublic())
                 .doodlePoint(doodle.getDoodlePoint())
                 .isGoalActive(doodle.isGoalActive())
+                .requiredTier(doodle.getRequiredTier())
                 .build();
     }
 }
