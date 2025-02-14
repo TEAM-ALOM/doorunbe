@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -67,7 +67,6 @@ public class DoodleServiceTest {
         user = User.builder()
                 .id(1L)
                 .nickname("runner123")
-                .name("testUser")
                 .email("example@example.com")
                 .cash(1000L)
                 .tier(Tier.AMATEUR)
@@ -76,7 +75,6 @@ public class DoodleServiceTest {
         user2 = User.builder()
                 .id(2L)
                 .nickname("runner456")
-                .name("testUser2")
                 .email("example2@example.com")
                 .cash(1000L)
                 .tier(Tier.AMATEUR)
@@ -97,6 +95,7 @@ public class DoodleServiceTest {
                 .isGoalActive(true)
                 .isRunning(true)
                 .doodlePoint(0)
+                .requiredTier(Tier.STARTER)
                 .build();
 
         doodle2 = Doodle.builder()
@@ -114,6 +113,7 @@ public class DoodleServiceTest {
                 .isGoalActive(true)
                 .isRunning(true)
                 .doodlePoint(0)
+                .requiredTier(Tier.AMATEUR)
                 .build();
 
         userDoodle = UserDoodle.builder()
@@ -148,6 +148,7 @@ public class DoodleServiceTest {
                 .isGoalActive(true)
                 .isPublic(true)
                 .isRunning(true)
+                .requiredTier(Tier.STARTER)
                 .build();
 
     }
@@ -171,6 +172,7 @@ public class DoodleServiceTest {
                 .maxParticipant(10)
                 .participants(new ArrayList<>())
                 .isRunning(true)
+                .requiredTier(Tier.STARTER)
                 .build();
         when(doodleRepository.save(any(Doodle.class))).thenReturn(savedDoodle);
 
@@ -193,6 +195,11 @@ public class DoodleServiceTest {
 
         // doodleRepository가 제대로 저장되었는지 확인
         verify(doodleRepository, times(1)).save(any(Doodle.class));
+
+        // 생성된 doodle 정보 확인
+        assertEquals(Tier.STARTER, responseDto.getRequiredTier());
+        assertEquals(2.0, responseDto.getWeeklyGoalCadence());
+        assertTrue(responseDto.isRunning());
     }
 
     @Test
