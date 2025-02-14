@@ -1,5 +1,6 @@
 package com.alom.dorundorunbe.domain.doodle.domain;
 
+import com.alom.dorundorunbe.global.enums.Tier;
 import com.alom.dorundorunbe.global.util.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -20,22 +21,22 @@ public class Doodle extends BaseEntity {
     @Column(nullable = false, length = 32)
     private String name;
 
-    @Column(nullable = false) //주간 목표
+    @Column//주간 목표
     private Double weeklyGoalDistance;
 
     @Column(nullable = false)
     private Integer weeklyGoalCount;
 
-    @Column(nullable = false)
+    @Column
     private Double weeklyGoalCadence;
 
-    @Column(nullable = false)
+    @Column
     private Double weeklyGoalPace;
 
-    @Column(nullable = false)
+    @Column
     private Integer weeklyGoalHeartRateZone;
 
-    @Column(nullable = false)
+    @Column
     private Integer goalParticipationCount;
 
     @Column(nullable = false)
@@ -55,6 +56,9 @@ public class Doodle extends BaseEntity {
 
     @Column(nullable = false)
     private boolean isGoalActive;
+
+    @Column
+    private Tier requiredTier;
 
     //추가할 것 - 목표로 설정한 위치
 
